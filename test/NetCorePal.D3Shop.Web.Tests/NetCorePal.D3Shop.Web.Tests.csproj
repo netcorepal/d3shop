@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.Development.json" />
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkVersion)"/>
+    <PackageReference Include="Moq" Version="4.20.69" />
+    <PackageReference Include="NetCorePal.Extensions.NewtonsoftJson" Version="$(NetCorePalVersion)" />
+    <PackageReference Include="Testcontainers" Version="$(TestcontainersVersion)"/>
+    <PackageReference Include="Testcontainers.MySql" Version="$(TestcontainersVersion)"/>
+    <PackageReference Include="Testcontainers.PostgreSql" Version="$(TestcontainersVersion)"/>
+    <PackageReference Include="Testcontainers.RabbitMq" Version="$(TestcontainersVersion)"/>
+    <PackageReference Include="Testcontainers.Redis"  Version="$(TestcontainersVersion)"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.6.0"/>
+    <PackageReference Include="xunit" Version="2.4.2"/>
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\NetCorePal.D3Shop.Web\NetCorePal.D3Shop.Web.csproj" />
+  </ItemGroup>
+
+</Project>

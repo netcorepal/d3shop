@@ -1,0 +1,43 @@
+```mermaid
+classDiagram
+
+class Employee {
+    <<AggregateRoot>>
+    + EmployeeId Id
+    + string Name
+    + string Department
+    + string Position
+    + ClockIn() void triggers ClockInDomainEvent
+    + void ClockOut() triggers ClockOutDomainEvent
+}
+
+class ClockInRecord {
+    <<Entity>>
+    + ClockInRecordId Id
+    + EmployeeId EmployeeId
+    + datetime ClockInTime
+    + datetime ClockOutTime
+}
+
+class ClockInDomainEvent {
+    <<DomainEvent>>
+    + ClockInRecord ClockInRecord
+}
+
+class ClockOutDomainEvent {
+    <<DomainEvent>>
+    + ClockInRecord ClockInRecord
+}
+
+class Admin {
+    <<AggregateRoot>>
+    + AdminId Id
+    + string Name
+    + void ViewAllClockInRecords()
+}
+
+Employee -- ClockInRecord
+Employee -- ClockInDomainEvent : triggers
+Employee -- ClockOutDomainEvent : triggers
+Admin -- ClockInRecord : view
+```
