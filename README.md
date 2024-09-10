@@ -9,7 +9,7 @@
 
 关注公众号`老肖想当外语大佬`，获取系列文章[老肖的领域驱动设计之路](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg3Mzg5NjI0Ng==&action=getalbum&album_id=3587530562086371329&scene=126#wechat_redirect)，菜单栏加群参与讨论。
 
-视频与直播在B站：[https://b23.tv/hUNoBjA](https://b23.tv/hUNoBjA)。
+视频与直播在B站：[https://b23.tv/hUNoBjA](https://b23.tv/hUNoBjA)
 
 ## 技术原则
 
