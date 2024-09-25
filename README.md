@@ -23,13 +23,7 @@
 
 ## 环境准备
 
-```shell
-docker run --restart always --name mysql -v /mnt/d/docker/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -p 3306:3306 -d mysql:latest
-
-docker run --restart always -d --hostname node1 --name rabbitmq -p 15672:15672 -p 5672:5672 rabbitmq:3-management
-
-docker run --restart always --name redis -v /mnt/d/docker/redis:/data -p 6379:6379 -d redis:5.0.7 redis-server
-```
+参考[这里](./docker/README.md)的文档使用`docker-compose`搭建开发环境。
 
 ## 依赖对框架与组件
 
