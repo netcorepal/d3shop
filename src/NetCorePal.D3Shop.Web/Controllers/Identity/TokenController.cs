@@ -1,0 +1,139 @@
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
+using NetCorePal.D3Shop.Web.Application.Commands.Identity;
+using NetCorePal.D3Shop.Web.Application.Queries.Identity;
+using NetCorePal.D3Shop.Web.Controllers.Identity.Requests;
+using NetCorePal.D3Shop.Web.Controllers.Identity.Responses;
+using NetCorePal.Extensions.Primitives;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
+
+namespace NetCorePal.D3Shop.Web.Controllers.Identity;
+
+[Route("/token")]
+[ApiController]
+[AllowAnonymous]
+public class TokenController(IMediator mediator, UserQuery userQuery, IOptions<AppConfiguration> appConfiguration)
+{
+    private AppConfiguration AppConfiguration => appConfiguration.Value;
+
+    [HttpPost]
+    [Route("login")]
+    public async Task<ResponseData<TokenResponse>> UserLoginAsync(UserLoginRequest request)
+    {
+        var user = await userQuery.LoginAsync(request.Name, request.Password);
+
+        var refreshToken = GenerateRefreshToken();
+        var refreshTokenExpiryDate = DateTime.Now.AddDays(7);
+        await mediator.Send(new LoginSuccessfullyCommand(user.Id, refreshToken, refreshTokenExpiryDate));
+
+        var response = new TokenResponse(GenerateJwtAsync(user), refreshToken, refreshTokenExpiryDate);
+        return response.AsResponseData();
+    }
+
+    [HttpPost]
+    [Route("getRefreshToken")]
+    public async Task<ResponseData<TokenResponse>> GetRefreshTokenAsync(RefreshTokenRequest request)
+    {
+        var userPrincipal = GetPrincipalFromExpiredToken(request.Token);
+
+        var userName = userPrincipal.FindFirstValue(ClaimTypes.Name) ??
+                       throw new KnownException("Invalid Token:There is no username in the token");
+
+        var user = await userQuery.GetUserByName(userName);
+
+        if (string.IsNullOrWhiteSpace(request.RefreshToken) ||
+            user.RefreshToken != request.RefreshToken ||
+            user.RefreshTokenExpiryDate <= DateTime.Now)
+            throw new KnownException("Invalid Client Token.");
+
+        var refreshToken = GenerateRefreshToken();
+        await mediator.Send(new UpdateRefreshTokenCommand(user.Id, refreshToken));
+
+        var response = new TokenResponse(GenerateJwtAsync(user), refreshToken, user.RefreshTokenExpiryDate);
+        return response.AsResponseData();
+    }
+
+    private static string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[32];
+        using var rnd = RandomNumberGenerator.Create();
+        rnd.GetBytes(randomNumber);
+
+        return Convert.ToBase64String(randomNumber);
+    }
+
+    private string GenerateJwtAsync(AdminUser user)
+    {
+        var token = GenerateEncryptedToken(GetSigningCredentials(), GetClaimsAsync(user));
+        return token;
+    }
+
+    private string GenerateEncryptedToken(SigningCredentials signingCredentials, IEnumerable<Claim> claims)
+    {
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(AppConfiguration.TokenExpiryInMinutes),
+            signingCredentials: signingCredentials);
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var encryptedToken = tokenHandler.WriteToken(token);
+        return encryptedToken;
+    }
+
+    private SigningCredentials GetSigningCredentials()
+    {
+        var secret = Encoding.UTF8.GetBytes(AppConfiguration.Secret);
+        return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256);
+    }
+
+    private static IEnumerable<Claim> GetClaimsAsync(AdminUser user)
+    {
+        var roles = user.Roles;
+        var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role.RoleName)).ToList();
+
+        var permissions = user.Permissions;
+        var permissionClaims = permissions.Select(p => new Claim(AppClaim.Permission, p.PermissionCode));
+
+        var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier,user.Id.ToString()),
+                new(ClaimTypes.Name, user.Name),
+                new(ClaimTypes.MobilePhone, user.Phone)
+            }
+        .Union(roleClaims)
+        .Union(permissionClaims);
+
+        return claims;
+    }
+
+    private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppConfiguration.Secret)),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            RoleClaimType = ClaimTypes.Role,
+            ClockSkew = TimeSpan.Zero
+        };
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+        if (securityToken is not JwtSecurityToken jwtSecurityToken
+            || !jwtSecurityToken.Header.Alg
+            .Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+        {
+            throw new SecurityTokenException("Invalid token");
+        }
+
+        return principal;
+    }
+
+}

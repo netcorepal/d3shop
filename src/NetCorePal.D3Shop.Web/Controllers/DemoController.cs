@@ -8,6 +8,8 @@ using NetCorePal.Extensions.DistributedLocks;
 using NetCorePal.Extensions.DistributedTransactions;
 using NetCorePal.Extensions.Domain;
 using NetCorePal.Extensions.Primitives;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
+using NetCorePal.D3Shop.Web.Attribute;
 
 namespace NetCorePal.D3Shop.Web.Controllers
 {
@@ -17,6 +19,7 @@ namespace NetCorePal.D3Shop.Web.Controllers
     {
         [HttpPost]
         [Route("json")]
+        [MustHavePermission(AppFeature.Demo, AppAction.Read)]
         public ResponseData<JsonResponse> Json(JsonRequest body)
         {
             return new JsonResponse(body.Id, body.Name, body.Time).AsResponseData();
