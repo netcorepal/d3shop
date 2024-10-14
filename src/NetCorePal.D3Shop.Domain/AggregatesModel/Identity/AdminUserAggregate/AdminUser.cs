@@ -65,9 +65,15 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
             {
                 Roles.Remove(role);
 
-                var adminUserPermissions = Permissions.Where(p => p.SourceRoleIds != null && p.SourceRoleIds.Contains(role.RoleId));
+                var adminUserPermissions = Permissions.Where(p => p.SourceRoleIds != null && p.SourceRoleIds.Contains(role.RoleId)).ToList();
                 foreach (var permission in adminUserPermissions)
+                {
                     permission.RemoveSourceRoleId(role.RoleId);
+                    if (permission.SourceRoleIds!.Count == 0)
+                    {
+                        Permissions.Remove(permission);
+                    }
+                }
             }
         }
 

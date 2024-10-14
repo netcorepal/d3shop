@@ -41,16 +41,11 @@ namespace NetCorePal.D3Shop.Infrastructure
                         .Where(r => AppDefaultRoles.DefaultRoles.Contains(r.Name))
                         .ToListAsync();
 
-                    var addRoleDtoList = defaultRoles.Select(r => new AddUserRoleDto()
-                    {
-                        RoleId = r.Id,
-                        RoleName = r.Name,
-                        Permissions = r.Permissions.Select(p => new AddUserPermissionDto()
-                        {
-                            PermissionCode = p.PermissionCode,
-                            PermissionRemark = p.PermissionRemark
-                        })
-                    }).ToList();
+                    var addRoleDtoList = defaultRoles.Select(r =>
+                        new AddUserRoleDto(r.Id, r.Name,
+                        r.Permissions.Select(p =>
+                                new AddUserPermissionDto(p.PermissionCode, p.PermissionRemark))
+                            )).ToList();
                     adminUser.AddRoles(addRoleDtoList);
                 }
 
@@ -71,16 +66,11 @@ namespace NetCorePal.D3Shop.Infrastructure
                 {
                     var basicRole = await dbContext.Roles.Where(r => r.Name == AppDefaultRoles.Basic).FirstAsync();
 
-                    var addRoleDto = new AddUserRoleDto()
-                    {
-                        RoleId = basicRole.Id,
-                        RoleName = basicRole.Name,
-                        Permissions = basicRole.Permissions.Select(p => new AddUserPermissionDto()
-                        {
-                            PermissionCode = p.PermissionCode,
-                            PermissionRemark = p.PermissionRemark
-                        })
-                    };
+                    var addRoleDto = new AddUserRoleDto(
+                        basicRole.Id, basicRole.Name,
+                        basicRole.Permissions.Select(p =>
+                            new AddUserPermissionDto(p.PermissionCode, p.PermissionRemark))
+                        );
                     basicUser.AddRoles([addRoleDto]);
                 }
 
