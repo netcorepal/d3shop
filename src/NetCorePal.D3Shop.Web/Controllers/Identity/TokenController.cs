@@ -20,7 +20,7 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 [Route("/token")]
 [ApiController]
 [AllowAnonymous]
-public class TokenController(IMediator mediator, UserQuery userQuery, IOptions<AppConfiguration> appConfiguration)
+public class TokenController(IMediator mediator, UserQuery userQuery, IOptions<AppConfiguration> appConfiguration) : ControllerBase
 {
     private AppConfiguration AppConfiguration => appConfiguration.Value;
 

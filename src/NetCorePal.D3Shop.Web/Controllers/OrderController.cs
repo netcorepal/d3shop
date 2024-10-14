@@ -17,7 +17,6 @@ namespace NetCorePal.D3Shop.Web.Controllers;
 public class OrderController(IMediator mediator, OrderQuery orderQuery, ICapPublisher capPublisher) : ControllerBase
 {
     [HttpGet]
-    [MustHavePermission(AppFeature.Order, AppAction.Read)]
     public IActionResult Get()
     {
         return Ok("Hello World");

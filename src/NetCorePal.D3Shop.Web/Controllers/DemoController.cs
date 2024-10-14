@@ -19,7 +19,6 @@ namespace NetCorePal.D3Shop.Web.Controllers
     {
         [HttpPost]
         [Route("json")]
-        [MustHavePermission(AppFeature.Demo, AppAction.Read)]
         public ResponseData<JsonResponse> Json(JsonRequest body)
         {
             return new JsonResponse(body.Id, body.Name, body.Time).AsResponseData();

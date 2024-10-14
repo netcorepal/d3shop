@@ -40,7 +40,10 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission
             new(AppFeature.Demo, AppAction.Read, PermissionGroup.ManagementHierarchy, "Read Demos",IsBasic:true),
             new(AppFeature.Demo, AppAction.Create, PermissionGroup.ManagementHierarchy, "Create Demos"),
             new(AppFeature.Demo, AppAction.Update, PermissionGroup.ManagementHierarchy, "Update Demos"),
-            new(AppFeature.Demo, AppAction.Delete, PermissionGroup.ManagementHierarchy, "Delete Demos")
+            new(AppFeature.Demo, AppAction.Delete, PermissionGroup.ManagementHierarchy, "Delete Demos"),
+
+            new(AppFeature.TestAuth, AppAction.Read, PermissionGroup.ManagementHierarchy, "TestAuth Get",IsBasic:true),
+            new(AppFeature.TestAuth, AppAction.Create, PermissionGroup.ManagementHierarchy, "TestAuth Post")
         ];
 
         public static IReadOnlyList<Permission> AdminPermissions { get; } = new ReadOnlyCollection<Permission>(All.Where(p => !p.IsBasic).ToArray());

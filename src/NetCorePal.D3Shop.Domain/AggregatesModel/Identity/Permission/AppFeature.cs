@@ -8,5 +8,6 @@
         public const string RolePermissions = nameof(RolePermissions);
         public const string Order = nameof(Order);
         public const string Demo = nameof(Demo);
+        public const string TestAuth = nameof(TestAuth);
     }
 }
