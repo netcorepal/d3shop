@@ -10,7 +10,7 @@ namespace NetCorePal.D3Shop.Infrastructure
     {
         public async Task SeedDatabaseAsync()
         {
-            await CheckAndApplyPendingMigrationAsync();
+            //await CheckAndApplyPendingMigrationAsync();
             await SeedRolesAsync();
             await SeedAdminUserAsync();
             await SeedBasicUserAsync();
