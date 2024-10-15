@@ -9,15 +9,6 @@ namespace NetCorePal.D3Shop.Domain.Tests.Identity
         private readonly AdminUser _testUser = new("test", "1");
 
         [Fact]
-        public void VerifyPassword_Test()
-        {
-            const string password = "test";
-            _testUser.SetPassword(password);
-            Assert.True(_testUser.VerifyPassword(password));
-            Assert.False(_testUser.VerifyPassword("test1"));
-        }
-
-        [Fact]
         public void EditRole_Test()
         {
             const string roleName = "testRole";

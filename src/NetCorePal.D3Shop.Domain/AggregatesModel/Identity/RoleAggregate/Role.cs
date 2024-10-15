@@ -1,5 +1,4 @@
-﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate.Dto;
-using NetCorePal.Extensions.Domain;
+﻿using NetCorePal.Extensions.Domain;
 
 namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
 {
@@ -23,20 +22,23 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
             CreatedAt = DateTime.Now;
         }
 
-        public void AddRolePermissions(List<AddRolePermissionDto> permissions)
+        public void AddRolePermissions(IEnumerable<RolePermission> permissions)
         {
-            foreach (var permissionDto in permissions)
+            foreach (var permission in permissions)
             {
-                if (Permissions.Any(p => p.PermissionCode == permissionDto.PermissionCode))
+                if (Permissions.Any(p => p.PermissionCode == permission.PermissionCode))
                     continue;
 
-                Permissions.Add(new RolePermission(Id, permissionDto.PermissionCode, permissionDto.PermissionRemark));
+                Permissions.Add(permission);
             }
         }
 
-        public void RemoveRolePermissions(List<RolePermission> permissions)
+        public void RemoveRolePermissions(IEnumerable<string> permissionCodes)
         {
-            foreach (var permission in permissions)
+            var removeList = Permissions.Where(p =>
+                permissionCodes.Contains(p.PermissionCode)).ToList();
+
+            foreach (var permission in removeList)
             {
                 Permissions.Remove(permission);
             }

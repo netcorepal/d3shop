@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
+using NetCorePal.D3Shop.Web.Const;
 
 namespace NetCorePal.D3Shop.Web.PermissionConfig
 {
@@ -9,7 +9,7 @@ namespace NetCorePal.D3Shop.Web.PermissionConfig
             PermissionRequirement requirement)
         {
             var permissions = context.User.Claims
-                .Where(claim => claim.Type == AppClaim.Permission
+                .Where(claim => claim.Type == AppClaim.AdminPermission
                     && claim.Value == requirement.Permission
                     && claim.Issuer == "LOCAL AUTHORITY");
             if (permissions.Any())

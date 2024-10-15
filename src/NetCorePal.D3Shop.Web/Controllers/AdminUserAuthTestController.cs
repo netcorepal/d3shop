@@ -1,22 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
 using NetCorePal.D3Shop.Web.Attribute;
 
 namespace NetCorePal.D3Shop.Web.Controllers;
 
-[Route("/test/auth")]
+[Route("test/[controller]")]
 [ApiController]
-public class TestAuthController : ControllerBase
+public class AdminUserAuthTestController : ControllerBase
 {
     [HttpGet]
-    [MustHavePermission(AppFeature.TestAuth, AppAction.Read)]
+    [MustHaveAdminPermission("AdminUserAuth_Test_Get")]
     public IActionResult Get()
     {
         return Ok("Hello World");
     }
 
     [HttpPost]
-    [MustHavePermission(AppFeature.TestAuth, AppAction.Create)]
+    [MustHaveAdminPermission("AdminUserAuth_Test_Post")]
     public IActionResult Post()
     {
         return Ok("Hello World");

@@ -16,7 +16,6 @@
     <AdditionalFiles Include="docs\mermaid.md.example" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="8.0.10" />
     <PackageReference Include="NetCorePal.Extensions.Domain.Abstractions" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.Primitives" Version="$(NetCorePalVersion)" />
   </ItemGroup>

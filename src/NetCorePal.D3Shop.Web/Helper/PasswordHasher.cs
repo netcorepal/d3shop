@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
+namespace NetCorePal.D3Shop.Web.Helper
 {
     public static class PasswordHasher
     {
@@ -22,7 +22,6 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
             var salt = GenerateSalt();
             var hash = HashPassword(password, salt);
             var result = $"{salt}.{hash}";
-            Console.WriteLine("hash result:{0}", result);
             return result;
         }
 

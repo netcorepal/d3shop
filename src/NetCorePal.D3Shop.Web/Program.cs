@@ -124,7 +124,7 @@ try
         options.LogTo(Console.WriteLine, LogLevel.Information)
             .EnableSensitiveDataLogging()
             .EnableDetailedErrors();
-    }).AddTransient<ApplicationDbSeeder>();
+    });
     builder.Services.AddUnitOfWork<ApplicationDbContext>();
     builder.Services.AddMySqlTransactionHandler();
     builder.Services.AddRedisLocks();

@@ -9,7 +9,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         public AdminUserId AdminUserId { get; private set; } = default!;
         public string PermissionCode { get; private set; } = string.Empty;
         public string PermissionRemark { get; private set; } = string.Empty;
-        public List<RoleId>? SourceRoleIds { get; private set; }
+        public List<RoleId> SourceRoleIds { get; private set; } = [];
 
         public AdminUserPermission(AdminUserId adminUserId, string permissionCode, string permissionRemark)
         {
@@ -20,15 +20,8 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
 
         public void AddSourceRoleId(RoleId roleId)
         {
-            if (SourceRoleIds == null)
-                SourceRoleIds = [roleId];
-            else
-            {
-                if (!SourceRoleIds.Contains(roleId))
-                {
-                    SourceRoleIds.Add(roleId);
-                }
-            }
+            if (SourceRoleIds.Contains(roleId)) return;
+            SourceRoleIds.Add(roleId);
         }
 
         public void RemoveSourceRoleId(RoleId roleId)

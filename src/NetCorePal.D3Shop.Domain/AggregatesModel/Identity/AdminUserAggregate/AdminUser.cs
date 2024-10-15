@@ -8,9 +8,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
 
     public class AdminUser : Entity<AdminUserId>, IAggregateRoot
     {
-        protected AdminUser()
-        {
-        }
+        protected AdminUser() { }
 
         public string Name { get; private set; } = string.Empty;
         public string Phone { get; private set; } = string.Empty;
@@ -18,8 +16,8 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         public string RefreshToken { get; private set; } = string.Empty;
         public DateTime RefreshTokenExpiryDate { get; private set; }
         public DateTime CreatedAt { get; init; }
-        public ICollection<AdminUserRole> Roles { get; private set; } = [];
-        public ICollection<AdminUserPermission> Permissions { get; private set; } = [];
+        public virtual ICollection<AdminUserRole> Roles { get; private set; } = [];
+        public virtual ICollection<AdminUserPermission> Permissions { get; private set; } = [];
 
         public AdminUser(string name, string phone)
         {
@@ -37,19 +35,19 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
 
                 Roles.Add(new AdminUserRole(Id, roleDto.RoleId, roleDto.RoleName));
 
-                foreach (var permissionDto in roleDto.Permissions)
+                foreach (var permission in roleDto.Permissions)
                 {
                     var savedPermission =
-                        Permissions.FirstOrDefault(p => p.PermissionCode == permissionDto.PermissionCode);
+                        Permissions.FirstOrDefault(p => p.PermissionCode == permission.PermissionCode);
 
                     if (savedPermission is null)
                     {
-                        var toSavePermission = new AdminUserPermission(
+                        var permissionToBeSaved = new AdminUserPermission(
                             Id,
-                            permissionDto.PermissionCode,
-                            permissionDto.PermissionRemark);
-                        toSavePermission.AddSourceRoleId(roleDto.RoleId);
-                        Permissions.Add(toSavePermission);
+                            permission.PermissionCode,
+                            permission.PermissionRemark);
+                        permissionToBeSaved.AddSourceRoleId(roleDto.RoleId);
+                        Permissions.Add(permissionToBeSaved);
                     }
                     else
                     {
@@ -65,11 +63,11 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
             {
                 Roles.Remove(role);
 
-                var adminUserPermissions = Permissions.Where(p => p.SourceRoleIds != null && p.SourceRoleIds.Contains(role.RoleId)).ToList();
-                foreach (var permission in adminUserPermissions)
+                var permissions = Permissions.Where(p => p.SourceRoleIds.Contains(role.RoleId)).ToList();
+                foreach (var permission in permissions)
                 {
                     permission.RemoveSourceRoleId(role.RoleId);
-                    if (permission.SourceRoleIds!.Count == 0)
+                    if (permission.SourceRoleIds.Count == 0)
                     {
                         Permissions.Remove(permission);
                     }
@@ -97,7 +95,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
                 var savedPermission = Permissions.FirstOrDefault(p => p.PermissionCode == permissionCode)
                                       ?? throw new KnownException("用户不存在该权限！");
 
-                if (savedPermission.SourceRoleIds is not null)
+                if (savedPermission.SourceRoleIds.Count != 0)
                 {
                     throw new KnownException("该权限由角色赋予，无法移除！");
                 }
@@ -113,13 +111,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
 
         public void SetPassword(string password)
         {
-            var passwordHashedResult = PasswordHasher.HashPassword(password);
-            Password = passwordHashedResult;
-        }
-
-        public bool VerifyPassword(string password)
-        {
-            return PasswordHasher.VerifyHashedPassword(password, Password);
+            Password = password;
         }
 
         public void SetRefreshToken(string token)

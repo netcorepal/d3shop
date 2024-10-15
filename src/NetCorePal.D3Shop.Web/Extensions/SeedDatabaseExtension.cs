@@ -1,4 +1,5 @@
-﻿using NetCorePal.D3Shop.Infrastructure;
+﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
+using NetCorePal.D3Shop.Web.Helper;
 
 namespace NetCorePal.D3Shop.Web.Extensions
 {
@@ -8,12 +9,15 @@ namespace NetCorePal.D3Shop.Web.Extensions
         {
             using var serviceScope = app.ApplicationServices.CreateScope();
 
-            var seeders = serviceScope.ServiceProvider.GetServices<ApplicationDbSeeder>();
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            foreach (var seeder in seeders)
-            {
-                seeder.SeedDatabaseAsync().GetAwaiter().GetResult();
-            }
+            if (dbContext.AdminUsers.Any(u => u.Name == AppDefaultCredentials.Name)) return app;
+
+            var adminUser = new AdminUser(AppDefaultCredentials.Name, "");
+            adminUser.SetPassword(PasswordHasher.HashPassword(AppDefaultCredentials.Password));
+
+            dbContext.AdminUsers.Add(adminUser);
+            dbContext.SaveChanges();
             return app;
         }
     }

@@ -1,7 +1,11 @@
-﻿using NetCorePal.D3Shop.Web.Controllers.Identity.Responses;
+﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate.Dto;
+using NetCorePal.D3Shop.Infrastructure;
+using NetCorePal.D3Shop.Web.Controllers.Identity.Responses;
 using NetCorePal.Extensions.AspNetCore;
 using System.Net;
 using System.Net.Http.Headers;
+using NetCorePal.D3Shop.Web.Helper;
 
 namespace NetCorePal.D3Shop.Web.Tests.Identity;
 
@@ -9,9 +13,19 @@ namespace NetCorePal.D3Shop.Web.Tests.Identity;
 public class AuthTests : IClassFixture<MyWebApplicationFactory>
 {
     private readonly HttpClient _client;
+    private readonly AdminUser _testUser = new("Test", "");
 
     public AuthTests(MyWebApplicationFactory factory)
     {
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            _testUser.SetPassword(PasswordHasher.HashPassword(AppDefaultCredentials.Password));
+            _testUser.AddPermissions([new AddUserPermissionDto("AdminUserAuth_Test_Get", "")]);
+            db.AdminUsers.Add(_testUser);
+            db.SaveChanges();
+        }
+
         _client = factory.WithWebHostBuilder(builder => { builder.ConfigureServices(p => { }); }).CreateClient();
     }
 
@@ -20,15 +34,15 @@ public class AuthTests : IClassFixture<MyWebApplicationFactory>
     [Fact]
     public async Task Login_Test()
     {
-        var json = """
+        var json = $$"""
                    {
-                        "name": "Z_jie",
-                        "password": "admin@001"
+                        "name": "{{_testUser.Name}}",
+                        "password": "{{AppDefaultCredentials.Password}}"
                    }
                    """;
         var content = new StringContent(json);
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-        var response = await _client.PostAsync("/token/login", content);
+        var response = await _client.PostAsync("/api/AdminUserToken/login", content);
         Assert.True(response.IsSuccessStatusCode);
         var responseData = await response.Content.ReadFromNewtonsoftJsonAsync<ResponseData<TokenResponse>>();
         Assert.NotNull(responseData);
@@ -39,13 +53,14 @@ public class AuthTests : IClassFixture<MyWebApplicationFactory>
     [Fact]
     public async Task Auth_Test()
     {
-        await Login_Test();
-        var response = await _client.GetAsync("test/auth");
+        if (string.IsNullOrEmpty(_token))
+            await Login_Test();
+        var response = await _client.GetAsync("/test/AdminUserAuthTest");
         Assert.True(response.StatusCode == HttpStatusCode.Unauthorized);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-        response = await _client.GetAsync("test/auth");
+        response = await _client.GetAsync("/test/AdminUserAuthTest");
         Assert.True(response.IsSuccessStatusCode);
-        response = await _client.PostAsync("test/auth", null);
+        response = await _client.PostAsync("/test/AdminUserAuthTest", null);
         Assert.True(response.StatusCode == HttpStatusCode.Forbidden);
     }
 }

@@ -1,11 +1,12 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
+using NetCorePal.D3Shop.Web.Const;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Requests;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Responses;
 using NetCorePal.Extensions.Primitives;
@@ -13,14 +14,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
+using NetCorePal.D3Shop.Web.Helper;
 
 namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 
-[Route("/token")]
+[Route("api/[controller]")]
 [ApiController]
 [AllowAnonymous]
-public class TokenController(IMediator mediator, UserQuery userQuery, IOptions<AppConfiguration> appConfiguration) : ControllerBase
+public class AdminUserTokenController(IMediator mediator, UserQuery userQuery, IOptions<AppConfiguration> appConfiguration) : ControllerBase
 {
     private AppConfiguration AppConfiguration => appConfiguration.Value;
 
@@ -28,10 +29,16 @@ public class TokenController(IMediator mediator, UserQuery userQuery, IOptions<A
     [Route("login")]
     public async Task<ResponseData<TokenResponse>> UserLoginAsync(UserLoginRequest request)
     {
-        var user = await userQuery.LoginAsync(request.Name, request.Password);
+        var user = await userQuery.GetUserByName(request.Name);
+        if (user is null)
+            throw new KnownException("Invalid Credentials.");
+
+        if (!PasswordHasher.VerifyHashedPassword(request.Password, user.Password))
+            throw new KnownException("Invalid Credentials.");
 
         var refreshToken = GenerateRefreshToken();
         var refreshTokenExpiryDate = DateTime.Now.AddDays(7);
+
         await mediator.Send(new LoginSuccessfullyCommand(user.Id, refreshToken, refreshTokenExpiryDate));
 
         var response = new TokenResponse(GenerateJwtAsync(user), refreshToken, refreshTokenExpiryDate);
@@ -48,10 +55,12 @@ public class TokenController(IMediator mediator, UserQuery userQuery, IOptions<A
                        throw new KnownException("Invalid Token:There is no username in the token");
 
         var user = await userQuery.GetUserByName(userName);
+        if (user is null)
+            throw new KnownException("Invalid Token:User does not exist");
 
         if (string.IsNullOrWhiteSpace(request.RefreshToken) ||
-            user.RefreshToken != request.RefreshToken ||
-            user.RefreshTokenExpiryDate <= DateTime.Now)
+        user.RefreshToken != request.RefreshToken ||
+        user.RefreshTokenExpiryDate <= DateTime.Now)
             throw new KnownException("Invalid Client Token.");
 
         var refreshToken = GenerateRefreshToken();
@@ -99,7 +108,7 @@ public class TokenController(IMediator mediator, UserQuery userQuery, IOptions<A
         var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role.RoleName)).ToList();
 
         var permissions = user.Permissions;
-        var permissionClaims = permissions.Select(p => new Claim(AppClaim.Permission, p.PermissionCode));
+        var permissionClaims = permissions.Select(p => new Claim(AppClaim.AdminPermission, p.PermissionCode));
 
         var claims = new List<Claim>
             {
