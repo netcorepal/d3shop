@@ -1,4 +1,5 @@
 ﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate.Dto;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.Extensions.Domain;
 using NetCorePal.Extensions.Primitives;
 
@@ -26,71 +27,91 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
             CreatedAt = DateTime.Now;
         }
 
-        public void AddRoles(List<AddUserRoleDto> addRoleDtoList)
+        public void UpdateRoleInfo(AdminUserRole role)
         {
-            foreach (var roleDto in addRoleDtoList)
+            var savedRole = Roles.FirstOrDefault(r => r.RoleId == role.RoleId);
+            savedRole?.UpdateRoleInfo(role.RoleName);
+        }
+
+        public void AddRoles(IEnumerable<AssignAdminUserRoleDto> rolesToBeAssigned)
+        {
+            foreach (var roleDto in rolesToBeAssigned)
             {
                 if (Roles.Any(r => r.RoleId == roleDto.RoleId))
                     continue;
 
                 Roles.Add(new AdminUserRole(Id, roleDto.RoleId, roleDto.RoleName));
 
-                foreach (var permission in roleDto.Permissions)
-                {
-                    var savedPermission =
-                        Permissions.FirstOrDefault(p => p.PermissionCode == permission.PermissionCode);
-
-                    if (savedPermission is null)
-                    {
-                        var permissionToBeSaved = new AdminUserPermission(
-                            Id,
-                            permission.PermissionCode,
-                            permission.PermissionRemark);
-                        permissionToBeSaved.AddSourceRoleId(roleDto.RoleId);
-                        Permissions.Add(permissionToBeSaved);
-                    }
-                    else
-                    {
-                        savedPermission.AddSourceRoleId(roleDto.RoleId);
-                    }
-                }
+                AddSpecificRolePermissions(roleDto.RoleId, roleDto.Permissions);
             }
         }
 
-        public void RemoveRoles(List<AdminUserRole> roles)
+        public void RemoveRoles(IEnumerable<RoleId> roleIds)
         {
-            foreach (var role in roles)
+            var removeList = Roles.Where(role => roleIds.Contains(role.RoleId)).ToList();
+
+            foreach (var role in removeList)
             {
                 Roles.Remove(role);
-
-                var permissions = Permissions.Where(p => p.SourceRoleIds.Contains(role.RoleId)).ToList();
-                foreach (var permission in permissions)
-                {
-                    permission.RemoveSourceRoleId(role.RoleId);
-                    if (permission.SourceRoleIds.Count == 0)
-                    {
-                        Permissions.Remove(permission);
-                    }
-                }
+                RemoveSpecificRolePermissions(role.RoleId);
             }
         }
 
-        public void AddPermissions(List<AddUserPermissionDto> addPermissionDtoList)
+        /// <summary>
+        /// 移除特定角色的权限
+        /// </summary>
+        /// <param name="roleId"></param>
+        public void RemoveSpecificRolePermissions(RoleId roleId)
         {
-            foreach (var addPermissionDto in addPermissionDtoList)
+            var permissions = Permissions.Where(p => p.SourceRoleIds.Contains(roleId)).ToArray();
+            foreach (var permission in permissions)
             {
-                if (Permissions.Any(p => p.PermissionCode == addPermissionDto.PermissionCode))
-                {
-                    throw new KnownException("权限重复！");
-                }
-
-                Permissions.Add(new AdminUserPermission(Id, addPermissionDto.PermissionCode, addPermissionDto.PermissionRemark));
+                permission.RemoveSourceRoleId(roleId);
+                if (permission.SourceRoleIds.Count != 0) continue;
+                Permissions.Remove(permission);
             }
         }
 
-        public void RemovePermissions(List<string> permissionCodeList)
+        /// <summary>
+        /// 添加特定角色的权限
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <param name="permissions"></param>
+        public void AddSpecificRolePermissions(RoleId roleId, IEnumerable<AdminUserPermission> permissions)
         {
-            foreach (var permissionCode in permissionCodeList)
+            foreach (var permission in permissions)
+            {
+                var savedPermission =
+                    Permissions.FirstOrDefault(p => p.PermissionCode == permission.PermissionCode);
+
+                if (savedPermission is null)
+                {
+                    permission.AdminUserId = Id;
+                    permission.AddSourceRoleId(roleId);
+                    Permissions.Add(permission);
+                }
+                else
+                {
+                    savedPermission.AddSourceRoleId(roleId);
+                }
+            }
+        }
+
+        public void AddPermissions(IEnumerable<AdminUserPermission> permissionsToBeAssigned)
+        {
+            foreach (var permission in permissionsToBeAssigned)
+            {
+                if (Permissions.Any(p => p.PermissionCode == permission.PermissionCode))
+                    throw new KnownException("权限重复！");
+
+                permission.AdminUserId = Id;
+                Permissions.Add(permission);
+            }
+        }
+
+        public void RemovePermissions(IEnumerable<string> permissionCodes)
+        {
+            foreach (var permissionCode in permissionCodes)
             {
                 var savedPermission = Permissions.FirstOrDefault(p => p.PermissionCode == permissionCode)
                                       ?? throw new KnownException("用户不存在该权限！");
@@ -122,6 +143,11 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         public void SetRefreshTokenExpiryDate(DateTime date)
         {
             RefreshTokenExpiryDate = date;
+        }
+
+        public void SetPhone(string phone)
+        {
+            Phone = phone;
         }
     }
 }

@@ -14,14 +14,14 @@ namespace NetCorePal.D3Shop.Domain.Tests.Identity
             const string roleName = "testRole";
             const string rolePermission = "testPermission";
             _testUser.AddRoles([
-                new AddUserRoleDto(
-                    new RoleId(1),roleName,[new AddUserPermissionDto(rolePermission,"test")]
+                new AssignAdminUserRoleDto(
+                    new RoleId(1),roleName,[new AdminUserPermission(rolePermission,"test")]
                     )
             ]);
             Assert.Contains(_testUser.Roles, r => r.RoleName == roleName);
             Assert.True(_testUser.IsInRole(roleName));
             Assert.Contains(_testUser.Permissions, p => p.PermissionCode == rolePermission);
-            _testUser.RemoveRoles(_testUser.Roles.ToList());
+            _testUser.RemoveRoles(_testUser.Roles.Select(r => r.RoleId).ToList());
             Assert.Empty(_testUser.Roles);
             Assert.Empty(_testUser.Permissions);
         }

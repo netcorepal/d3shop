@@ -4,7 +4,10 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
 {
     public class AdminUserRole
     {
-        protected AdminUserRole(){}
+        protected AdminUserRole()
+        {
+        }
+
         public AdminUserId AdminUserId { get; private set; } = default!;
         public RoleId RoleId { get; private set; } = default!;
         public string RoleName { get; private set; } = string.Empty;
@@ -13,6 +16,11 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         {
             AdminUserId = adminUserId;
             RoleId = roleId;
+            RoleName = roleName;
+        }
+
+        public void UpdateRoleInfo(string roleName)
+        {
             RoleName = roleName;
         }
     }

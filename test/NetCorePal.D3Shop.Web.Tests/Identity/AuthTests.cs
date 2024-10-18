@@ -1,5 +1,4 @@
 ﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate.Dto;
 using NetCorePal.D3Shop.Infrastructure;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Responses;
 using NetCorePal.Extensions.AspNetCore;
@@ -21,7 +20,7 @@ public class AuthTests : IClassFixture<MyWebApplicationFactory>
         {
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             _testUser.SetPassword(PasswordHasher.HashPassword(AppDefaultCredentials.Password));
-            _testUser.AddPermissions([new AddUserPermissionDto("AdminUserAuth_Test_Get", "")]);
+            _testUser.AddPermissions([new AdminUserPermission("AdminUserAuth_Test_Get", "")]);
             db.AdminUsers.Add(_testUser);
             db.SaveChanges();
         }
@@ -42,9 +41,9 @@ public class AuthTests : IClassFixture<MyWebApplicationFactory>
                    """;
         var content = new StringContent(json);
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-        var response = await _client.PostAsync("/api/AdminUserToken/login", content);
+        var response = await _client.PostAsync("api/AdminUserToken/login", content);
         Assert.True(response.IsSuccessStatusCode);
-        var responseData = await response.Content.ReadFromNewtonsoftJsonAsync<ResponseData<TokenResponse>>();
+        var responseData = await response.Content.ReadFromNewtonsoftJsonAsync<ResponseData<AminUserTokenResponse>>();
         Assert.NotNull(responseData);
         _token = responseData.Data.Token;
         Assert.NotNull(_token);

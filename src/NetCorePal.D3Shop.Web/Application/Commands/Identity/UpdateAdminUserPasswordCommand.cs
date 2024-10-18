@@ -4,15 +4,16 @@ using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity;
 
-public record UpdateRefreshTokenCommand(AdminUserId AdminUserId, string RefreshToken) : ICommand;
+public record UpdateAdminUserPasswordCommand(AdminUserId AdminUserId, string Password) : ICommand;
 
-public class UpdateRefreshTokenCommandHandler(AdminUserRepository adminUserRepository) : ICommandHandler<UpdateRefreshTokenCommand>
+public class UpdateAdminUserPasswordCommandHandler(AdminUserRepository adminUserRepository)
+    : ICommandHandler<UpdateAdminUserPasswordCommand>
 {
-    public async Task Handle(UpdateRefreshTokenCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateAdminUserPasswordCommand request, CancellationToken cancellationToken)
     {
         var user = await adminUserRepository.GetAsync(request.AdminUserId, cancellationToken) ??
                    throw new KnownException($"未找到用户，AdminUserId = {request.AdminUserId}");
 
-        user.SetRefreshToken(request.RefreshToken);
+        user.SetPassword(request.Password);
     }
 }

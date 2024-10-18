@@ -10,7 +10,7 @@ public class RoleTests
         const string rolePermission = "testPermission";
         var role = new Role("testRole", "");
         role.AddRolePermissions([
-            new RolePermission(role.Id, rolePermission,"test")
+            new RolePermission(rolePermission,"test")
         ]);
         Assert.Contains(role.Permissions, p => p.PermissionCode == rolePermission);
         role.RemoveRolePermissions(role.Permissions.Select(p => p.PermissionCode));

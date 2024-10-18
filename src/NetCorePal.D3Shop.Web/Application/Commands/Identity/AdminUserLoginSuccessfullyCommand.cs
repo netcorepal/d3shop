@@ -4,12 +4,12 @@ using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity
 {
-    public record LoginSuccessfullyCommand(AdminUserId AdminUserId, string RefreshToken, DateTime RefreshTokenExpiryDate) : ICommand;
+    public record AdminUserLoginSuccessfullyCommand(AdminUserId AdminUserId, string RefreshToken, DateTime RefreshTokenExpiryDate) : ICommand;
 
-    public class LoginSuccessfullyCommandCommandHandler(
-        IAdminUserRepository adminUserRepository) : ICommandHandler<LoginSuccessfullyCommand>
+    public class AdminUserLoginSuccessfullyCommandCommandHandler(
+        IAdminUserRepository adminUserRepository) : ICommandHandler<AdminUserLoginSuccessfullyCommand>
     {
-        public async Task Handle(LoginSuccessfullyCommand request, CancellationToken cancellationToken)
+        public async Task Handle(AdminUserLoginSuccessfullyCommand request, CancellationToken cancellationToken)
         {
             var user = await adminUserRepository.GetAsync(request.AdminUserId, cancellationToken) ??
                        throw new KnownException($"未找到用户，AdminUserId = {request.AdminUserId}");

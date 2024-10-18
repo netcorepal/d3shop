@@ -21,15 +21,14 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 [Route("api/[controller]")]
 [ApiController]
 [AllowAnonymous]
-public class AdminUserTokenController(IMediator mediator, UserQuery userQuery, IOptions<AppConfiguration> appConfiguration) : ControllerBase
+public class AdminUserTokenController(IMediator mediator, AdminUserQuery adminUserQuery, IOptions<AppConfiguration> appConfiguration) : ControllerBase
 {
     private AppConfiguration AppConfiguration => appConfiguration.Value;
 
-    [HttpPost]
-    [Route("login")]
-    public async Task<ResponseData<TokenResponse>> UserLoginAsync(UserLoginRequest request)
+    [HttpPost("login")]
+    public async Task<ResponseData<AminUserTokenResponse>> LoginAsync([FromBody] AdminUserLoginRequest request)
     {
-        var user = await userQuery.GetUserByName(request.Name);
+        var user = await adminUserQuery.GetAdminUserByNameAsync(request.Name, HttpContext.RequestAborted);
         if (user is null)
             throw new KnownException("Invalid Credentials.");
 
@@ -39,22 +38,21 @@ public class AdminUserTokenController(IMediator mediator, UserQuery userQuery, I
         var refreshToken = GenerateRefreshToken();
         var refreshTokenExpiryDate = DateTime.Now.AddDays(7);
 
-        await mediator.Send(new LoginSuccessfullyCommand(user.Id, refreshToken, refreshTokenExpiryDate));
+        await mediator.Send(new AdminUserLoginSuccessfullyCommand(user.Id, refreshToken, refreshTokenExpiryDate));
 
-        var response = new TokenResponse(GenerateJwtAsync(user), refreshToken, refreshTokenExpiryDate);
+        var response = new AminUserTokenResponse(GenerateJwtAsync(user), refreshToken, refreshTokenExpiryDate);
         return response.AsResponseData();
     }
 
-    [HttpPost]
-    [Route("getRefreshToken")]
-    public async Task<ResponseData<TokenResponse>> GetRefreshTokenAsync(RefreshTokenRequest request)
+    [HttpPost("getRefreshToken")]
+    public async Task<ResponseData<AminUserTokenResponse>> GetRefreshTokenAsync([FromBody] AdminUserRefreshTokenRequest request)
     {
         var userPrincipal = GetPrincipalFromExpiredToken(request.Token);
 
         var userName = userPrincipal.FindFirstValue(ClaimTypes.Name) ??
                        throw new KnownException("Invalid Token:There is no username in the token");
 
-        var user = await userQuery.GetUserByName(userName);
+        var user = await adminUserQuery.GetAdminUserByNameAsync(userName, HttpContext.RequestAborted);
         if (user is null)
             throw new KnownException("Invalid Token:User does not exist");
 
@@ -64,9 +62,9 @@ public class AdminUserTokenController(IMediator mediator, UserQuery userQuery, I
             throw new KnownException("Invalid Client Token.");
 
         var refreshToken = GenerateRefreshToken();
-        await mediator.Send(new UpdateRefreshTokenCommand(user.Id, refreshToken));
+        await mediator.Send(new UpdateAdminUserRefreshTokenCommand(user.Id, refreshToken));
 
-        var response = new TokenResponse(GenerateJwtAsync(user), refreshToken, user.RefreshTokenExpiryDate);
+        var response = new AminUserTokenResponse(GenerateJwtAsync(user), refreshToken, user.RefreshTokenExpiryDate);
         return response.AsResponseData();
     }
 
@@ -106,6 +104,9 @@ public class AdminUserTokenController(IMediator mediator, UserQuery userQuery, I
     {
         var roles = user.Roles;
         var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role.RoleName)).ToList();
+        //系统默认用户添加超级管理员角色
+        if (user.Name == AppDefaultCredentials.Name)
+            roleClaims.Add(new Claim(ClaimTypes.Role, AppClaim.SuperAdminRole));
 
         var permissions = user.Permissions;
         var permissionClaims = permissions.Select(p => new Claim(AppClaim.AdminPermission, p.PermissionCode));

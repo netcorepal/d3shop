@@ -6,14 +6,13 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
     {
         protected AdminUserPermission() { }
 
-        public AdminUserId AdminUserId { get; private set; } = default!;
+        public AdminUserId AdminUserId { get; internal set; } = default!;
         public string PermissionCode { get; private set; } = string.Empty;
         public string PermissionRemark { get; private set; } = string.Empty;
         public List<RoleId> SourceRoleIds { get; private set; } = [];
 
-        public AdminUserPermission(AdminUserId adminUserId, string permissionCode, string permissionRemark)
+        public AdminUserPermission(string permissionCode, string permissionRemark)
         {
-            AdminUserId = adminUserId;
             PermissionCode = permissionCode;
             PermissionRemark = permissionRemark;
         }

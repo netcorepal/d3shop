@@ -47,7 +47,8 @@ namespace NetCorePal.D3Shop.Infrastructure.EntityConfigurations.Identity
             builder.ToTable("adminUserPermissions");
             builder.HasKey(aup => new { aup.AdminUserId, aup.PermissionCode });
             builder.Property(p => p.SourceRoleIds).HasConversion(v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
-                v => JsonSerializer.Deserialize<List<RoleId>>(v, (JsonSerializerOptions?)null),
+                v => JsonSerializer.Deserialize<List<RoleId>>(v, (JsonSerializerOptions?)null) ??
+                     new List<RoleId>(),
                 new ValueComparer<IList<RoleId>>(
                     (c1, c2) => c1 != null && c2 != null && c1.SequenceEqual(c2),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
