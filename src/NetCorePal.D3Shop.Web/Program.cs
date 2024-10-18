@@ -16,6 +16,8 @@ using Serilog;
 using Serilog.Formatting.Json;
 using Hangfire;
 using Hangfire.Redis.StackExchange;
+using NetCorePal.D3Shop.Web.Admin.Client;
+using NetCorePal.D3Shop.Web.Components;
 using NetCorePal.Extensions.AspNetCore.Json;
 using NetCorePal.Extensions.MultiEnv;
 using Newtonsoft.Json;
@@ -106,8 +108,8 @@ try
     #endregion
 
 
-
     #region 基础设施
+
     builder.Services.AddRepositories(typeof(ApplicationDbContext).Assembly);
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -139,7 +141,7 @@ try
     });
 
     #endregion
-    
+
     builder.Services.AddMediatR(cfg =>
         cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly())
             .AddKnownExceptionValidationBehavior()
@@ -168,6 +170,14 @@ try
 
     #endregion
 
+    #region MyRegion
+    builder.Services.AddRazorComponents()
+        .AddInteractiveServerComponents()
+        .AddInteractiveWebAssemblyComponents();
+    builder.Services.AddAntDesign();
+
+    #endregion
+
     var app = builder.Build();
     if (app.Environment.IsDevelopment())
     {
@@ -184,11 +194,12 @@ try
         app.UseSwaggerUI();
     }
 
-    app.UseStaticFiles();
     app.UseHttpsRedirection();
+    app.UseStaticFiles();
+    
     app.UseRouting();
     app.UseAuthorization();
-
+    app.UseAntiforgery();
     app.MapControllers();
 
     #region SignalR
@@ -201,6 +212,11 @@ try
     app.MapHealthChecks("/health");
     app.MapMetrics("/metrics"); // 通过   /metrics  访问指标
     app.UseHangfireDashboard();
+    app.MapRazorComponents<App>()
+        .AddInteractiveServerRenderMode()
+        .AddInteractiveWebAssemblyRenderMode()
+        .AddAdditionalAssemblies(typeof(NetCorePal.D3Shop.Web.Admin.Client._Imports).Assembly);
+
     app.Run();
 }
 catch (Exception ex)

@@ -34,6 +34,13 @@
 + [MediatR](https://github.com/jbogard/MediatR)
 + [FluentValidation](https://docs.fluentvalidation.net/en/latest)
 + [Swashbuckle.AspNetCore.Swagger](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
++ [Ant Design Blazor](https://antblazor.com/)
+
+## Admin IU
+
+基于 Ant Design Blazor 实现，参见：
+
+https://antblazor.com/zh-CN/components/overview
 
 ## 数据库迁移
 
