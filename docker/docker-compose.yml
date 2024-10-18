@@ -41,36 +41,36 @@ services:
       - 4318:4318 # OTLP http receiver
       - 55679:55679 # zpages extension
 
-  rabbitmq:
-    container_name: rabbitmq
-    image: heidiks/rabbitmq-delayed-message-exchange:latest
-    restart: always
-    volumes:
-      - ${DATA_DIR}/rabbitmq/data:/var/lib/rabbitmq
-      - ${DATA_DIR}/rabbitmq/log:/var/log/rabbitmq/log
-    ports:
-      - 4369:4369
-      - 25672:25672
-      - 15672:15672
-      - 5672:5672
-    environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=test@123
+#  rabbitmq:
+#    container_name: rabbitmq
+#    image: heidiks/rabbitmq-delayed-message-exchange:latest
+#    restart: always
+#    volumes:
+#      - ${DATA_DIR}/rabbitmq/data:/var/lib/rabbitmq
+#      - ${DATA_DIR}/rabbitmq/log:/var/log/rabbitmq/log
+#    ports:
+#      - 4369:4369
+#      - 25672:25672
+#      - 15672:15672
+#      - 5672:5672
+#    environment:
+#      - RABBITMQ_DEFAULT_USER=admin
+#      - RABBITMQ_DEFAULT_PASS=test@123
 
-  mysql:
-    container_name: mysql
-    image: mysql:latest
-    restart: always
-    command: mysqld --default-authentication-plugin=mysql_native_password
-    environment:
-      - MYSQL_ROOT_PASSWORD=test@123
-      - MYSQL_USER=admin
-      - MYSQL_PASS=admin@123
-    ports:
-      - '3306:3306'
-    volumes:
-      - ${DATA_DIR}/mysql/var/lib/mysql:/var/lib/mysql
-      - ${DATA_DIR}/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+#  mysql:
+#    container_name: mysql
+#    image: mysql:latest
+#    restart: always
+#    command: mysqld --default-authentication-plugin=mysql_native_password
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=test@123
+#      - MYSQL_USER=admin
+#      - MYSQL_PASS=admin@123
+#    ports:
+#      - '3306:3306'
+#    volumes:
+#      - ${DATA_DIR}/mysql/var/lib/mysql:/var/lib/mysql
+#      - ${DATA_DIR}/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
 
   postgres:
     container_name: pgsql
@@ -84,17 +84,17 @@ services:
     volumes:
       - ${DATA_DIR}/pgsql/data:/var/lib/postgresql/data
 
-  redis:
-    container_name: redis
-    image: redis:latest
-    restart: always
-    volumes:
-      - ${DATA_DIR}/redis/redis.conf:/usr/local/etc/redis/redis.conf
-      - ${DATA_DIR}/redis/data:/data
-      - ${DATA_DIR}/redis/logs:/logs
-    ports:
-      - 6379:6379
-    command: /bin/bash -c "redis-server /usr/local/etc/redis/redis.conf"
+#  redis:
+#    container_name: redis
+#    image: redis:latest
+#    restart: always
+#    volumes:
+#      - ${DATA_DIR}/redis/redis.conf:/usr/local/etc/redis/redis.conf
+#      - ${DATA_DIR}/redis/data:/data
+#      - ${DATA_DIR}/redis/logs:/logs
+#    ports:
+#      - 6379:6379
+#    command: /bin/bash -c "redis-server /usr/local/etc/redis/redis.conf"
 
   rnacos:
     container_name: rnacos

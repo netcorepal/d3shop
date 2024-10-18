@@ -18,6 +18,7 @@
     <PackageReference Include="Hangfire.AspNetCore" Version="1.8.5"/>
     <PackageReference Include="Hangfire.Redis.StackExchange" Version="1.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(FrameworkVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="$(FrameworkVersion)"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkVersion)">
       <PrivateAssets>all</PrivateAssets>
@@ -48,11 +49,11 @@
   <ItemGroup>
     <ProjectReference Include="..\NetCorePal.D3Shop.Domain\NetCorePal.D3Shop.Domain.csproj" />
     <ProjectReference Include="..\NetCorePal.D3Shop.Infrastructure\NetCorePal.D3Shop.Infrastructure.csproj" />
+    <ProjectReference Include="..\NetCorePal.D3Shop.Web.Admin.Client\NetCorePal.D3Shop.Web.Admin.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
