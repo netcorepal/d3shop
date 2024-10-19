@@ -8,7 +8,7 @@ namespace NetCorePal.D3Shop.Web.Extensions
     {
         public static SwaggerGenOptions AddEntityIdSchemaMap(this SwaggerGenOptions swaggerGenOptions)
         {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(p=>p.FullName!.StartsWith("NetCorePal")))
             {
                 foreach (var type in assembly.GetTypes())
                 {
