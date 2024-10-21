@@ -16,6 +16,6 @@ public class DeleteAdminUserCommandHandler(IAdminUserRepository adminUserReposit
         if (adminUser.Name == AppDefaultCredentials.Name)
             throw new KnownException("无法删除默认用户");
 
-        await adminUserRepository.RemoveAsync(adminUser);
+        adminUser.Delete();
     }
 }

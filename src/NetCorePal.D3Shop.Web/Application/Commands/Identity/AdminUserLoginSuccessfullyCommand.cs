@@ -4,7 +4,7 @@ using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity
 {
-    public record AdminUserLoginSuccessfullyCommand(AdminUserId AdminUserId, string RefreshToken, DateTime RefreshTokenExpiryDate) : ICommand;
+    public record AdminUserLoginSuccessfullyCommand(AdminUserId AdminUserId, string RefreshToken, DateTime LoginExpiryDate) : ICommand;
 
     public class AdminUserLoginSuccessfullyCommandCommandHandler(
         IAdminUserRepository adminUserRepository) : ICommandHandler<AdminUserLoginSuccessfullyCommand>
@@ -14,8 +14,7 @@ namespace NetCorePal.D3Shop.Web.Application.Commands.Identity
             var user = await adminUserRepository.GetAsync(request.AdminUserId, cancellationToken) ??
                        throw new KnownException($"未找到用户，AdminUserId = {request.AdminUserId}");
 
-            user.SetRefreshToken(request.RefreshToken);
-            user.SetRefreshTokenExpiryDate(request.RefreshTokenExpiryDate);
+            user.LoginSuccessful(request.RefreshToken, request.LoginExpiryDate);
         }
     }
 }

@@ -15,7 +15,6 @@ public class UpdateAdminUserRolePermissionsCommandHandler(IAdminUserRepository a
         var adminUser = await adminUserRepository.GetAsync(request.AdminUserId, cancellationToken) ??
                         throw new KnownException($"用户不存在，AdminUserId={request.AdminUserId}");
 
-        adminUser.RemoveSpecificRolePermissions(request.RoleId);
-        adminUser.AddSpecificRolePermissions(request.RoleId, request.Permissions);
+        adminUser.UpdateRolePermissions(request.RoleId, request.Permissions);
     }
 }

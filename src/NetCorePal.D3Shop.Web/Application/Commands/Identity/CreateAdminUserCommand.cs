@@ -28,9 +28,7 @@ public class CreateAdminUserCommandHandler(IAdminUserRepository adminUserReposit
 {
     public async Task<AdminUserId> Handle(CreateAdminUserCommand request, CancellationToken cancellationToken)
     {
-        var adminUser = new AdminUser(request.Name, request.Phone);
-        adminUser.SetPassword(request.Password);
-        adminUser.AddRoles(request.RolesToBeAssigned);
+        var adminUser = new AdminUser(request.Name, request.Phone, request.Password, request.RolesToBeAssigned);
         await adminUserRepository.AddAsync(adminUser, cancellationToken);
         return adminUser.Id;
     }

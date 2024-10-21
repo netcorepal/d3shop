@@ -12,7 +12,7 @@ namespace NetCorePal.D3Shop.Web.Tests.Identity;
 public class AuthTests : IClassFixture<MyWebApplicationFactory>
 {
     private readonly HttpClient _client;
-    private readonly AdminUser _testUser = new("Test", "");
+    private readonly AdminUser _testUser = new("Test", "", "", []);
 
     public AuthTests(MyWebApplicationFactory factory)
     {
@@ -20,7 +20,7 @@ public class AuthTests : IClassFixture<MyWebApplicationFactory>
         {
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             _testUser.SetPassword(PasswordHasher.HashPassword(AppDefaultCredentials.Password));
-            _testUser.AddPermissions([new AdminUserPermission("AdminUserAuth_Test_Get", "")]);
+            _testUser.SetSpecificPermissions([new AdminUserPermission("AdminUserAuth_Test_Get", "")]);
             db.AdminUsers.Add(_testUser);
             db.SaveChanges();
         }

@@ -15,8 +15,7 @@ public class RoleInfoChangedDomainEventHandler(IMediator mediator, AdminUserQuer
         var adminUsers = await adminUserQuery.GetAdminUserByRoleIdAsync(role.Id, cancellationToken);
         foreach (var adminUser in adminUsers)
         {
-            await mediator.Send(new UpdateAdminUserRoleInfoCommand(
-                    new AdminUserRole(adminUser.Id, role.Id, role.Name)),
+            await mediator.Send(new UpdateAdminUserRoleInfoCommand(adminUser.Id, role.Id, role.Name),
                 cancellationToken);
         }
     }

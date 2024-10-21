@@ -13,6 +13,6 @@ public class UpdateAdminUserRefreshTokenCommandHandler(AdminUserRepository admin
         var user = await adminUserRepository.GetAsync(request.AdminUserId, cancellationToken) ??
                    throw new KnownException($"未找到用户，AdminUserId = {request.AdminUserId}");
 
-        user.SetRefreshToken(request.RefreshToken);
+        user.UpdateRefreshToken(request.RefreshToken);
     }
 }

@@ -24,15 +24,7 @@ public class UpdateAdminUserRolesCommandHandler(IAdminUserRepository adminUserRe
         var adminUser = await adminUserRepository.GetAsync(request.AdminUserId, cancellationToken)
                         ?? throw new KnownException($"未找到用户，AdminUserId = {request.AdminUserId}");
 
-        var targetRoleIds = request.RolesToBeAssigned.Select(r => r.RoleId).ToArray();
-        var currentRoleIds = adminUser.Roles.Select(r => r.RoleId).ToArray();
-
-        var roleIdsToBeRemove = currentRoleIds.Except(targetRoleIds).ToArray();
-        if (roleIdsToBeRemove.Length != 0) adminUser.RemoveRoles(roleIdsToBeRemove);
-
-        adminUser.AddRoles(request.RolesToBeAssigned);
-
-        await adminUserRepository.UpdateAsync(adminUser, cancellationToken);
+        adminUser.UpdateRoles(request.RolesToBeAssigned);
     }
 
 }

@@ -36,11 +36,11 @@ public class AdminUserTokenController(IMediator mediator, AdminUserQuery adminUs
             throw new KnownException("Invalid Credentials.");
 
         var refreshToken = GenerateRefreshToken();
-        var refreshTokenExpiryDate = DateTime.Now.AddDays(7);
+        var loginExpiryDate = DateTime.Now.AddDays(7);
 
-        await mediator.Send(new AdminUserLoginSuccessfullyCommand(user.Id, refreshToken, refreshTokenExpiryDate));
+        await mediator.Send(new AdminUserLoginSuccessfullyCommand(user.Id, refreshToken, loginExpiryDate));
 
-        var response = new AminUserTokenResponse(GenerateJwtAsync(user), refreshToken, refreshTokenExpiryDate);
+        var response = new AminUserTokenResponse(GenerateJwtAsync(user), refreshToken, loginExpiryDate);
         return response.AsResponseData();
     }
 
@@ -58,13 +58,13 @@ public class AdminUserTokenController(IMediator mediator, AdminUserQuery adminUs
 
         if (string.IsNullOrWhiteSpace(request.RefreshToken) ||
         user.RefreshToken != request.RefreshToken ||
-        user.RefreshTokenExpiryDate <= DateTime.Now)
+        user.LoginExpiryDate <= DateTime.Now)
             throw new KnownException("Invalid Client Token.");
 
         var refreshToken = GenerateRefreshToken();
         await mediator.Send(new UpdateAdminUserRefreshTokenCommand(user.Id, refreshToken));
 
-        var response = new AminUserTokenResponse(GenerateJwtAsync(user), refreshToken, user.RefreshTokenExpiryDate);
+        var response = new AminUserTokenResponse(GenerateJwtAsync(user), refreshToken, user.LoginExpiryDate);
         return response.AsResponseData();
     }
 

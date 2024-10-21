@@ -17,16 +17,18 @@ namespace NetCorePal.D3Shop.Infrastructure.EntityConfigurations.Identity
             // 配置 AdminUser 与 AdminUserRole 的一对多关系
             builder.HasMany(au => au.Roles)
                 .WithOne()
-                .HasForeignKey(aur => aur.AdminUserId)
-                .OnDelete(DeleteBehavior.Cascade); // 当删除用户时，级联删除角色关联
+                .HasForeignKey(aur => aur.AdminUserId);
+            //.OnDelete(DeleteBehavior.Cascade); // 当删除用户时，级联删除角色关联
             builder.Navigation(au => au.Roles).AutoInclude();
 
             // 配置 AdminUser 与 AdminUserPermission 的一对多关系
             builder.HasMany(au => au.Permissions)
                 .WithOne()
-                .HasForeignKey(aup => aup.AdminUserId)
-                .OnDelete(DeleteBehavior.Cascade); // 当删除用户时，级联删除权限关联
+                .HasForeignKey(aup => aup.AdminUserId);
+            //.OnDelete(DeleteBehavior.Cascade); // 当删除用户时，级联删除权限关联
             builder.Navigation(au => au.Permissions).AutoInclude();
+
+            builder.HasQueryFilter(au => !au.IsDeleted);
         }
     }
 
