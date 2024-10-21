@@ -20,7 +20,7 @@ public class RoleController(IMediator mediator, IMapperProvider mapperProvider, 
     private IMapper<Role, RoleResponse> RoleOutputMapper => mapperProvider.GetMapper<Role, RoleResponse>();
 
     [HttpPost]
-    [MustHaveAdminPermission(PermissionDefinitions.RoleManagement.Create)]
+    [MustHaveAdminPermission(PermissionDefinitions.RoleCreate)]
     public async Task<ResponseData<RoleId>> CreateRole([FromBody] CreateRoleRequest request)
     {
         var allPermissions = Permissions.AllPermissions;
@@ -35,7 +35,7 @@ public class RoleController(IMediator mediator, IMapperProvider mapperProvider, 
     }
 
     [HttpGet]
-    [MustHaveAdminPermission(PermissionDefinitions.RoleManagement.View)]
+    [MustHaveAdminPermission(PermissionDefinitions.RoleView)]
     public async Task<ResponseData<IEnumerable<RoleResponse>>> GetAllRoles()
     {
         var roles = await roleQuery.GetAllRolesAsync(CancellationToken);
@@ -44,7 +44,7 @@ public class RoleController(IMediator mediator, IMapperProvider mapperProvider, 
     }
 
     [HttpGet]
-    [MustHaveAdminPermission(PermissionDefinitions.RoleManagement.View)]
+    [MustHaveAdminPermission(PermissionDefinitions.RoleView)]
     public async Task<ResponseData<IEnumerable<RoleResponse>>> GetRolesByCondition([FromQuery] RoleQueryRequest request)
     {
         var roles = await roleQuery.GetRolesByCondition(request.Name, request.Description);
@@ -53,7 +53,7 @@ public class RoleController(IMediator mediator, IMapperProvider mapperProvider, 
     }
 
     [HttpGet("{id}")]
-    [MustHaveAdminPermission(PermissionDefinitions.RoleManagement.View)]
+    [MustHaveAdminPermission(PermissionDefinitions.RoleView)]
     public async Task<ResponseData<RoleResponse>> GetRoleById([FromRoute] RoleId id)
     {
         var role = await roleQuery.GetRoleByIdAsync(id, CancellationToken);
@@ -63,7 +63,7 @@ public class RoleController(IMediator mediator, IMapperProvider mapperProvider, 
     }
 
     [HttpGet("{id}")]
-    [MustHaveAdminPermission(PermissionDefinitions.RoleManagement.View)]
+    [MustHaveAdminPermission(PermissionDefinitions.RoleView)]
     public async Task<ResponseData<IEnumerable<RolePermissionResponse>>> GetRolePermissions([FromRoute] RoleId id)
     {
         var role = await roleQuery.GetRoleByIdAsync(id, CancellationToken);
@@ -80,7 +80,7 @@ public class RoleController(IMediator mediator, IMapperProvider mapperProvider, 
     }
 
     [HttpPut("{id}")]
-    [MustHaveAdminPermission(PermissionDefinitions.RoleManagement.Edit)]
+    [MustHaveAdminPermission(PermissionDefinitions.RoleEdit)]
     public async Task<ResponseData> UpdateRoleInfo([FromRoute] RoleId id, [FromBody] UpdateRoleInfoRequest request)
     {
         await mediator.Send(
@@ -91,7 +91,7 @@ public class RoleController(IMediator mediator, IMapperProvider mapperProvider, 
     }
 
     [HttpPut("{id}")]
-    [MustHaveAdminPermission(PermissionDefinitions.RoleManagement.UpdatePermissions)]
+    [MustHaveAdminPermission(PermissionDefinitions.RoleUpdatePermissions)]
     public async Task<ResponseData> UpdateRolePermissions([FromRoute] RoleId id, [FromBody] List<string> permissionCodes)
     {
         var allPermissions = Permissions.AllPermissions;
@@ -105,7 +105,7 @@ public class RoleController(IMediator mediator, IMapperProvider mapperProvider, 
     }
 
     [HttpDelete]
-    [MustHaveAdminPermission(PermissionDefinitions.RoleManagement.Delete)]
+    [MustHaveAdminPermission(PermissionDefinitions.RoleDelete)]
     public async Task<ResponseData> DeleteRole([FromRoute] RoleId id)
     {
         await mediator.Send(new DeleteRoleCommand(id), CancellationToken);

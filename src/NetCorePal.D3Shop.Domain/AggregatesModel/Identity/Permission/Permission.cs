@@ -9,20 +9,43 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission
         private static readonly Permission[] All =
             [
                 #region AdminUserManagement
-                new(PermissionDefinitions.AdminUserManagement.Create,
+                new (PermissionDefinitions.AdminUserCreate,
                     PermissionGroup.SystemAccess,
-                    "Create AdminUser"),
-                new(PermissionDefinitions.AdminUserManagement.Edit,
+                    "创建管理员用户"),
+                new (PermissionDefinitions.AdminUserEdit,
                     PermissionGroup.SystemAccess,
-                    "Update AdminUser"),
-                new(PermissionDefinitions.AdminUserManagement.Delete,
+                    "更新管理员用户信息"),
+                new (PermissionDefinitions.AdminUserDelete,
                     PermissionGroup.SystemAccess,
-                    "Delete AdminUser"),
-                new(PermissionDefinitions.AdminUserManagement.View,
+                    "删除管理员用户"),
+                new (PermissionDefinitions.AdminUserView,
                     PermissionGroup.SystemAccess,
-                    "Manage AdminUser"),
+                    "查询管理员用户"),
+                new (PermissionDefinitions.AdminUserUpdateRoles,
+                    PermissionGroup.SystemAccess,
+                    "更新管理员用户角色"),
+                new (PermissionDefinitions.AdminUserUpdatePassword,
+                    PermissionGroup.SystemAccess,
+                    "更新管理员用户密码"),
                 #endregion
-                
+
+                #region RoleManagement
+                new (PermissionDefinitions.RoleCreate,
+                    PermissionGroup.SystemAccess,
+                    "创建角色"),
+                new (PermissionDefinitions.RoleEdit,
+                    PermissionGroup.SystemAccess,
+                    "更新角色信息"),
+                new (PermissionDefinitions.RoleUpdatePermissions,
+                    PermissionGroup.SystemAccess,
+                    "更新角色权限"),
+                new (PermissionDefinitions.RoleView,
+                    PermissionGroup.SystemAccess,
+                    "查询角色"),
+                new (PermissionDefinitions.RoleDelete,
+                    PermissionGroup.SystemAccess,
+                    "删除角色"),
+                #endregion
             ];
 
         public static IReadOnlyList<Permission> AllPermissions { get; } =

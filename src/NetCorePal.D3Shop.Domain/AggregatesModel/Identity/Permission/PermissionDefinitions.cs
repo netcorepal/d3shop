@@ -2,23 +2,21 @@
 
 public static class PermissionDefinitions
 {
-    public static class AdminUserManagement
-    {
-        public const string Create = "AdminUser_Create";
-        public const string Edit = "AdminUser_Edit";
-        public const string ResetPassword = "AdminUser_ResetPassword";
-        public const string UpdateRoles = "AdminUser_UpdateRoles";
-        public const string Delete = "AdminUser_Delete";
-        public const string View = "AdminUser_View";
-    }
+    #region AdminUserManagement
+    public const string AdminUserCreate = nameof(AdminUserCreate);
+    public const string AdminUserEdit = nameof(AdminUserEdit);
+    public const string AdminUserUpdateRoles = nameof(AdminUserUpdateRoles);
+    public const string AdminUserView = nameof(AdminUserView);
+    public const string AdminUserUpdatePassword = nameof(AdminUserUpdatePassword);
+    public const string AdminUserDelete = nameof(AdminUserDelete);
+    #endregion
 
-    public static class RoleManagement
-    {
-        public const string Create = "Role_Create";
-        public const string Edit = "Role_Create";
-        public const string UpdatePermissions = "Role_UpdatePermissions";
-        public const string Delete = "Role_Create";
-        public const string View = "Role_Create";
-    }
+    #region RoleManagement
+    public const string RoleCreate = nameof(RoleCreate);
+    public const string RoleEdit = nameof(RoleEdit);
+    public const string RoleUpdatePermissions = nameof(RoleUpdatePermissions);
+    public const string RoleDelete = nameof(RoleDelete);
+    public const string RoleView = nameof(RoleView);
+    #endregion
 
 }
