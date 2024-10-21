@@ -4,6 +4,8 @@ using NetCorePal.D3Shop.Infrastructure.EntityConfigurations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using NetCorePal.D3Shop.Domain.AggregatesModel.DeliverAggregate;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 
 namespace NetCorePal.D3Shop.Infrastructure
 {
@@ -31,5 +33,10 @@ namespace NetCorePal.D3Shop.Infrastructure
 
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<DeliverRecord> DeliverRecords => Set<DeliverRecord>();
+
+        #region Identity
+        public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
+        public DbSet<Role> Roles => Set<Role>();
+        #endregion
     }
 }
