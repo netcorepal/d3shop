@@ -16,16 +16,13 @@ public class CreateRoleCommandValidator : AbstractValidator<CreateRoleCommand>
         RuleFor(x => x.Name).Must((n) => roleQuery.GetRoleByNameAsync(n, CancellationToken.None).GetAwaiter().GetResult() is null)
             .WithMessage(r => $"角色名称重复，Name={r.Name}");
     }
-
-
 }
 
 public class CreateRoleCommandHandler(IRoleRepository roleRepository) : ICommandHandler<CreateRoleCommand, RoleId>
 {
     public async Task<RoleId> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {
-        var role = new Role(request.Name, request.Description);
-        role.AddRolePermissions(request.Permissions);
+        var role = new Role(request.Name, request.Description, request.Permissions);
         await roleRepository.AddAsync(role, cancellationToken);
         return role.Id;
     }

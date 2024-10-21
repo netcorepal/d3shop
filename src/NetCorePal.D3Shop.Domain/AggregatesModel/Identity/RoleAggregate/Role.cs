@@ -1,5 +1,6 @@
 ﻿using NetCorePal.D3Shop.Domain.DomainEvents.Identity;
 using NetCorePal.Extensions.Domain;
+// ReSharper disable VirtualMemberCallInConstructor
 
 namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
 {
@@ -13,11 +14,12 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
         public DateTime CreatedAt { get; init; }
         public virtual ICollection<RolePermission> Permissions { get; init; } = [];
 
-        public Role(string name, string description)
+        public Role(string name, string description, IEnumerable<RolePermission> permissions)
         {
+            CreatedAt = DateTime.Now;
             Name = name;
             Description = description;
-            CreatedAt = DateTime.Now;
+            Permissions = new List<RolePermission>(permissions);
         }
 
         public void UpdateRoleInfo(string name, string description)
@@ -27,29 +29,25 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
             AddDomainEvent(new RoleInfoChangedDomainEvent(this));
         }
 
-        public void AddRolePermissions(IEnumerable<RolePermission> permissions)
+        public void UpdateRolePermissions(IEnumerable<RolePermission> newPermissions)
         {
-            foreach (var permission in permissions)
-            {
-                if (Permissions.Any(p => p.PermissionCode == permission.PermissionCode))
-                    continue;
+            var currentPermissionMap = Permissions.ToDictionary(p => p.PermissionCode);
+            var newPermissionMap = newPermissions.ToDictionary(p => p.PermissionCode);
 
-                permission.RoleId = Id;
-                Permissions.Add(permission);
+            var permissionsToRemove = currentPermissionMap.Keys.Except(newPermissionMap.Keys).ToList();
+            foreach (var permissionCode in permissionsToRemove)
+            {
+                Permissions.Remove(currentPermissionMap[permissionCode]);
             }
+
+            var permissionsToAdd = newPermissionMap.Keys.Except(currentPermissionMap.Keys).ToList();
+            foreach (var permissionCode in permissionsToAdd)
+            {
+                Permissions.Add(newPermissionMap[permissionCode]);
+            }
+
             AddDomainEvent(new RolePermissionChangedDomainEvent(this));
         }
 
-        public void RemoveRolePermissions(IEnumerable<string> permissionCodes)
-        {
-            var removeList = Permissions.Where(p =>
-                permissionCodes.Contains(p.PermissionCode)).ToList();
-
-            foreach (var permission in removeList)
-            {
-                Permissions.Remove(permission);
-            }
-            AddDomainEvent(new RolePermissionChangedDomainEvent(this));
-        }
     }
 }

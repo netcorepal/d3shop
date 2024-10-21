@@ -13,14 +13,6 @@ public class UpdateRolePermissionsCommandHandler(IRoleRepository roleRepository)
         var role = await roleRepository.GetAsync(request.RoleId, cancellationToken) ??
                    throw new KnownException($"角色不存在，RoleId={request.RoleId}");
 
-        var currentRolePermissionCodes = role.Permissions.Select(p => p.PermissionCode).ToList();
-        var targetRolePermissionCodes = request.Permissions.Select(p => p.PermissionCode).ToList();
-
-        var removedPermissionCodes = currentRolePermissionCodes.Except(targetRolePermissionCodes).ToArray();
-        if (removedPermissionCodes.Length != 0)
-            role.RemoveRolePermissions(removedPermissionCodes);
-
-        role.AddRolePermissions(request.Permissions);
-        await roleRepository.UpdateAsync(role, cancellationToken);
+        role.UpdateRolePermissions(request.Permissions);
     }
 }

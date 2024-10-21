@@ -122,7 +122,7 @@ public class AdminUserRoleIntegrationTests : IClassFixture<MyWebApplicationFacto
         var userData = await getUserDataResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<AdminUserResponse>>();
         Assert.NotNull(userData);
         Assert.Equal(roleId, userData.Data.Roles.Single().RoleId);
-        Assert.Equal(permissionCodes, userData.Data.Permissions.Select(p => p.PermissionCode));
+        Assert.Equal(permissionCodes.OrderBy(p => p), userData.Data.Permissions.Select(p => p.PermissionCode).OrderBy(p => p));
 
         // Step 4: 更新用户角色
         permissionCodes = Permissions.AllPermissions.TakeLast(2).Select(p => p.Code).ToList();
@@ -137,7 +137,7 @@ public class AdminUserRoleIntegrationTests : IClassFixture<MyWebApplicationFacto
         userData = await getUserDataResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<AdminUserResponse>>();
         Assert.NotNull(userData);
         Assert.Equal(newRoleId, userData.Data.Roles.Single().RoleId);
-        Assert.Equal(permissionCodes, userData.Data.Permissions.Select(p => p.PermissionCode));// 验证权限
+        Assert.Equal(permissionCodes.OrderBy(p => p), userData.Data.Permissions.Select(p => p.PermissionCode).OrderBy(p => p));// 验证权限
     }
 
     /// <summary>
@@ -187,7 +187,7 @@ public class AdminUserRoleIntegrationTests : IClassFixture<MyWebApplicationFacto
         getRoleResponse.EnsureSuccessStatusCode();
         var roleData = await getRoleResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<RoleResponse>>();
         Assert.NotNull(roleData);
-        Assert.Equal(permissionCodes, roleData.Data.Permissions.Select(p => p.PermissionCode));
+        Assert.Equal(permissionCodes.OrderBy(p => p), roleData.Data.Permissions.Select(p => p.PermissionCode).OrderBy(p => p));
 
         permissionCodes = Permissions.AllPermissions.TakeLast(2).Select(p => p.Code).ToList();
         var updateResponse = await _client.PutAsNewtonsoftJsonAsync($"/api/Role/UpdateRolePermissions/{testRoleId}", permissionCodes);
@@ -197,13 +197,13 @@ public class AdminUserRoleIntegrationTests : IClassFixture<MyWebApplicationFacto
         getRoleResponse.EnsureSuccessStatusCode();
         roleData = await getRoleResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<RoleResponse>>();
         Assert.NotNull(roleData);
-        Assert.Equal(permissionCodes, roleData.Data.Permissions.Select(p => p.PermissionCode));
+        Assert.Equal(permissionCodes.OrderBy(p => p), roleData.Data.Permissions.Select(p => p.PermissionCode).OrderBy(p => p));
 
         //验证关联用户的权限
         var getUserResponse = await _client.GetAsync($"/api/AdminUser/GetAdminUserById/{testUserId}");
         getUserResponse.EnsureSuccessStatusCode();
         var userData = await getUserResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<AdminUserResponse>>();
         Assert.NotNull(userData);
-        Assert.Equal(permissionCodes, userData.Data.Permissions.Select(p => p.PermissionCode));
+        Assert.Equal(permissionCodes.OrderBy(p => p), userData.Data.Permissions.Select(p => p.PermissionCode).OrderBy(p => p));
     }
 }
