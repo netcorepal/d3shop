@@ -18,6 +18,7 @@ using Hangfire;
 using Hangfire.Redis.StackExchange;
 using NetCorePal.D3Shop.Web.Admin.Client;
 using NetCorePal.D3Shop.Web.Components;
+using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.Extensions.AspNetCore.Json;
 using NetCorePal.Extensions.MultiEnv;
 using Newtonsoft.Json;
@@ -61,6 +62,8 @@ try
     builder.Services.AddDataProtection()
         .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
 
+    builder.Services.AddJwtAuthentication(builder.Services.GetApplicationSettings(builder.Configuration));
+    builder.Services.AddPermissionAuthorizationServices();
     #endregion
 
     #region Controller
@@ -71,8 +74,11 @@ try
     });
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen(c => c.AddEntityIdSchemaMap()); //强类型id swagger schema 映射
-
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.AddEntityIdSchemaMap(); //强类型id swagger schema 映射
+        c.AddJwtSecurity();//添加jwt认证
+    });
     #endregion
 
     #region 公共服务
@@ -104,7 +110,8 @@ try
     #region Query
 
     builder.Services.AddScoped<OrderQuery>();
-
+    builder.Services.AddScoped<AdminUserQuery>();
+    builder.Services.AddScoped<RoleQuery>();
     #endregion
 
 
@@ -184,6 +191,7 @@ try
         using var scope = app.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         dbContext.Database.EnsureCreated();
+        app.SeedDatabase();
     }
 
     app.UseKnownExceptionHandler();

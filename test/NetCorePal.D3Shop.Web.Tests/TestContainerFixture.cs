@@ -15,7 +15,7 @@ public class TestContainerFixture : IDisposable
     public MySqlContainer MySqlContainer { get; } = new MySqlBuilder()
         .WithUsername("root").WithPassword("123456")
         .WithEnvironment("TZ", "Asia/Shanghai")
-        .WithDatabase("mysql").Build();
+        .WithDatabase("demo").Build();
 
     public TestContainerFixture()
     {
