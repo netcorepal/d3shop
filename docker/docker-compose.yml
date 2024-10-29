@@ -94,7 +94,6 @@ services:
     #   - ${DATA_DIR}/redis/logs:/logs
     ports:
       - 6379:6379
-    command: /bin/bash -c "redis-server /usr/local/etc/redis/redis.conf"
 
   # rnacos:
   #   container_name: rnacos
