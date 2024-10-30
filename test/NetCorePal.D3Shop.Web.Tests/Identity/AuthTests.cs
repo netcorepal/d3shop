@@ -9,7 +9,7 @@ using NetCorePal.D3Shop.Web.Helper;
 namespace NetCorePal.D3Shop.Web.Tests.Identity;
 
 [Collection("web")]
-public class AuthTests : IClassFixture<MyWebApplicationFactory>
+public class AuthTests
 {
     private readonly HttpClient _client;
     private readonly AdminUser _testUser = new("Test", "", "", []);
