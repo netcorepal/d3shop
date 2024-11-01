@@ -16,7 +16,6 @@ using Serilog;
 using Serilog.Formatting.Json;
 using Hangfire;
 using Hangfire.Redis.StackExchange;
-using NetCorePal.D3Shop.Web.Admin.Client;
 using NetCorePal.D3Shop.Web.Components;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.Extensions.AspNetCore.Json;
@@ -177,12 +176,12 @@ try
 
     #endregion
 
-    #region MyRegion
+    #region Blazor
     builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents()
         .AddInteractiveWebAssemblyComponents();
-    builder.Services.AddAntDesign();
-
+    
+    NetCorePal.D3Shop.Web.Admin.Client.Program.AddClientServices(builder.Services);
     #endregion
 
     var app = builder.Build();
