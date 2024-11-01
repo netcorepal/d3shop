@@ -1,11 +1,8 @@
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using AntDesign.ProLayout;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+using NetCorePal.D3Shop.Web.Admin.Client.Services;
 
-namespace NetCorePal.D3Shop.Web.Admin
+namespace NetCorePal.D3Shop.Web.Admin.Client
 {
     public class Program
     {
@@ -25,6 +22,8 @@ namespace NetCorePal.D3Shop.Web.Admin
         public static void AddClientServices(IServiceCollection services)
         {
             services.AddAntDesign();
+
+            services.AddScoped<IAccountService, AccountService>();
         }
     }
 }

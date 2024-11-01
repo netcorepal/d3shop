@@ -1,0 +1,50 @@
+﻿@namespace NetCorePal.D3Shop.Web.Admin.Layouts
+@inherits LayoutComponentBase
+
+<div class="container__b__0">
+    <div class="lang">
+        <!--todo: selectLang-->
+    </div>
+    <div class="content">
+        <div class="top">
+            <div class="header">
+                <a>
+                    @* <img alt="logo" class="logo" src="assets/logo.svg" /> *@
+                    <span class="title">D3Shop</span>
+                </a>
+            </div>
+            <div class="desc">D3Shop Admin Platform</div>
+        </div>
+        @Body
+    </div>
+    <FooterView Copyright="2024 D3Shop" Links="Links"></FooterView>
+</div>
+
+@code
+{
+    public LinkItem[] Links { get; } =
+    [
+        new()
+        {
+            Key = "Ant Design Blazor",
+            Title = "Ant Design Blazor",
+            Href = "https://antblazor.com",
+            BlankTarget = true,
+        },
+        new()
+        {
+            Key = "github",
+            Title = (RenderFragment)(@<Icon Type="github" />),
+            Href = "https://github.com/netcorepal/d3shop",
+            BlankTarget = true,
+        },
+        new()
+        {
+            Key = "netcorepal-cloud-framework",
+            Title = "netcorepal-cloud-framework",
+            Href = "https://netcorepal.github.io/netcorepal-cloud-framework",
+            BlankTarget = true,
+        }
+    ];
+
+};
