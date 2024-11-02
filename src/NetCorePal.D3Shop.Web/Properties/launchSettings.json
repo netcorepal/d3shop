@@ -1,22 +1,13 @@
 {
-  "$schema": "https://json.schemastore.org/launchsettings.json",
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:13602",
-      "sslPort": 44319
-    }
-  },
   "profiles": {
     "NetCorePal.D3Shop.Web": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7058;http://localhost:5058",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
+      "applicationUrl": "https://localhost:7058;http://localhost:5058",
       "dotnetRunMessages": true
     },
     "IIS Express": {
@@ -31,9 +22,27 @@
       "commandName": "Docker",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
-      "environmentVariables": {},
       "publishAllPorts": true,
       "useSSL": true
+    },
+    "NetCorePal.D3Shop.Admin.Client": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "admin",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:7058;http://localhost:5058",
+      "dotnetRunMessages": true
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:13602",
+      "sslPort": 44319
     }
   }
 }
