@@ -18,5 +18,9 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(ExtensionsVersion)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\NetCorePal.D3Shop.Admin.Shared\NetCorePal.D3Shop.Admin.Shared.csproj" />
+  </ItemGroup>
+
   
 </Project>

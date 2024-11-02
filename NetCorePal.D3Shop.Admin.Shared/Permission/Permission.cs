@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission
+namespace NetCorePal.D3Shop.Admin.Shared.Permission
 {
     public record Permission(string Code, string GroupName, string Remark);
 

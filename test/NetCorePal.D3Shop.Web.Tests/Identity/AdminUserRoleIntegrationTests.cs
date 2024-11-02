@@ -1,11 +1,10 @@
 ﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Requests;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Responses;
 using NetCorePal.Extensions.AspNetCore;
 using System.Net.Http.Json;
-using NetCorePal.D3Shop.Web.Controllers.Identity;
+using NetCorePal.D3Shop.Admin.Shared.Permission;
 
 namespace NetCorePal.D3Shop.Web.Tests.Identity;
 

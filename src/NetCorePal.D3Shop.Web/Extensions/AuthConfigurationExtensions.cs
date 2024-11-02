@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
 using NetCorePal.D3Shop.Web.PermissionConfig;
 using Newtonsoft.Json;
 using System.Net;
-using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 

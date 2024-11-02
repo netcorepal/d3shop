@@ -1,4 +1,4 @@
-﻿namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
+﻿namespace NetCorePal.D3Shop.Admin.Shared.Permission;
 
 public static class PermissionDefinitions
 {

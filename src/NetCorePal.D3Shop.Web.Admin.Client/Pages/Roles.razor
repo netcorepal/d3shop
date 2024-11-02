@@ -1,4 +1,6 @@
 @page "/admin/roles"
+@attribute [MustHaveAdminPermission(PermissionDefinitions.RoleView)]
+
 <h3>角色列表</h3>
 
 @code {
