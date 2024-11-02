@@ -8,7 +8,7 @@ using NetCorePal.Extensions.AspNetCore;
 namespace NetCorePal.D3Shop.Web.Tests
 {
     [Collection("web")]
-    public class DemoTests : IClassFixture<MyWebApplicationFactory>
+    public class DemoTests
     {
         private readonly MyWebApplicationFactory _factory;
 

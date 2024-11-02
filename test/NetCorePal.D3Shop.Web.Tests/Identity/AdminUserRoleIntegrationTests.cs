@@ -10,7 +10,7 @@ using NetCorePal.D3Shop.Web.Controllers.Identity;
 namespace NetCorePal.D3Shop.Web.Tests.Identity;
 
 [Collection("web")]
-public class AdminUserRoleIntegrationTests : IClassFixture<MyWebApplicationFactory>
+public class AdminUserRoleIntegrationTests
 {
     private readonly HttpClient _client;
     public AdminUserRoleIntegrationTests(MyWebApplicationFactory factory)
