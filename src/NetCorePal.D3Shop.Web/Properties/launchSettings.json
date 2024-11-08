@@ -26,9 +26,10 @@
       "useSSL": true
     },
     "NetCorePal.D3Shop.Admin.Client": {
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "admin",
+      "launchUrl": "admin/login",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
