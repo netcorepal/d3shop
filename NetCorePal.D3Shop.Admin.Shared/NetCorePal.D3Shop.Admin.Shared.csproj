@@ -8,6 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.10" />
+    <PackageReference Include="NetCorePal.Extensions.Dto" Version="2.0.0-preview.1.2411041514" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\NetCorePal.D3Shop.Domain\NetCorePal.D3Shop.Domain.csproj" />
   </ItemGroup>
 
 </Project>

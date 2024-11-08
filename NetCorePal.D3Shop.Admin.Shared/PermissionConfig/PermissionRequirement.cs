@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace NetCorePal.D3Shop.Web.PermissionConfig
+namespace NetCorePal.D3Shop.Admin.Shared.PermissionConfig
 {
     public class PermissionRequirement(string permission) : IAuthorizationRequirement
     {

@@ -1,4 +1,4 @@
-﻿@namespace NetCorePal.D3Shop.Web.Admin.Client.Pages
+﻿@namespace NetCorePal.D3Shop.Web.Admin.Client.Pages.Account
 @layout UserLayout
 @page "/admin/login"
 
@@ -9,26 +9,34 @@
                 <TabPane Key="1" Tab="Account Login">
                     <FormItem>
                         <AntDesign.Input Placeholder="Name" Size="large" @bind-Value="@context.Name">
-                            <Prefix><Icon Type="user" /></Prefix>
+                            <Prefix>
+                                <Icon Type="user"/>
+                            </Prefix>
                         </AntDesign.Input>
                     </FormItem>
                     <FormItem>
                         <AntDesign.Input Placeholder="Password" Size="large" @bind-Value="@context.Password" Type="password">
-                            <Prefix><Icon Type="lock" /></Prefix>
+                            <Prefix>
+                                <Icon Type="lock"/>
+                            </Prefix>
                         </AntDesign.Input>
                     </FormItem>
                 </TabPane>
                 <TabPane Key="2" Tab="Mobile Login">
                     <FormItem>
                         <AntDesign.Input Placeholder="Phone Number" Size="large" @bind-Value="@context.Mobile">
-                            <Prefix><Icon Type="mobile" /></Prefix>
+                            <Prefix>
+                                <Icon Type="mobile"/>
+                            </Prefix>
                         </AntDesign.Input>
                     </FormItem>
                     <FormItem>
                         <Row Gutter="8">
                             <AntDesign.Col Span="16">
                                 <AntDesign.Input Placeholder="Verification code" Size="large" @bind-Value="@context.Captcha">
-                                    <Prefix><Icon Type="mail" /></Prefix>
+                                    <Prefix>
+                                        <Icon Type="mail"/>
+                                    </Prefix>
                                 </AntDesign.Input>
                             </AntDesign.Col>
                             <AntDesign.Col Span="8">
@@ -46,13 +54,13 @@
                     Forgot Password
                 </a>
             </div>
-            <Button Type="primary" HtmlType="submit" Class="submit" Size="large" Block>Log in </Button>
-           @*  <div class="other">
-                Other Login Methods
-                <Icon Class="icon" Type="alipay-circle" />
-                <Icon Class="icon" Type="taobao-circle" />
-                <Icon Class="icon" Type="weibo-circle" />
-                <a class="register" href="/user/register">Register Account</a>
+            <Button Type="@ButtonType.Primary" HtmlType="submit" Class="submit" Size="large" Block>Log in </Button>
+            @*  <div class="other">
+            Other Login Methods
+            <Icon Class="icon" Type="alipay-circle" />
+            <Icon Class="icon" Type="taobao-circle" />
+            <Icon Class="icon" Type="weibo-circle" />
+            <a class="register" href="/user/register">Register Account</a>
             </div> *@
         </Form>
     </div>

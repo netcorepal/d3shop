@@ -1,10 +1,7 @@
-﻿using AntDesign.Extensions.Localization;
-using AntDesign.ProLayout;
+﻿using AntDesign.ProLayout;
 using Microsoft.AspNetCore.Components;
-using System.Globalization;
-using System.Net.Http.Json;
 
-namespace NetCorePal.D3Shop.Web.Admin.Layouts
+namespace NetCorePal.D3Shop.Web.Admin.Client.Layouts
 {
     public partial class BasicLayout : LayoutComponentBase, IDisposable
     {
@@ -46,7 +43,7 @@ namespace NetCorePal.D3Shop.Web.Admin.Layouts
 
         public void Dispose()
         {
-            
+            // Method intentionally left empty.
         }
 
     }

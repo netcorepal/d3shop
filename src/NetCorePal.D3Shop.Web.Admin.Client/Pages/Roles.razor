@@ -1,8 +1,26 @@
 @page "/admin/roles"
 @attribute [MustHaveAdminPermission(PermissionDefinitions.RoleView)]
-
+@inject AuthenticationStateProvider iip;
 <h3>角色列表</h3>
+<button @onclick="l">test</button>
+<AuthorizeView>
+    <NotAuthorized>没权限</NotAuthorized>
+    <Authorized>有缺陷Hello @context.User.Identity?.IsAuthenticated.ToString();</Authorized>
+    
+</AuthorizeView>
+
+@if (u is not null)
+{
+    @u.User.Identity?.Name;
+}
+
 
 @code {
-    
+    AuthenticationState? u;
+
+    async Task l()
+    {
+        u = await iip.GetAuthenticationStateAsync();
+    }
+
 }

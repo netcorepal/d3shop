@@ -43,7 +43,7 @@ public class AuthTests : IClassFixture<MyWebApplicationFactory>
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         var response = await _client.PostAsync("api/AdminUserToken/login", content);
         Assert.True(response.IsSuccessStatusCode);
-        var responseData = await response.Content.ReadFromNewtonsoftJsonAsync<ResponseData<AminUserTokenResponse>>();
+        var responseData = await response.Content.ReadFromNewtonsoftJsonAsync<ResponseData<AdminUserTokenResponse>>();
         Assert.NotNull(responseData);
         _token = responseData.Data.Token;
         Assert.NotNull(_token);

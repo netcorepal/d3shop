@@ -1,21 +1,30 @@
-﻿using NetCorePal.D3Shop.Web.Admin.Client.Models;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http;
+using NetCorePal.D3Shop.Admin.Shared.Requests;
+using NetCorePal.D3Shop.Admin.Shared.Responses;
+using NetCorePal.D3Shop.Web.Admin.Client.Pages.Account;
 
 namespace NetCorePal.D3Shop.Web.Admin.Client.Services
 {
-    public interface IAccountService
-    {
-        Task LoginAsync(LoginParamsType model);
-        Task<string> GetCaptchaAsync(string? mobile);
-    }
-
-    public class AccountService : IAccountService
+    public class AccountService(
+        ApiHttpClient httpClient,
+        MessageService message)
     {
         private readonly Random _random = new();
 
-        public Task LoginAsync(LoginParamsType model)
+        [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+
+        public async Task<bool> LoginAsync(LoginParamsType model)
         {
-            // todo: login logic
-            return Task.CompletedTask;
+            var request = new AdminUserLoginRequest(model.Name, model.Password);
+            var response = await httpClient.PostWithDataAsync<AminUserTokenResponse, AdminUserLoginRequest>(
+                "/api/AdminUserToken/login", request);
+            if (response.Success)
+                return true;
+            else
+                await message.Error(response.Message);
+
+            return false;
         }
 
         public Task<string> GetCaptchaAsync(string? mobile)
