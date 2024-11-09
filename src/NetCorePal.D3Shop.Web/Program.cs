@@ -235,7 +235,8 @@ try
     app.MapRazorComponents<App>()
         // .AddInteractiveServerRenderMode()
         .AddInteractiveWebAssemblyRenderMode()
-        .AddAdditionalAssemblies(typeof(_Imports).Assembly);
+        .AddAdditionalAssemblies(typeof(_Imports).Assembly)
+        .AllowAnonymous();
 
     app.Run();
 }
