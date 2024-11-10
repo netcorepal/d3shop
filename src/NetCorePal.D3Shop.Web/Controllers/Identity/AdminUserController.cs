@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NetCorePal.D3Shop.Admin.Shared.Attribute;
-using NetCorePal.D3Shop.Admin.Shared.Permission;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate.Dto;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
