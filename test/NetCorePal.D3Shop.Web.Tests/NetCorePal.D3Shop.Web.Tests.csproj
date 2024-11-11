@@ -14,17 +14,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkVersion)"/>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkVersion)" />
     <PackageReference Include="Moq" Version="4.20.69" />
-    <PackageReference Include="NetCorePal.Extensions.NewtonsoftJson" Version="$(NetCorePalVersion)" />
-    <PackageReference Include="Testcontainers" Version="$(TestcontainersVersion)"/>
-    <PackageReference Include="Testcontainers.MySql" Version="$(TestcontainersVersion)"/>
-    <PackageReference Include="Testcontainers.PostgreSql" Version="$(TestcontainersVersion)"/>
-    <PackageReference Include="Testcontainers.RabbitMq" Version="$(TestcontainersVersion)"/>
-    <PackageReference Include="Testcontainers.Redis"  Version="$(TestcontainersVersion)"/>
+    <PackageReference Include="NetCorePal.Extensions.NewtonsoftJson" Version="2.0.0-preview.1.2411041514" />
+    <PackageReference Include="Testcontainers" Version="$(TestcontainersVersion)" />
+    <PackageReference Include="Testcontainers.MySql" Version="$(TestcontainersVersion)" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="$(TestcontainersVersion)" />
+    <PackageReference Include="Testcontainers.RabbitMq" Version="$(TestcontainersVersion)" />
+    <PackageReference Include="Testcontainers.Redis" Version="$(TestcontainersVersion)" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.6.0"/>
-    <PackageReference Include="xunit" Version="2.4.2"/>
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.6.0" />
+    <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

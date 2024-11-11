@@ -1,10 +1,21 @@
 ﻿<Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
-        <CascadingValue Value="routeData">
-            <RouteView RouteData="routeData" DefaultLayout="typeof(NetCorePal.D3Shop.Web.Admin.Layouts.BasicLayout)" />
-        </CascadingValue>
-        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        @*  <CascadingValue Value="routeData"> *@
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layouts.BasicLayout)">
+            <NotAuthorized>
+                @if (context.User.Identity is not { IsAuthenticated: true })
+                {
+                    <RedirectToLogin/>
+                }
+                <_403/>
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        @*  </CascadingValue> *@
+        <FocusOnNavigate RouteData="routeData" Selector="h1"/>
     </Found>
+    <NotFound>
+        <_404/>
+    </NotFound>
 </Router>
 
-<AntContainer />
+<AntContainer/>

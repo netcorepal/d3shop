@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NetCorePal.D3Shop.Web.Attribute;
+using NetCorePal.D3Shop.Admin.Shared.Attribute;
 
 namespace NetCorePal.D3Shop.Web.Controllers;
 

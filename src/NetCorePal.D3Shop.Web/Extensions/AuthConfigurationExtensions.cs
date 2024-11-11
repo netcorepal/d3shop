@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
-using NetCorePal.D3Shop.Web.PermissionConfig;
 using Newtonsoft.Json;
 using System.Net;
-using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using NetCorePal.D3Shop.Admin.Shared.PermissionConfig;
 
 namespace NetCorePal.D3Shop.Web.Extensions
 {
@@ -22,7 +20,8 @@ namespace NetCorePal.D3Shop.Web.Extensions
             return services;
         }
 
-        internal static IServiceCollection AddJwtAuthentication(this IServiceCollection services, AppConfiguration config)
+        internal static IServiceCollection AddJwtAuthentication(this IServiceCollection services,
+            AppConfiguration config)
         {
             var key = Encoding.ASCII.GetBytes(config.Secret);
             services
@@ -47,20 +46,36 @@ namespace NetCorePal.D3Shop.Web.Extensions
 
                     bearer.Events = new JwtBearerEvents
                     {
+                        OnMessageReceived = context =>
+                        {
+                            // 从 Cookie 中获取 token
+                            var token = context.HttpContext.Request
+                                .Cookies["authToken"];
+
+                            if (!string.IsNullOrEmpty(token))
+                            {
+                                context.Token = token;
+                            }
+
+                            return Task.CompletedTask;
+                        },
                         OnAuthenticationFailed = c =>
                         {
                             if (c.Exception is SecurityTokenExpiredException)
                             {
                                 c.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                                 c.Response.ContentType = "application/json";
-                                var result = JsonConvert.SerializeObject(new ResponseData(false, "The Token is expired."));
+                                var result =
+                                    JsonConvert.SerializeObject(new ResponseData(false, "The Token is expired."));
                                 return c.Response.WriteAsync(result);
                             }
                             else
                             {
                                 c.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                                 c.Response.ContentType = "application/json";
-                                var result = JsonConvert.SerializeObject(new ResponseData(false, "An unhandled error has occurred."));
+                                var result =
+                                    JsonConvert.SerializeObject(new ResponseData(false,
+                                        "An unhandled error has occurred."));
                                 return c.Response.WriteAsync(result);
                             }
                         },
@@ -73,13 +88,13 @@ namespace NetCorePal.D3Shop.Web.Extensions
                             context.Response.ContentType = "application/json";
                             var result = JsonConvert.SerializeObject("You are not Authorized.");
                             return context.Response.WriteAsync(result);
-
                         },
                         OnForbidden = context =>
                         {
                             context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                             context.Response.ContentType = "application/json";
-                            var result = JsonConvert.SerializeObject(new ResponseData(false, "You are not authorized to access this resource."));
+                            var result = JsonConvert.SerializeObject(new ResponseData(false,
+                                "You are not authorized to access this resource."));
                             return context.Response.WriteAsync(result);
                         },
                     };

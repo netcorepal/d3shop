@@ -8,8 +8,6 @@ using NetCorePal.Extensions.DistributedLocks;
 using NetCorePal.Extensions.DistributedTransactions;
 using NetCorePal.Extensions.Domain;
 using NetCorePal.Extensions.Primitives;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
-using NetCorePal.D3Shop.Web.Attribute;
 
 namespace NetCorePal.D3Shop.Web.Controllers
 {

@@ -1,29 +1,31 @@
-using NetCorePal.Extensions.Primitives;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Prometheus;
 using System.Reflection;
-using Microsoft.AspNetCore.DataProtection;
-using StackExchange.Redis;
-using FluentValidation.AspNetCore;
 using FluentValidation;
-using NetCorePal.Extensions.Domain.Json;
-using NetCorePal.D3Shop.Web.Application.Queries;
-using NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers;
-using NetCorePal.D3Shop.Web.Clients;
-using NetCorePal.D3Shop.Web.Extensions;
-using Serilog;
-using Serilog.Formatting.Json;
+using FluentValidation.AspNetCore;
 using Hangfire;
 using Hangfire.Redis.StackExchange;
-using NetCorePal.D3Shop.Web.Admin.Client;
-using NetCorePal.D3Shop.Web.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using NetCorePal.D3Shop.Web.Application.Hubs;
+using NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers;
+using NetCorePal.D3Shop.Web.Application.Queries;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
+using NetCorePal.D3Shop.Web.Clients;
+using NetCorePal.D3Shop.Web.Components;
+using NetCorePal.D3Shop.Web.Extensions;
 using NetCorePal.Extensions.AspNetCore.Json;
+using NetCorePal.Extensions.Domain.Json;
 using NetCorePal.Extensions.MultiEnv;
+using NetCorePal.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Prometheus;
 using Refit;
+using Serilog;
+using Serilog.Formatting.Json;
+using StackExchange.Redis;
+using _Imports = NetCorePal.D3Shop.Web.Admin.Client._Imports;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.WithClientIp()
@@ -64,6 +66,7 @@ try
 
     builder.Services.AddJwtAuthentication(builder.Services.GetApplicationSettings(builder.Configuration));
     builder.Services.AddPermissionAuthorizationServices();
+
     #endregion
 
     #region Controller
@@ -77,8 +80,9 @@ try
     builder.Services.AddSwaggerGen(c =>
     {
         c.AddEntityIdSchemaMap(); //强类型id swagger schema 映射
-        c.AddJwtSecurity();//添加jwt认证
+        c.AddJwtSecurity(); //添加jwt认证
     });
+
     #endregion
 
     #region 公共服务
@@ -112,6 +116,7 @@ try
     builder.Services.AddScoped<OrderQuery>();
     builder.Services.AddScoped<AdminUserQuery>();
     builder.Services.AddScoped<RoleQuery>();
+
     #endregion
 
 
@@ -177,11 +182,17 @@ try
 
     #endregion
 
-    #region MyRegion
+    builder.Services.AddHttpContextAccessor();
+
+    #region Blazor
+
     builder.Services.AddRazorComponents()
-        .AddInteractiveServerComponents()
+        // .AddInteractiveServerComponents()
         .AddInteractiveWebAssemblyComponents();
-    builder.Services.AddAntDesign();
+
+    builder.Services.AddCascadingAuthenticationState();
+    builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
+    // NetCorePal.D3Shop.Web.Admin.Client.Program.AddClientServices(builder.Services);
 
     #endregion
 
@@ -202,9 +213,10 @@ try
         app.UseSwaggerUI();
     }
 
+    app.UseAuthentication();
     app.UseHttpsRedirection();
     app.UseStaticFiles();
-    
+
     app.UseRouting();
     app.UseAuthorization();
     app.UseAntiforgery();
@@ -212,7 +224,7 @@ try
 
     #region SignalR
 
-    app.MapHub<NetCorePal.D3Shop.Web.Application.Hubs.ChatHub>("/chat");
+    app.MapHub<ChatHub>("/chat");
 
     #endregion
 
@@ -221,9 +233,10 @@ try
     app.MapMetrics("/metrics"); // 通过   /metrics  访问指标
     app.UseHangfireDashboard();
     app.MapRazorComponents<App>()
-        .AddInteractiveServerRenderMode()
+        // .AddInteractiveServerRenderMode()
         .AddInteractiveWebAssemblyRenderMode()
-        .AddAdditionalAssemblies(typeof(NetCorePal.D3Shop.Web.Admin.Client._Imports).Assembly);
+        .AddAdditionalAssemblies(typeof(_Imports).Assembly)
+        .AllowAnonymous();
 
     app.Run();
 }

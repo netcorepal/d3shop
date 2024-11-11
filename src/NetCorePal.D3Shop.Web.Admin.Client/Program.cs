@@ -1,19 +1,30 @@
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using AntDesign.ProLayout;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+using NetCorePal.D3Shop.Admin.Shared.PermissionConfig;
+using NetCorePal.D3Shop.Web.Admin.Client.Auth;
+using NetCorePal.D3Shop.Web.Admin.Client.Services;
 
-namespace NetCorePal.D3Shop.Web.Admin
+namespace NetCorePal.D3Shop.Web.Admin.Client
 {
     public class Program
     {
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.Services.AddScoped(
-                sp => new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
+
+            builder.Services.AddHttpClient<ApiHttpClient>(client =>
+            {
+                client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+            });
+
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddCascadingAuthenticationState();
+            builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
+            builder.Services.AddSingleton<IAccessTokenProvider, AccessTokenProvider>();
+
+            AddPermissionAuthorizationServices(builder.Services);
 
             AddClientServices(builder.Services);
 
@@ -25,6 +36,14 @@ namespace NetCorePal.D3Shop.Web.Admin
         public static void AddClientServices(IServiceCollection services)
         {
             services.AddAntDesign();
+            services.AddScoped<AccountService>();
+        }
+
+        private static void AddPermissionAuthorizationServices(IServiceCollection services)
+        {
+            services
+                .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
+                .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
         }
     }
 }

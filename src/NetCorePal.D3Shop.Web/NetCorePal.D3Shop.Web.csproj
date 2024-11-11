@@ -14,29 +14,29 @@
     <PackageReference Include="AspNet.Security.OAuth.Weixin" Version="8.0.0" />
     <PackageReference Include="DotNetCore.CAP.Dashboard" Version="8.2.0" />
     <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="8.2.0" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0"/>
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.5"/>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.5" />
     <PackageReference Include="Hangfire.Redis.StackExchange" Version="1.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(FrameworkVersion)" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="$(FrameworkVersion)" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="$(FrameworkVersion)"/>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="$(FrameworkVersion)" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(EntityFrameworkVersion)"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(EntityFrameworkVersion)" />
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.7.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5"/>
-    <PackageReference Include="NetCorePal.Context.AspNetCore" Version="$(NetCorePalVersion)"/>
-    <PackageReference Include="NetCorePal.Context.CAP" Version="$(NetCorePalVersion)"/>
-    <PackageReference Include="NetCorePal.Context.Shared" Version="$(NetCorePalVersion)"/>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="NetCorePal.Context.AspNetCore" Version="$(NetCorePalVersion)" />
+    <PackageReference Include="NetCorePal.Context.CAP" Version="$(NetCorePalVersion)" />
+    <PackageReference Include="NetCorePal.Context.Shared" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.AspNetCore" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.DistributedLocks.Redis" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.DistributedTransactions.CAP.MySql" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.Mappers" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.MultiEnv" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.Primitives" Version="$(NetCorePalVersion)" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2"/>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="8.0.1" />
     <PackageReference Include="prometheus-net.AspNetCore.HealthChecks" Version="8.0.1" />
     <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
@@ -47,6 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\NetCorePal.D3Shop.Admin.Shared\NetCorePal.D3Shop.Admin.Shared.csproj" />
     <ProjectReference Include="..\NetCorePal.D3Shop.Domain\NetCorePal.D3Shop.Domain.csproj" />
     <ProjectReference Include="..\NetCorePal.D3Shop.Infrastructure\NetCorePal.D3Shop.Infrastructure.csproj" />
     <ProjectReference Include="..\NetCorePal.D3Shop.Web.Admin.Client\NetCorePal.D3Shop.Web.Admin.Client.csproj" />
@@ -54,6 +55,10 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Account\Pages\Login.razor" />
   </ItemGroup>
 
 </Project>

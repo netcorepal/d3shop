@@ -1,8 +1,8 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using NetCorePal.D3Shop.Web.Const;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using NetCorePal.D3Shop.Admin.Shared.Const;
 
 namespace NetCorePal.D3Shop.Web.Tests;
 
