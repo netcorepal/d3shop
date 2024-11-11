@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Http;
-using NetCorePal.D3Shop.Admin.Shared.Requests;
+﻿using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Admin.Shared.Responses;
 using NetCorePal.D3Shop.Web.Admin.Client.Pages.Account;
 
@@ -11,8 +9,6 @@ namespace NetCorePal.D3Shop.Web.Admin.Client.Services
         MessageService message)
     {
         private readonly Random _random = new();
-
-        [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
 
         public async Task<bool> LoginAsync(LoginParamsType model)
         {
