@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using NetCorePal.D3Shop.Web.Const;
+using NetCorePal.D3Shop.Admin.Shared.Const;
 
-namespace NetCorePal.D3Shop.Web.PermissionConfig
+namespace NetCorePal.D3Shop.Admin.Shared.PermissionConfig
 {
     public class PermissionPolicyProvider(IOptions<AuthorizationOptions> options) : DefaultAuthorizationPolicyProvider(options)
     {

@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using NetCorePal.D3Shop.Web.Const;
+using NetCorePal.D3Shop.Admin.Shared.Const;
 
-namespace NetCorePal.D3Shop.Web.PermissionConfig
+namespace NetCorePal.D3Shop.Admin.Shared.PermissionConfig
 {
     public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
     {

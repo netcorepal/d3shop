@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
-using NetCorePal.D3Shop.Web.Const;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Requests;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Responses;
 using NetCorePal.Extensions.Primitives;
@@ -14,6 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using NetCorePal.D3Shop.Admin.Shared.Const;
 using NetCorePal.D3Shop.Web.Helper;
 
 namespace NetCorePal.D3Shop.Web.Controllers.Identity;
@@ -26,7 +26,7 @@ public class AdminUserTokenController(IMediator mediator, AdminUserQuery adminUs
     private AppConfiguration AppConfiguration => appConfiguration.Value;
 
     [HttpPost("login")]
-    public async Task<ResponseData<AminUserTokenResponse>> LoginAsync([FromBody] AdminUserLoginRequest request)
+    public async Task<ResponseData<AdminUserTokenResponse>> LoginAsync([FromBody] AdminUserLoginRequest request)
     {
         var user = await adminUserQuery.GetAdminUserByNameAsync(request.Name, HttpContext.RequestAborted);
         if (user is null)
@@ -39,13 +39,20 @@ public class AdminUserTokenController(IMediator mediator, AdminUserQuery adminUs
         var loginExpiryDate = DateTime.Now.AddDays(7);
 
         await mediator.Send(new AdminUserLoginSuccessfullyCommand(user.Id, refreshToken, loginExpiryDate));
-
-        var response = new AminUserTokenResponse(GenerateJwtAsync(user), refreshToken, loginExpiryDate);
+        var jwtToken = GenerateJwtAsync(user);
+        HttpContext.Response.Cookies.Append("authToken", jwtToken, new CookieOptions
+        {
+            HttpOnly = true, // 仅允许服务器访问 Cookie，增强安全性
+            Secure = true, // 使用 HTTPS 时设置 Secure
+            SameSite = SameSiteMode.Strict, // 配置 SameSite 策略以防 CSRF 攻击
+            // Expires = DateTimeOffset.Now.AddMinutes(30) // 设置 Cookie 过期时间
+        });
+        var response = new AdminUserTokenResponse(GenerateJwtAsync(user), refreshToken, loginExpiryDate);
         return response.AsResponseData();
     }
 
     [HttpPost("getRefreshToken")]
-    public async Task<ResponseData<AminUserTokenResponse>> GetRefreshTokenAsync([FromBody] AdminUserRefreshTokenRequest request)
+    public async Task<ResponseData<AdminUserTokenResponse>> GetRefreshTokenAsync([FromBody] AdminUserRefreshTokenRequest request)
     {
         var userPrincipal = GetPrincipalFromExpiredToken(request.Token);
 
@@ -64,7 +71,7 @@ public class AdminUserTokenController(IMediator mediator, AdminUserQuery adminUs
         var refreshToken = GenerateRefreshToken();
         await mediator.Send(new UpdateAdminUserRefreshTokenCommand(user.Id, refreshToken));
 
-        var response = new AminUserTokenResponse(GenerateJwtAsync(user), refreshToken, user.LoginExpiryDate);
+        var response = new AdminUserTokenResponse(GenerateJwtAsync(user), refreshToken, user.LoginExpiryDate);
         return response.AsResponseData();
     }
 
