@@ -13,11 +13,9 @@ namespace NetCorePal.D3Shop.Web.Admin.Client
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-
-            builder.Services.AddHttpClient<ApiHttpClient>(client =>
-            {
-                client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
-            });
+            
+            builder.Services.AddRefitClient<IAccountService>()
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
             builder.Services.AddAuthorizationCore();
             builder.Services.AddCascadingAuthenticationState();
@@ -36,7 +34,6 @@ namespace NetCorePal.D3Shop.Web.Admin.Client
         public static void AddClientServices(IServiceCollection services)
         {
             services.AddAntDesign();
-            services.AddScoped<AccountService>();
         }
 
         private static void AddPermissionAuthorizationServices(IServiceCollection services)
