@@ -1,26 +1,29 @@
 @page "/admin/roles"
 @attribute [MustHaveAdminPermission(PermissionDefinitions.RoleView)]
-@inject AuthenticationStateProvider iip;
-<h3>角色列表</h3>
-<button @onclick="l">test</button>
-<AuthorizeView>
-    <NotAuthorized>没权限</NotAuthorized>
-    <Authorized>有缺陷Hello @context.User.Identity?.IsAuthenticated.ToString();</Authorized>
-    
-</AuthorizeView>
 
-@if (u is not null)
-{
-    @u.User.Identity?.Name;
-}
-
-
-@code {
-    AuthenticationState? u;
-
-    async Task l()
-    {
-        u = await iip.GetAuthenticationStateAsync();
-    }
-
-}
+<Table DataSource="_roleList">
+    <TitleTemplate>
+        <GridRow>
+            <GridCol Span="4">
+                <Title Level="3">角色列表</Title>
+            </GridCol>
+            <GridCol Span="8" Offset="12">
+                <Search Placeholder="Search Name" @bind-Value="_searchString" OnSearch="() => { }"/>
+            </GridCol>
+        </GridRow>
+    </TitleTemplate>
+    <ColumnDefinitions>
+        <PropertyColumn Property="c => c.Name"/>
+        <PropertyColumn Property="c => c.Description"/>
+        <ActionColumn Title="Action">
+            <Space Size=@("middle")>
+                <SpaceItem>
+                    <a>Invite @context.Name</a>
+                </SpaceItem>
+                <SpaceItem>
+                    <a>Delete</a>
+                </SpaceItem>
+            </Space>
+        </ActionColumn>
+    </ColumnDefinitions>
+</Table>

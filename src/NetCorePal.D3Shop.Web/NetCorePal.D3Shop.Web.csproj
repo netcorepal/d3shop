@@ -61,4 +61,10 @@
     <_ContentIncludedByDefault Remove="Components\Account\Pages\Login.razor" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AdditionalFiles Include="Blazor\Components\App.razor" />
+    <AdditionalFiles Include="Blazor\Components\Pages\Error.razor" />
+    <AdditionalFiles Include="Blazor\Components\_Imports.razor" />
+  </ItemGroup>
+
 </Project>

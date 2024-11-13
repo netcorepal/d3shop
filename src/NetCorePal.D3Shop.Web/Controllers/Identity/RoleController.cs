@@ -17,7 +17,8 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 [ApiController]
 public class RoleController(IMediator mediator, IMapperProvider mapperProvider, RoleQuery roleQuery) : ControllerBase
 {
-    private CancellationToken CancellationToken => HttpContext.RequestAborted;
+    private CancellationToken CancellationToken => HttpContext?.RequestAborted ?? CancellationToken.None;
+
     private IMapper<Role, RoleResponse> RoleOutputMapper => mapperProvider.GetMapper<Role, RoleResponse>();
 
     [HttpPost]
@@ -93,7 +94,8 @@ public class RoleController(IMediator mediator, IMapperProvider mapperProvider, 
 
     [HttpPut("{id}")]
     [MustHaveAdminPermission(PermissionDefinitions.RoleUpdatePermissions)]
-    public async Task<ResponseData> UpdateRolePermissions([FromRoute] RoleId id, [FromBody] List<string> permissionCodes)
+    public async Task<ResponseData> UpdateRolePermissions([FromRoute] RoleId id,
+        [FromBody] List<string> permissionCodes)
     {
         var allPermissions = Permissions.AllPermissions;
         var permissionsToBeAssigned = allPermissions.Where(x => permissionCodes.Contains(x.Code))
