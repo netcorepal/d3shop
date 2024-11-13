@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using NetCorePal.D3Shop.Admin.Shared.Responses;
 using NetCorePal.D3Shop.Web.Helper;
+using NetCorePal.Extensions.Dto;
 
 namespace NetCorePal.D3Shop.Web.Tests.Identity;
 

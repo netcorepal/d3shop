@@ -5,6 +5,7 @@ using System.Net.Http.Json;
 using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Admin.Shared.Responses;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
+using NetCorePal.Extensions.Dto;
 
 namespace NetCorePal.D3Shop.Web.Tests.Identity;
 

@@ -144,7 +144,7 @@ try
         .AddIIntegrationEventConverter(typeof(Program))
         .UseCap(typeof(Program))
         .AddContextIntegrationFilters()
-        .AddEnvIntegrationFilters();
+        .AddEnvIntegrationFilters(_ => { });
     builder.Services.AddCap(x =>
     {
         x.UseEntityFramework<ApplicationDbContext>();
