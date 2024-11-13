@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using System.Net;
+﻿using System.Net;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using NetCorePal.D3Shop.Admin.Shared.PermissionConfig;
+using Newtonsoft.Json;
 
 namespace NetCorePal.D3Shop.Web.Extensions
 {

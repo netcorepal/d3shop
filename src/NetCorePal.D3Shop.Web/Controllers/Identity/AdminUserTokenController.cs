@@ -1,20 +1,20 @@
-﻿using MediatR;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using NetCorePal.D3Shop.Admin.Shared.Const;
+using NetCorePal.D3Shop.Admin.Shared.Requests;
+using NetCorePal.D3Shop.Admin.Shared.Responses;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
-using NetCorePal.D3Shop.Web.Controllers.Identity.Requests;
-using NetCorePal.D3Shop.Web.Controllers.Identity.Responses;
-using NetCorePal.Extensions.Primitives;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using NetCorePal.D3Shop.Admin.Shared.Const;
 using NetCorePal.D3Shop.Web.Helper;
+using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 

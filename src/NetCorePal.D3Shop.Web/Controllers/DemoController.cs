@@ -1,9 +1,9 @@
-﻿using NetCorePal.D3Shop.Domain.AggregatesModel.OrderAggregate;
-using NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NetCorePal.Context;
+using NetCorePal.D3Shop.Domain.AggregatesModel.OrderAggregate;
+using NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers;
 using NetCorePal.Extensions.DistributedLocks;
 using NetCorePal.Extensions.DistributedTransactions;
 using NetCorePal.Extensions.Domain;

@@ -1,5 +1,5 @@
-﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
-using NetCorePal.D3Shop.Web.Controllers.Identity.Responses;
+﻿using NetCorePal.D3Shop.Admin.Shared.Responses;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.Extensions.Mappers;
 
 namespace NetCorePal.D3Shop.Web.Application.Mappers;
