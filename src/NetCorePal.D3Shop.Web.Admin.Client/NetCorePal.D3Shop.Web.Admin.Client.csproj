@@ -10,8 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="AntDesign.Charts" Version="0.5.6" />
-    <PackageReference Include="AntDesign.Extensions.Localization" Version="1.0.0-rc.2" />
-    <PackageReference Include="AntDesign.ProLayout" Version="1.0.0-rc.2" />
+    <PackageReference Include="AntDesign.Extensions.Localization" Version="1.0.0" />
+    <PackageReference Include="AntDesign.ProLayout" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="$(FrameworkVersion)" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="$(FrameworkVersion)" PrivateAssets="all" />
@@ -34,15 +34,5 @@
     <_ContentIncludedByDefault Remove="Pages\Account\Pages\Login.razor" />
     <_ContentIncludedByDefault Remove="Account\Pages\Login.razor" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
-      <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.10\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNetCore.Http.Features">
-      <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.10\Microsoft.AspNetCore.Http.Features.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
   
 </Project>
