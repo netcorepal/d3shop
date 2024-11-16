@@ -1,14 +1,24 @@
 @page "/admin/roles"
+@using NetCorePal.D3Shop.Web.Admin.Client.Components
+@using NetCorePal.D3Shop.Web.Admin.Client.Extensions
 @attribute [MustHaveAdminPermission(PermissionDefinitions.RoleView)]
 
 <Table DataSource="_roleList">
     <TitleTemplate>
-        <GridRow>
+        <GridRow Gutter="8" Justify="space-between">
             <GridCol Span="4">
                 <Title Level="3">角色列表</Title>
             </GridCol>
-            <GridCol Span="8" Offset="12">
+            <GridCol Span="8" Offset="10">
                 <Search Placeholder="Search Name" @bind-Value="_searchString" OnSearch="() => { }"/>
+            </GridCol>
+            <GridCol Span="2">
+                <AuthorizeView>
+                    @if (context.CheckPermission(PermissionDefinitions.RoleCreate))
+                    {
+                        <AddRole OnItemAdded="HandleItemAdded"></AddRole>
+                    }
+                </AuthorizeView>
             </GridCol>
         </GridRow>
     </TitleTemplate>

@@ -35,6 +35,12 @@ public sealed partial class Roles : IDisposable
         await Message.Error(response.Message);
         return [];
     }
+    
+    // 处理子组件新增事件
+    private async Task HandleItemAdded()
+    {
+        _roleList = await GetAllRoles();
+    }
 
     string _searchString = default!;
     

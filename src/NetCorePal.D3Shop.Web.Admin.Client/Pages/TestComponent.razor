@@ -1,0 +1,73 @@
+﻿@page "/test/component"
+<h3>此页面用于测试组件样式和行为</h3>
+
+<Tree
+    @ref="tree"
+    TItem="string"
+    Multiple
+    Checkable
+    ShowLine
+    OnCheck="HandleCheck"
+    @bind-CheckedKeys="CheckedKeys">
+    @foreach (var group in GroupedPermissions)
+    {
+        <TreeNode Key="@group.Key" Title="@group.Key">
+            @foreach (var permission in group.Value)
+            {
+                <TreeNode Key="@permission.Code" Title="@($"{permission.Remark} ({permission.Code})")"/>
+            }
+        </TreeNode>
+    }
+</Tree>
+
+<h3>Selected Permissions:</h3>
+<ul>
+    @foreach (var selected in SelectedPermissions)
+    {
+        <li>@selected.Remark (@selected.Code) - Group: @selected.GroupName</li>
+    }
+</ul>
+
+@code {
+
+    // 假设的权限数据
+    private List<Permission> Permissions = new()
+    {
+        new Permission("Code1", "Group1", "Remark1"),
+        new Permission("Code2", "Group1", "Remark2"),
+        new Permission("Code3", "Group2", "Remark3"),
+        new Permission("Code4", "Group3", "Remark4"),
+    };
+
+    // 按 GroupName 分组的权限
+    private Dictionary<string, List<Permission>> GroupedPermissions = [];
+
+    // 树组件引用
+    private Tree<string> tree = default!;
+
+    // 选中的节点 Key
+    private string[] CheckedKeys = [];
+
+    // 选中的权限
+    private List<Permission> SelectedPermissions = new();
+
+    protected override void OnInitialized()
+    {
+        // 按 GroupName 分组
+        GroupedPermissions = Permissions
+            .GroupBy(p => p.GroupName)
+            .ToDictionary(g => g.Key, g => g.ToList());
+    }
+
+    private void HandleCheck(TreeEventArgs<string> e)
+    {
+        // 获取选中的权限
+        SelectedPermissions = Permissions
+            .Where(p => CheckedKeys.Contains(p.Code))
+            .ToList();
+    }
+
+    // 权限数据模型
+    public record Permission(string Code, string GroupName, string Remark);
+
+}

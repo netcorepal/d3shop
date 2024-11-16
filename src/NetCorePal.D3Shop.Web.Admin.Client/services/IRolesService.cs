@@ -6,7 +6,7 @@ namespace NetCorePal.D3Shop.Web.Admin.Client.Services;
 public interface IRolesService
 {
     [Post("/api/Role/CreateRole")]
-    Task CreateRole([Body] CreateRoleRequest request);
+    Task<ResponseData<RoleId>> CreateRole([Body] CreateRoleRequest request);
 
     [Get("/api/Role/GetAllRoles")]
     Task<ResponseData<IEnumerable<RoleResponse>>> GetAllRoles();

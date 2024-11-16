@@ -1,0 +1,43 @@
+﻿<Button Type="@ButtonType.Primary" OnClick="@ShowModal">新建</Button>
+
+<Modal Title="@("新建角色")"
+       Visible="@_modalVisible"
+       OnOk="@Modal_HandleOk"
+       OnCancel="@Modal_HandleCancel"
+       ConfirmLoading="@_modalConfirmLoading">
+
+    <Tabs @ref="_tabs">
+        <TabPane Tab="基本信息">
+            <Form @ref="_form"
+                  Model="@_newRoleModel"
+                  OnFinish="Form_OnFinish"
+                  OnFinishFailed="Form_OnFinishFailed"
+                  LabelColSpan="4"
+                  WrapperColSpan="16">
+                <FormItem Label="名称">
+                    <Input @bind-Value="@context.Name"/>
+                </FormItem>
+                <FormItem Label="描述">
+                    <Input @bind-Value="@context.Description"/>
+                </FormItem>
+            </Form>
+        </TabPane>
+        <TabPane Tab="角色权限">
+            <Tree TItem="string"
+                  Checkable
+                  @bind-CheckedKeys="_treeCheckedKeys"
+                  OnCheck="Tree_OnCheck">
+                @foreach (var group in _allPermissions.GroupBy(p => p.GroupName))
+                {
+                    <TreeNode Title="@group.Key" Key="@group.Key">
+                        @foreach (var permission in group)
+                        {
+                            <TreeNode Title="@permission.Remark" Key="@permission.Code"/>
+                        }
+                    </TreeNode>
+                }
+            </Tree>
+        </TabPane>
+    </Tabs>
+</Modal>
+

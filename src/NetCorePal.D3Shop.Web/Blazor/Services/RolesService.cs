@@ -9,9 +9,9 @@ namespace NetCorePal.D3Shop.Web.Blazor.Services;
 
 public class RolesService(RoleController roleController) : IRolesService
 {
-    public async Task CreateRole(CreateRoleRequest request)
+    public async Task<ResponseData<RoleId>> CreateRole(CreateRoleRequest request)
     {
-        await roleController.CreateRole(request);
+        return await roleController.CreateRole(request);
     }
 
     public async Task<ResponseData<IEnumerable<RoleResponse>>> GetAllRoles()

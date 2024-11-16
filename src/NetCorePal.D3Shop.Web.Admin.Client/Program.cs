@@ -22,6 +22,9 @@ namespace NetCorePal.D3Shop.Web.Admin.Client
             var settings = new RefitSettings(ser);
             builder.Services.AddRefitClient<IRolesService>(settings)
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+            builder.Services.AddRefitClient<IPermissionsService>(settings)
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+
 
             builder.Services.AddAuthorizationCore();
             builder.Services.AddCascadingAuthenticationState();

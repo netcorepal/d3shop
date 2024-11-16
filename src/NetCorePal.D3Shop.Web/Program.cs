@@ -198,7 +198,7 @@ try
     builder.Services.AddCascadingAuthenticationState();
     builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
     builder.Services.AddScoped<IRolesService, RolesService>();
-
+    builder.Services.AddScoped<IPermissionsService,PermissionsService>();
     #endregion
 
     var app = builder.Build();
