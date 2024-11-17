@@ -27,10 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="Pages\Account\Pages\Login.razor" />
     <_ContentIncludedByDefault Remove="Account\Pages\Login.razor" />
   </ItemGroup>

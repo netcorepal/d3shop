@@ -1,0 +1,63 @@
+﻿@using NetCorePal.D3Shop.Admin.Shared.Requests
+@using NetCorePal.D3Shop.Web.Admin.Client.Models
+@using NetCorePal.D3Shop.Web.Admin.Client.Services
+<a @onclick="ShowModal">编辑</a>
+<Modal Title="@("编辑")"
+       Visible="@_modalVisible"
+       OnOk="() => _form.Submit()"
+       OnCancel="() =>  _modalVisible = false"
+       ConfirmLoading="@_modalConfirmLoading">
+
+    <Form @ref="_form"
+          Model="@_roleInfoModel"
+          OnFinish="Form_OnFinish"
+          LabelColSpan="4"
+          WrapperColSpan="16">
+        <FormItem Label="名称">
+            <Input @bind-Value="@context.Name"/>
+        </FormItem>
+        <FormItem Label="描述">
+            <Input @bind-Value="@context.Description"/>
+        </FormItem>
+    </Form>
+</Modal>
+
+@code {
+    [CascadingParameter] public RoleResponse Row { get; set; } = default!;
+    [Inject] private IRolesService RolesService { get; set; } = default!;
+    [Inject] private MessageService Message { get; set; } = default!;
+    [Parameter] public EventCallback OnRowUpdated { get; set; }
+
+    private bool _modalVisible;
+    private bool _modalConfirmLoading;
+    private Form<UpdateRoleInfoModel> _form = default!;
+    private UpdateRoleInfoModel _roleInfoModel = new();
+
+    private void ShowModal()
+    {
+        _modalVisible = true;
+        _roleInfoModel.Name = Row.Name;
+        _roleInfoModel.Description = Row.Description;
+    }
+
+    private async Task Form_OnFinish(EditContext editContext)
+    {
+        _modalConfirmLoading = true;
+        StateHasChanged();
+        var response = await RolesService.UpdateRoleInfo(Row.Id, new UpdateRoleInfoRequest(_roleInfoModel.Name, _roleInfoModel.Description));
+        _modalConfirmLoading = false;
+        if (response.Success)
+        {
+            _modalVisible = false;
+            _ = Message.Success("更新成功！");
+            Row.Name = _roleInfoModel.Name;
+            Row.Description = _roleInfoModel.Description;
+            await OnRowUpdated.InvokeAsync();
+        }
+        else
+        {
+            _ = Message.Error(response.Message);
+        }
+    }
+
+}

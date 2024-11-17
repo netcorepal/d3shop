@@ -19,6 +19,11 @@ public class RolesService(RoleController roleController) : IRolesService
         return await roleController.GetAllRoles();
     }
 
+    public async Task<ResponseData> UpdateRoleInfo(RoleId id, UpdateRoleInfoRequest request)
+    {
+        return await roleController.UpdateRoleInfo(id, request);
+    }
+
     public async Task<ResponseData<IEnumerable<RoleResponse>>> GetRolesByCondition(
         RoleQueryRequest request)
     {

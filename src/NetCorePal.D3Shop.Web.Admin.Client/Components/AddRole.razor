@@ -2,8 +2,8 @@
 
 <Modal Title="@("新建角色")"
        Visible="@_modalVisible"
-       OnOk="@Modal_HandleOk"
-       OnCancel="@Modal_HandleCancel"
+       OnOk="() => _form.Submit()"
+       OnCancel="() => _modalVisible = false"
        ConfirmLoading="@_modalConfirmLoading">
 
     <Tabs @ref="_tabs">

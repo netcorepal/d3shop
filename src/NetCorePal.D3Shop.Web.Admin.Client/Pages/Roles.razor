@@ -22,18 +22,19 @@
             </GridCol>
         </GridRow>
     </TitleTemplate>
-    <ColumnDefinitions>
+    <ColumnDefinitions Context="row">
         <PropertyColumn Property="c => c.Name"/>
         <PropertyColumn Property="c => c.Description"/>
         <ActionColumn Title="Action">
-            <Space Size=@("middle")>
-                <SpaceItem>
-                    <a>Invite @context.Name</a>
-                </SpaceItem>
-                <SpaceItem>
-                    <a>Delete</a>
-                </SpaceItem>
-            </Space>
+            <AuthorizeView>
+                @if (context.CheckPermission(PermissionDefinitions.RoleEdit))
+                {
+                    <CascadingValue Value="@row">
+                        <EditRoleInfo OnRowUpdated="HandleItemUpdated"></EditRoleInfo>
+                    </CascadingValue>
+                }
+            </AuthorizeView>
+            <a>Delete</a>
         </ActionColumn>
     </ColumnDefinitions>
 </Table>

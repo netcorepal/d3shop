@@ -36,14 +36,18 @@ public sealed partial class Roles : IDisposable
         return [];
     }
     
-    // 处理子组件新增事件
     private async Task HandleItemAdded()
     {
         _roleList = await GetAllRoles();
     }
 
+    private void HandleItemUpdated()
+    {
+        StateHasChanged();
+    }
+
     string _searchString = default!;
-    
+
     public void Dispose()
     {
         _persistingSubscription.Dispose();
