@@ -2,6 +2,7 @@
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.Extensions.Domain;
 using NetCorePal.Extensions.Primitives;
+
 // ReSharper disable VirtualMemberCallInConstructor
 
 namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
@@ -10,19 +11,21 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
 
     public class AdminUser : Entity<AdminUserId>, IAggregateRoot
     {
-        protected AdminUser() { }
+        protected AdminUser()
+        {
+        }
 
         public string Name { get; private set; } = string.Empty;
         public string Phone { get; private set; } = string.Empty;
         public string Password { get; private set; } = string.Empty;
-        public string RefreshToken { get; private set; } = string.Empty;
-        public DateTime LoginExpiryDate { get; private set; }
         public DateTime CreatedAt { get; init; }
-        public virtual ICollection<AdminUserRole> Roles { get; private set; } = [];
-        public virtual ICollection<AdminUserPermission> Permissions { get; private set; } = [];
-        public bool IsDeleted { get; private set; } = false;
+        public virtual ICollection<AdminUserRole> Roles { get; } = [];
+        public virtual ICollection<AdminUserPermission> Permissions { get; } = [];
+        public bool IsDeleted { get; private set; }
+        public DateTime? DeletedAt { get; private set; }
 
-        public AdminUser(string name, string phone, string password, IEnumerable<AssignAdminUserRoleDto> rolesToBeAssigned)
+        public AdminUser(string name, string phone, string password,
+            IEnumerable<AssignAdminUserRoleDto> rolesToBeAssigned)
         {
             CreatedAt = DateTime.Now;
             Name = name;
@@ -125,6 +128,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         {
             if (IsDeleted) throw new KnownException("用户已经被删除！");
             IsDeleted = true;
+            DeletedAt = DateTime.Now;
         }
 
         public bool IsInRole(string roleName)
@@ -135,17 +139,6 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         public void SetPassword(string password)
         {
             Password = password;
-        }
-
-        public void LoginSuccessful(string refreshToken, DateTime loginExpiryDate)
-        {
-            RefreshToken = refreshToken;
-            LoginExpiryDate = loginExpiryDate;
-        }
-
-        public void UpdateRefreshToken(string token)
-        {
-            RefreshToken = token;
         }
 
         public void SetPhone(string phone)

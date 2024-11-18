@@ -1,10 +1,10 @@
-﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
-using NetCorePal.Extensions.AspNetCore;
+﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Admin.Shared.Responses;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.Extensions.Dto;
 
 namespace NetCorePal.D3Shop.Web.Tests.Identity;
@@ -17,10 +17,15 @@ public class AdminUserRoleIntegrationTests
     {
         _client = factory.WithWebHostBuilder(builder => { builder.ConfigureServices(_ => { }); })
             .CreateClient();
-
-        var configuration = factory.Services.GetRequiredService<IConfiguration>();
-        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Helpers.GenerateEncryptedToken(configuration));
-
+        const string json = $$"""
+                              {
+                                   "name": "{{AppDefaultCredentials.Name}}",
+                                   "password": "{{AppDefaultCredentials.Password}}"
+                              }
+                              """;
+        var content = new StringContent(json);
+        content.Headers.ContentType = new MediaTypeHeaderValue("application/json"); 
+        _client.PostAsync("api/AdminUserToken/login", content).GetAwaiter().GetResult();
     }
 
     /// <summary>

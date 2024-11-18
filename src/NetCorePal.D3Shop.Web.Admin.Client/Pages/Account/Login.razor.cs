@@ -17,7 +17,7 @@ namespace NetCorePal.D3Shop.Web.Admin.Client.Pages.Account
 
         public async Task HandleSubmit()
         {
-            var request = new AdminUserLoginRequest(_model.Name, _model.Password);
+            var request = new AdminUserLoginRequest(_model.Name, _model.Password, _model.AutoLogin);
             var response = await AccountService.LoginAsync(request);
             if (response.Success)
                 NavigationManager.NavigateTo("/admin", forceLoad: true);

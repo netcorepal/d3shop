@@ -4,10 +4,9 @@ namespace NetCorePal.D3Shop.Web.Admin.Client
     // to expose more information about the authenticated user to the client.
     public class UserInfo
     {
-        public required string UserId { get; set; }
-        public required IEnumerable<string> Roles { get; set; }
+        public required string UserId { get; init; }
+        public required IEnumerable<string> Roles { get; init; }
 
-        public required IEnumerable<string> Permissions { get; set; }
-        public required string AccessToken { get; set; }
+        public required IEnumerable<string> Permissions { get; init; }
     }
 }

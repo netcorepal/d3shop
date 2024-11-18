@@ -1,17 +1,12 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using MediatR;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using NetCorePal.D3Shop.Admin.Shared.Const;
 using NetCorePal.D3Shop.Admin.Shared.Requests;
-using NetCorePal.D3Shop.Admin.Shared.Responses;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Web.Application.Commands.Identity;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.D3Shop.Web.Helper;
 using NetCorePal.Extensions.Dto;
@@ -22,12 +17,14 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 [Route("api/[controller]")]
 [ApiController]
 [AllowAnonymous]
-public class AdminUserTokenController(IMediator mediator, AdminUserQuery adminUserQuery, IOptions<AppConfiguration> appConfiguration) : ControllerBase
+public class AdminUserTokenController(
+    AdminUserQuery adminUserQuery,
+    IOptions<AppConfiguration> appConfiguration) : ControllerBase
 {
     private AppConfiguration AppConfiguration => appConfiguration.Value;
 
     [HttpPost("login")]
-    public async Task<ResponseData<AdminUserTokenResponse>> LoginAsync([FromBody] AdminUserLoginRequest request)
+    public async Task<ResponseData> LoginAsync([FromBody] AdminUserLoginRequest request)
     {
         var user = await adminUserQuery.GetAdminUserByNameAsync(request.Name, HttpContext.RequestAborted);
         if (user is null)
@@ -36,47 +33,47 @@ public class AdminUserTokenController(IMediator mediator, AdminUserQuery adminUs
         if (!PasswordHasher.VerifyHashedPassword(request.Password, user.Password))
             throw new KnownException("Invalid Credentials.");
 
-        var refreshToken = GenerateRefreshToken();
-        var loginExpiryDate = DateTime.Now.AddDays(7);
-
-        await mediator.Send(new AdminUserLoginSuccessfullyCommand(user.Id, refreshToken, loginExpiryDate));
-        var jwtToken = GenerateJwtAsync(user);
-        HttpContext.Response.Cookies.Append("authToken", jwtToken, new CookieOptions
+        var claims = GetClaimsAsync(user);
+        var claimsIdentity = new ClaimsIdentity(
+            claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var authProperties = new AuthenticationProperties
         {
-            HttpOnly = true, // 仅允许服务器访问 Cookie，增强安全性
-            Secure = true, // 使用 HTTPS 时设置 Secure
-            SameSite = SameSiteMode.Strict, // 配置 SameSite 策略以防 CSRF 攻击
-            // Expires = DateTimeOffset.Now.AddMinutes(30) // 设置 Cookie 过期时间
-        });
-        var response = new AdminUserTokenResponse(GenerateJwtAsync(user), refreshToken, loginExpiryDate);
-        return response.AsResponseData();
+            AllowRefresh = true,
+            ExpiresUtc = DateTime.UtcNow.AddMinutes(AppConfiguration.TokenExpiryInMinutes),
+            IsPersistent = request.IsPersistent
+        };
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity),
+            authProperties);
+        return new ResponseData();
     }
 
-    [HttpPost("getRefreshToken")]
-    public async Task<ResponseData<AdminUserTokenResponse>> GetRefreshTokenAsync([FromBody] AdminUserRefreshTokenRequest request)
+    private static IEnumerable<Claim> GetClaimsAsync(AdminUser user)
     {
-        var userPrincipal = GetPrincipalFromExpiredToken(request.Token);
+        var roles = user.Roles;
+        var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role.RoleName)).ToList();
+        //系统默认用户添加超级管理员角色
+        if (user.Name == AppDefaultCredentials.Name)
+            roleClaims.Add(new Claim(ClaimTypes.Role, AppClaim.SuperAdminRole));
 
-        var userName = userPrincipal.FindFirstValue(ClaimTypes.Name) ??
-                       throw new KnownException("Invalid Token:There is no username in the token");
+        var permissions = user.Permissions;
+        var permissionClaims = permissions.Select(p => new Claim(AppClaim.AdminPermission, p.PermissionCode));
 
-        var user = await adminUserQuery.GetAdminUserByNameAsync(userName, HttpContext.RequestAborted);
-        if (user is null)
-            throw new KnownException("Invalid Token:User does not exist");
+        var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Name, user.Name),
+                new(ClaimTypes.MobilePhone, user.Phone)
+            }
+            .Union(roleClaims)
+            .Union(permissionClaims);
 
-        if (string.IsNullOrWhiteSpace(request.RefreshToken) ||
-        user.RefreshToken != request.RefreshToken ||
-        user.LoginExpiryDate <= DateTime.Now)
-            throw new KnownException("Invalid Client Token.");
-
-        var refreshToken = GenerateRefreshToken();
-        await mediator.Send(new UpdateAdminUserRefreshTokenCommand(user.Id, refreshToken));
-
-        var response = new AdminUserTokenResponse(GenerateJwtAsync(user), refreshToken, user.LoginExpiryDate);
-        return response.AsResponseData();
+        return claims;
     }
 
-    private static string GenerateRefreshToken()
+
+    /*private static string GenerateRefreshToken()
     {
         var randomNumber = new byte[32];
         using var rnd = RandomNumberGenerator.Create();
@@ -108,29 +105,6 @@ public class AdminUserTokenController(IMediator mediator, AdminUserQuery adminUs
         return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256);
     }
 
-    private static IEnumerable<Claim> GetClaimsAsync(AdminUser user)
-    {
-        var roles = user.Roles;
-        var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role.RoleName)).ToList();
-        //系统默认用户添加超级管理员角色
-        if (user.Name == AppDefaultCredentials.Name)
-            roleClaims.Add(new Claim(ClaimTypes.Role, AppClaim.SuperAdminRole));
-
-        var permissions = user.Permissions;
-        var permissionClaims = permissions.Select(p => new Claim(AppClaim.AdminPermission, p.PermissionCode));
-
-        var claims = new List<Claim>
-            {
-                new(ClaimTypes.NameIdentifier,user.Id.ToString()),
-                new(ClaimTypes.Name, user.Name),
-                new(ClaimTypes.MobilePhone, user.Phone)
-            }
-        .Union(roleClaims)
-        .Union(permissionClaims);
-
-        return claims;
-    }
-
     private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
         var tokenValidationParameters = new TokenValidationParameters
@@ -146,12 +120,11 @@ public class AdminUserTokenController(IMediator mediator, AdminUserQuery adminUs
         var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
         if (securityToken is not JwtSecurityToken jwtSecurityToken
             || !jwtSecurityToken.Header.Alg
-            .Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                .Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
         {
             throw new SecurityTokenException("Invalid token");
         }
 
         return principal;
-    }
-
+    }*/
 }

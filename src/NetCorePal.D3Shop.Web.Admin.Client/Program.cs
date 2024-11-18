@@ -14,42 +14,31 @@ namespace NetCorePal.D3Shop.Web.Admin.Client
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            
+
             builder.Services.AddRefitClient<IAccountService>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
-            var ser = new NewtonsoftJsonContentSerializer(new JsonSerializerSettings {});
+            var ser = new NewtonsoftJsonContentSerializer(new JsonSerializerSettings { });
             var settings = new RefitSettings(ser);
             builder.Services.AddRefitClient<IRolesService>(settings)
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
             builder.Services.AddRefitClient<IPermissionsService>(settings)
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
+            #region 身份认证和授权
 
             builder.Services.AddAuthorizationCore();
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
-            builder.Services.AddSingleton<IAccessTokenProvider, AccessTokenProvider>();
+            builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
-            AddPermissionAuthorizationServices(builder.Services);
+            #endregion
 
-            AddClientServices(builder.Services);
+            builder.Services.AddAntDesign();
 
             builder.Services.Configure<ProSettings>(builder.Configuration.GetSection("ProSettings"));
 
             await builder.Build().RunAsync();
-        }
-
-        public static void AddClientServices(IServiceCollection services)
-        {
-            services.AddAntDesign();
-        }
-
-        private static void AddPermissionAuthorizationServices(IServiceCollection services)
-        {
-            services
-                // .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
-                .AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
         }
     }
 }

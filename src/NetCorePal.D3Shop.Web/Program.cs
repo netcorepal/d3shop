@@ -3,10 +3,12 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
 using Hangfire.Redis.StackExchange;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using NetCorePal.D3Shop.Admin.Shared.PermissionConfig;
 using NetCorePal.D3Shop.Web.Admin.Client.Services;
 using NetCorePal.D3Shop.Web.Application.Hubs;
 using NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers;
@@ -15,7 +17,6 @@ using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.D3Shop.Web.Blazor.Components;
 using NetCorePal.D3Shop.Web.Blazor.Services;
 using NetCorePal.D3Shop.Web.Clients;
-using NetCorePal.D3Shop.Web.Components;
 using NetCorePal.D3Shop.Web.Extensions;
 using NetCorePal.Extensions.AspNetCore.Json;
 using NetCorePal.Extensions.Domain.Json;
@@ -62,13 +63,13 @@ try
 
     #region 身份认证
 
-    var redis = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!);
+    var redis = await ConnectionMultiplexer.ConnectAsync(builder.Configuration.GetConnectionString("Redis")!);
     builder.Services.AddSingleton<IConnectionMultiplexer>(_ => redis);
     builder.Services.AddDataProtection()
         .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
 
-    builder.Services.AddJwtAuthentication(builder.Services.GetApplicationSettings(builder.Configuration));
-    builder.Services.AddPermissionAuthorizationServices();
+    builder.Services.AddAuthenticationSchemes(builder.Services.GetApplicationSettings(builder.Configuration));
+    builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
     #endregion
 
@@ -198,7 +199,8 @@ try
     builder.Services.AddCascadingAuthenticationState();
     builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
     builder.Services.AddScoped<IRolesService, RolesService>();
-    builder.Services.AddScoped<IPermissionsService,PermissionsService>();
+    builder.Services.AddScoped<IPermissionsService, PermissionsService>();
+
     #endregion
 
     var app = builder.Build();
@@ -206,7 +208,7 @@ try
     {
         using var scope = app.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        dbContext.Database.EnsureCreated();
+        await dbContext.Database.EnsureCreatedAsync();
         app.SeedDatabase();
     }
 
@@ -243,7 +245,7 @@ try
         .AddAdditionalAssemblies(typeof(_Imports).Assembly)
         .AllowAnonymous();
 
-    app.Run();
+    await app.RunAsync();
 }
 catch (Exception ex)
 {
@@ -251,7 +253,7 @@ catch (Exception ex)
 }
 finally
 {
-    Log.CloseAndFlush();
+    await Log.CloseAndFlushAsync();
 }
 
 #pragma warning disable S1118
