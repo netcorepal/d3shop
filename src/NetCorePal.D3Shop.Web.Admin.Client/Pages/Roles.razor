@@ -3,14 +3,17 @@
 @using NetCorePal.D3Shop.Web.Admin.Client.Extensions
 @attribute [MustHaveAdminPermission(PermissionDefinitions.RoleView)]
 
-<Table DataSource="_roleList">
+<Table
+    @ref="_table"
+    DataSource="_roleList"
+    HidePagination="true">
     <TitleTemplate>
         <GridRow Gutter="8" Justify="space-between">
             <GridCol Span="4">
                 <Title Level="3">角色列表</Title>
             </GridCol>
             <GridCol Span="8" Offset="10">
-                <Search Placeholder="Search Name" @bind-Value="_searchString" OnSearch="() => { }"/>
+                <Search Placeholder="搜索名称" @bind-Value="_searchString" OnSearch="() => OnSearch()"/>
             </GridCol>
             <GridCol Span="2">
                 <AuthorizeView>
@@ -23,9 +26,9 @@
         </GridRow>
     </TitleTemplate>
     <ColumnDefinitions Context="row">
-        <PropertyColumn Property="c => c.Name"/>
-        <PropertyColumn Property="c => c.Description"/>
-        <ActionColumn Title="Action">
+        <PropertyColumn Title="名称" Property="c => c.Name"/>
+        <PropertyColumn Title="描述" Property="c => c.Description"/>
+        <ActionColumn Title="操作">
             <AuthorizeView>
                 @if (context.CheckPermission(PermissionDefinitions.RoleEdit))
                 {
@@ -42,7 +45,12 @@
                     </CascadingValue>
                 }
             </AuthorizeView>
-            <a>Delete</a>
+            <AuthorizeView>
+                @if (context.CheckPermission(PermissionDefinitions.RoleDelete))
+                {
+                    <a @onclick="() => Delete(row)">删除</a>
+                }
+            </AuthorizeView>
         </ActionColumn>
     </ColumnDefinitions>
 </Table>

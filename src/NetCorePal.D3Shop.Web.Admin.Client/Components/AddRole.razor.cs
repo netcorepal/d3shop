@@ -39,6 +39,14 @@ public partial class AddRole
         return [];
     }
 
+    private void CloseModal()
+    {
+        _modalVisible = false;
+        _newRoleModel = new CreateRoleModel();
+        _treeCheckedKeys = [];
+        _tabs.GoTo(0);
+    }
+
     private async Task Form_OnFinish(EditContext editContext)
     {
         _modalConfirmLoading = true;
@@ -49,7 +57,7 @@ public partial class AddRole
         if (response.Success)
         {
             _ = Message.Success("创建成功！");
-            _modalVisible = false;
+            CloseModal();
             await OnItemAdded.InvokeAsync();
         }
         else

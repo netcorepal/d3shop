@@ -29,6 +29,11 @@ public class RolesService(RoleController roleController) : IRolesService
         return await roleController.UpdateRolePermissions(id, permissionCodes);
     }
 
+    public async Task<ResponseData> DeleteRole(RoleId id)
+    {
+        return await roleController.DeleteRole(id);
+    }
+
     public async Task<ResponseData<IEnumerable<RoleResponse>>> GetRolesByCondition(
         RoleQueryRequest request)
     {

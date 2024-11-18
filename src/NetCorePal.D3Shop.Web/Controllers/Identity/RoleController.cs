@@ -107,7 +107,7 @@ public class RoleController(IMediator mediator, IMapperProvider mapperProvider, 
         return new ResponseData();
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [MustHaveAdminPermission(PermissionDefinitions.RoleDelete)]
     public async Task<ResponseData> DeleteRole([FromRoute] RoleId id)
     {

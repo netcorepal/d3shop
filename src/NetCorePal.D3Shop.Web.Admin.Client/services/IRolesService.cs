@@ -17,6 +17,9 @@ public interface IRolesService
     [Put("/api/Role/UpdateRolePermissions/{id}")]
     Task<ResponseData> UpdateRolePermissions(RoleId id, [Body] List<string> permissionCodes);
 
+    [Delete("/api/Role/DeleteRole/{id}")]
+    Task<ResponseData> DeleteRole(RoleId id);
+
     [Get("/api/Role/GetRolesByCondition")]
     Task<ResponseData<IEnumerable<RoleResponse>>> GetRolesByCondition([Query] RoleQueryRequest request);
 
