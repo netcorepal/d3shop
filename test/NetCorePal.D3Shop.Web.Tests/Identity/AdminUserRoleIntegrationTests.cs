@@ -187,7 +187,7 @@ public class AdminUserRoleIntegrationTests
         getRoleResponse.EnsureSuccessStatusCode();
         var roleData = await getRoleResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<RoleResponse>>();
         Assert.NotNull(roleData);
-        Assert.Equal(permissionCodes.OrderBy(p => p), roleData.Data.Permissions.Select(p => p.PermissionCode).OrderBy(p => p));
+        Assert.Equal(permissionCodes.OrderBy(p => p), roleData.Data.PermissionCodes.OrderBy(p => p));
 
         permissionCodes = Permissions.AllPermissions.TakeLast(2).Select(p => p.Code).ToList();
         var updateResponse = await _client.PutAsNewtonsoftJsonAsync($"/api/Role/UpdateRolePermissions/{testRoleId}", permissionCodes);
@@ -197,7 +197,7 @@ public class AdminUserRoleIntegrationTests
         getRoleResponse.EnsureSuccessStatusCode();
         roleData = await getRoleResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<RoleResponse>>();
         Assert.NotNull(roleData);
-        Assert.Equal(permissionCodes.OrderBy(p => p), roleData.Data.Permissions.Select(p => p.PermissionCode).OrderBy(p => p));
+        Assert.Equal(permissionCodes.OrderBy(p => p), roleData.Data.PermissionCodes.OrderBy(p => p));
 
         //验证关联用户的权限
         var getUserResponse = await _client.GetAsync($"/api/AdminUser/GetAdminUserById/{testUserId}");

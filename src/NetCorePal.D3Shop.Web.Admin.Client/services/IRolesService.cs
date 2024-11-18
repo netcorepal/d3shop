@@ -14,6 +14,9 @@ public interface IRolesService
     [Put("/api/Role/UpdateRoleInfo/{id}")]
     Task<ResponseData> UpdateRoleInfo(RoleId id, [Body] UpdateRoleInfoRequest request);
 
+    [Put("/api/Role/UpdateRolePermissions/{id}")]
+    Task<ResponseData> UpdateRolePermissions(RoleId id, [Body] List<string> permissionCodes);
+
     [Get("/api/Role/GetRolesByCondition")]
     Task<ResponseData<IEnumerable<RoleResponse>>> GetRolesByCondition([Query] RoleQueryRequest request);
 

@@ -34,6 +34,14 @@
                     </CascadingValue>
                 }
             </AuthorizeView>
+            <AuthorizeView>
+                @if (context.CheckPermission(PermissionDefinitions.RoleUpdatePermissions))
+                {
+                    <CascadingValue Value="@row">
+                        <EditRolePermissions></EditRolePermissions>
+                    </CascadingValue>
+                }
+            </AuthorizeView>
             <a>Delete</a>
         </ActionColumn>
     </ColumnDefinitions>
