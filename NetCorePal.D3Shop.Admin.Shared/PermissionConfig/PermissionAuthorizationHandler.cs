@@ -19,8 +19,8 @@ namespace NetCorePal.D3Shop.Admin.Shared.PermissionConfig
 
             var permissions = context.User.Claims
                 .Where(claim => claim.Type == AppClaim.AdminPermission
-                    && claim.Value == requirement.Permission
-                    && claim.Issuer == "LOCAL AUTHORITY");
+                                && claim.Value == requirement.PermissionCode
+                                && claim.Issuer == "LOCAL AUTHORITY");
             if (permissions.Any())
             {
                 context.Succeed(requirement);

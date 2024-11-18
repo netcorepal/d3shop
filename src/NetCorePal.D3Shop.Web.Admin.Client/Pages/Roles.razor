@@ -1,7 +1,7 @@
 @page "/admin/roles"
 @using NetCorePal.D3Shop.Web.Admin.Client.Components
 @using NetCorePal.D3Shop.Web.Admin.Client.Extensions
-@attribute [MustHaveAdminPermission(PermissionDefinitions.RoleView)]
+@attribute [AdminPermission(PermissionDefinitions.RoleView)]
 
 <Table
     @ref="_table"

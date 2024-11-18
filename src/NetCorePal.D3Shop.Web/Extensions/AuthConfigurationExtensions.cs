@@ -15,8 +15,8 @@ namespace NetCorePal.D3Shop.Web.Extensions
         internal static IServiceCollection AddPermissionAuthorizationServices(this IServiceCollection services)
         {
             services
-                .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
-                .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+                // .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
+                .AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
             return services;
         }

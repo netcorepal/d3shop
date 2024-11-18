@@ -48,8 +48,8 @@ namespace NetCorePal.D3Shop.Web.Admin.Client
         private static void AddPermissionAuthorizationServices(IServiceCollection services)
         {
             services
-                .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
-                .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+                // .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
+                .AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
         }
     }
 }
