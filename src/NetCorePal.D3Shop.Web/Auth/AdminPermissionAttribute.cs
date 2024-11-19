@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using NetCorePal.D3Shop.Admin.Shared.PermissionConfig;
+using NetCorePal.D3Shop.Admin.Shared.Authorization;
 
-namespace NetCorePal.D3Shop.Admin.Shared.Attribute
+namespace NetCorePal.D3Shop.Web.Auth
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
     public class AdminPermissionAttribute(params string[] permissionCodes)

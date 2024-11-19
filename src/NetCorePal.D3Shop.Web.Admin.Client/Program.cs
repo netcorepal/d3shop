@@ -2,7 +2,7 @@ using AntDesign.ProLayout;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using NetCorePal.D3Shop.Admin.Shared.PermissionConfig;
+using NetCorePal.D3Shop.Admin.Shared.Authorization;
 using NetCorePal.D3Shop.Web.Admin.Client.Auth;
 using NetCorePal.D3Shop.Web.Admin.Client.Services;
 using Newtonsoft.Json;
@@ -30,7 +30,9 @@ namespace NetCorePal.D3Shop.Web.Admin.Client
             builder.Services.AddAuthorizationCore();
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
+            builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
             builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            builder.Services.AddSingleton<IPermissionChecker, ClientPermissionChecker>();
 
             #endregion
 

@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using NetCorePal.D3Shop.Admin.Shared.PermissionConfig;
+using NetCorePal.D3Shop.Admin.Shared.Authorization;
 using NetCorePal.D3Shop.Web.Admin.Client.Services;
 using NetCorePal.D3Shop.Web.Application.Hubs;
 using NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers;
 using NetCorePal.D3Shop.Web.Application.Queries;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
+using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Web.Blazor.Components;
 using NetCorePal.D3Shop.Web.Blazor.Services;
 using NetCorePal.D3Shop.Web.Clients;
@@ -69,7 +70,8 @@ try
         .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
 
     builder.Services.AddAuthenticationSchemes(builder.Services.GetApplicationSettings(builder.Configuration));
-    builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+    builder.Services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+    builder.Services.AddTransient<IPermissionChecker, ServerPermissionChecker>();
 
     #endregion
 
@@ -157,6 +159,8 @@ try
     });
 
     #endregion
+
+    builder.Services.AddMemoryCache();
 
     builder.Services.AddMediatR(cfg =>
         cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly())

@@ -25,7 +25,8 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext)
 
     public async Task<AdminUser?> GetAdminUserByNameAsync(string name, CancellationToken cancellationToken)
     {
-        var adminUser = await applicationDbContext.AdminUsers.FirstOrDefaultAsync(u => u.Name == name, cancellationToken);
+        var adminUser =
+            await applicationDbContext.AdminUsers.FirstOrDefaultAsync(u => u.Name == name, cancellationToken);
 
         return adminUser;
     }
@@ -42,5 +43,15 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext)
             .Where(x => x.Roles.Any(r => r.RoleId == roleId))
             .ToListAsync(cancellationToken);
         return adminUsers;
+    }
+
+    public async Task<List<string>> GetAdminUserPermissionCodes(AdminUserId id)
+    {
+        var permissionCodes = await applicationDbContext.AdminUsers
+            .Where(au => au.Id == id)
+            .SelectMany(au => au.Permissions.Select(p => p.PermissionCode))
+            .ToListAsync();
+
+        return permissionCodes;
     }
 }
