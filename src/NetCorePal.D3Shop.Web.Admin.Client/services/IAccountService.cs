@@ -6,6 +6,6 @@ namespace NetCorePal.D3Shop.Web.Admin.Client.Services;
 
 public interface IAccountService
 {
-    [Post("/api/AdminUserToken/login")]
+    [Post("/api/AdminUserAccount/login")]
     Task<ResponseData> LoginAsync([Body] AdminUserLoginRequest request);
 }

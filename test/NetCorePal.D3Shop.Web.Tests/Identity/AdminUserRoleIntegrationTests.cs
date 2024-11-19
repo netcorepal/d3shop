@@ -25,7 +25,7 @@ public class AdminUserRoleIntegrationTests
                               """;
         var content = new StringContent(json);
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json"); 
-        _client.PostAsync("api/AdminUserToken/login", content).GetAwaiter().GetResult();
+        _client.PostAsync("api/AdminUserAccount/login", content).GetAwaiter().GetResult();
     }
 
     /// <summary>

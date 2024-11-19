@@ -41,7 +41,7 @@ public class AuthTests
                      """;
         var content = new StringContent(json);
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-        response = await _client.PostAsync("api/AdminUserToken/login", content);
+        response = await _client.PostAsync("api/AdminUserAccount/login", content);
         Assert.True(response.IsSuccessStatusCode);
         response = await _client.GetAsync("/test/AdminUserAuthTest");
         Assert.True(response.IsSuccessStatusCode);

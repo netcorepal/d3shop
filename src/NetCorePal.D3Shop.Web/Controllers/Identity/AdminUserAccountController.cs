@@ -17,7 +17,7 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 [Route("api/[controller]")]
 [ApiController]
 [AllowAnonymous]
-public class AdminUserTokenController(
+public class AdminUserAccountController(
     AdminUserQuery adminUserQuery,
     IOptions<AppConfiguration> appConfiguration) : ControllerBase
 {
@@ -57,17 +57,13 @@ public class AdminUserTokenController(
         if (user.Name == AppDefaultCredentials.Name)
             roleClaims.Add(new Claim(ClaimTypes.Role, AppClaim.SuperAdminRole));
 
-        var permissions = user.Permissions;
-        var permissionClaims = permissions.Select(p => new Claim(AppClaim.AdminPermission, p.PermissionCode));
-
         var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Name, user.Name),
                 new(ClaimTypes.MobilePhone, user.Phone)
             }
-            .Union(roleClaims)
-            .Union(permissionClaims);
+            .Union(roleClaims);
 
         return claims;
     }

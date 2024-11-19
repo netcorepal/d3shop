@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
+using NetCorePal.D3Shop.Web.Const;
 
 namespace NetCorePal.D3Shop.Web.Application.Queries.Identity;
 
-public class AdminUserQuery(ApplicationDbContext applicationDbContext)
+public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCache memoryCache)
 {
     public async Task<AdminUser?> GetAdminUserByIdAsync(AdminUserId id, CancellationToken cancellationToken)
     {
@@ -45,13 +47,18 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext)
         return adminUsers;
     }
 
-    public async Task<List<string>> GetAdminUserPermissionCodes(AdminUserId id)
+    public async Task<List<string>?> GetAdminUserPermissionCodes(AdminUserId id)
     {
-        var permissionCodes = await applicationDbContext.AdminUsers
-            .Where(au => au.Id == id)
-            .SelectMany(au => au.Permissions.Select(p => p.PermissionCode))
-            .ToListAsync();
-
-        return permissionCodes;
+        var cacheKey = $"{CacheKeys.AdminUserPermissions}:{id}";
+        var adminUserPermissions = await memoryCache.GetOrCreateAsync(cacheKey, async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+            return await applicationDbContext.AdminUsers
+                .Where(au => au.Id == id)
+                .SelectMany(au => au.Permissions.Select(p => p.PermissionCode))
+                .ToListAsync();
+        });
+        
+        return adminUserPermissions;
     }
 }
