@@ -10,14 +10,15 @@
 
   <ItemGroup>
     <PackageReference Include="AntDesign.Charts" Version="0.5.6" />
-    <PackageReference Include="AntDesign.Extensions.Localization" Version="1.0.0-rc.2" />
-    <PackageReference Include="AntDesign.ProLayout" Version="1.0.0-rc.2" />
+    <PackageReference Include="AntDesign.Extensions.Localization" Version="1.0.0" />
+    <PackageReference Include="AntDesign.ProLayout" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="$(FrameworkVersion)" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="$(FrameworkVersion)" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="$(ExtensionsVersion)" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(ExtensionsVersion)" />
     <PackageReference Include="NetCorePal.Extensions.NewtonsoftJson" Version="2.0.0-preview.1.2410290216" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
+    <PackageReference Include="Refit.Newtonsoft.Json" Version="8.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
   </ItemGroup>
 
@@ -26,22 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="Pages\Account\Pages\Login.razor" />
     <_ContentIncludedByDefault Remove="Account\Pages\Login.razor" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
-      <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.10\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNetCore.Http.Features">
-      <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.10\Microsoft.AspNetCore.Http.Features.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
   
 </Project>

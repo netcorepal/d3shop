@@ -39,8 +39,8 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="8.0.1" />
     <PackageReference Include="prometheus-net.AspNetCore.HealthChecks" Version="8.0.1" />
-    <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
-    <PackageReference Include="Refit.Newtonsoft.Json" Version="7.0.0" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
+    <PackageReference Include="Refit.Newtonsoft.Json" Version="8.0.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
     <PackageReference Include="Serilog.Enrichers.ClientInfo" Version="2.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
@@ -59,6 +59,12 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Components\Account\Pages\Login.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Blazor\Components\App.razor" />
+    <AdditionalFiles Include="Blazor\Components\Pages\Error.razor" />
+    <AdditionalFiles Include="Blazor\Components\_Imports.razor" />
   </ItemGroup>
 
 </Project>

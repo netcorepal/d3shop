@@ -1,10 +1,11 @@
-﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
-using NetCorePal.D3Shop.Web.Controllers.Identity.Requests;
-using NetCorePal.D3Shop.Web.Controllers.Identity.Responses;
-using NetCorePal.Extensions.AspNetCore;
+﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using NetCorePal.D3Shop.Admin.Shared.Requests;
+using NetCorePal.D3Shop.Admin.Shared.Responses;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
+using NetCorePal.Extensions.Dto;
 
 namespace NetCorePal.D3Shop.Web.Tests.Identity;
 
@@ -16,10 +17,15 @@ public class AdminUserRoleIntegrationTests
     {
         _client = factory.WithWebHostBuilder(builder => { builder.ConfigureServices(_ => { }); })
             .CreateClient();
-
-        var configuration = factory.Services.GetRequiredService<IConfiguration>();
-        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Helpers.GenerateEncryptedToken(configuration));
-
+        const string json = $$"""
+                              {
+                                   "name": "{{AppDefaultCredentials.Name}}",
+                                   "password": "{{AppDefaultCredentials.Password}}"
+                              }
+                              """;
+        var content = new StringContent(json);
+        content.Headers.ContentType = new MediaTypeHeaderValue("application/json"); 
+        _client.PostAsync("api/AdminUserAccount/login", content).GetAwaiter().GetResult();
     }
 
     /// <summary>
@@ -186,7 +192,7 @@ public class AdminUserRoleIntegrationTests
         getRoleResponse.EnsureSuccessStatusCode();
         var roleData = await getRoleResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<RoleResponse>>();
         Assert.NotNull(roleData);
-        Assert.Equal(permissionCodes.OrderBy(p => p), roleData.Data.Permissions.Select(p => p.PermissionCode).OrderBy(p => p));
+        Assert.Equal(permissionCodes.OrderBy(p => p), roleData.Data.PermissionCodes.OrderBy(p => p));
 
         permissionCodes = Permissions.AllPermissions.TakeLast(2).Select(p => p.Code).ToList();
         var updateResponse = await _client.PutAsNewtonsoftJsonAsync($"/api/Role/UpdateRolePermissions/{testRoleId}", permissionCodes);
@@ -196,7 +202,7 @@ public class AdminUserRoleIntegrationTests
         getRoleResponse.EnsureSuccessStatusCode();
         roleData = await getRoleResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<RoleResponse>>();
         Assert.NotNull(roleData);
-        Assert.Equal(permissionCodes.OrderBy(p => p), roleData.Data.Permissions.Select(p => p.PermissionCode).OrderBy(p => p));
+        Assert.Equal(permissionCodes.OrderBy(p => p), roleData.Data.PermissionCodes.OrderBy(p => p));
 
         //验证关联用户的权限
         var getUserResponse = await _client.GetAsync($"/api/AdminUser/GetAdminUserById/{testUserId}");

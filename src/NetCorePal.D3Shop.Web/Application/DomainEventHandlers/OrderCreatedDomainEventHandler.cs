@@ -1,6 +1,6 @@
-﻿using NetCorePal.D3Shop.Domain.DomainEvents;
+﻿using MediatR;
+using NetCorePal.D3Shop.Domain.DomainEvents;
 using NetCorePal.D3Shop.Web.Application.Commands;
-using MediatR;
 using NetCorePal.Extensions.Domain;
 
 namespace NetCorePal.D3Shop.Web.Application.DomainEventHandlers

@@ -1,26 +1,56 @@
 @page "/admin/roles"
-@attribute [MustHaveAdminPermission(PermissionDefinitions.RoleView)]
-@inject AuthenticationStateProvider iip;
-<h3>角色列表</h3>
-<button @onclick="l">test</button>
-<AuthorizeView>
-    <NotAuthorized>没权限</NotAuthorized>
-    <Authorized>有缺陷Hello @context.User.Identity?.IsAuthenticated.ToString();</Authorized>
-    
-</AuthorizeView>
+@using NetCorePal.D3Shop.Web.Admin.Client.Components
+@using NetCorePal.D3Shop.Web.Admin.Client.Extensions
+@attribute [ClientPermission(PermissionDefinitions.RoleView)]
 
-@if (u is not null)
-{
-    @u.User.Identity?.Name;
-}
-
-
-@code {
-    AuthenticationState? u;
-
-    async Task l()
-    {
-        u = await iip.GetAuthenticationStateAsync();
-    }
-
-}
+<Table
+    @ref="_table"
+    DataSource="_roleList"
+    HidePagination="true">
+    <TitleTemplate>
+        <GridRow Gutter="8" Justify="space-between">
+            <GridCol Span="4">
+                <Title Level="3">角色列表</Title>
+            </GridCol>
+            <GridCol Span="8" Offset="10">
+                <Search Placeholder="搜索名称" @bind-Value="_searchString" OnSearch="() => OnSearch()"/>
+            </GridCol>
+            <GridCol Span="2">
+                <AuthorizeView>
+                    @if (context.CheckPermission(PermissionDefinitions.RoleCreate))
+                    {
+                        <AddRole OnItemAdded="HandleItemAdded"></AddRole>
+                    }
+                </AuthorizeView>
+            </GridCol>
+        </GridRow>
+    </TitleTemplate>
+    <ColumnDefinitions Context="row">
+        <PropertyColumn Title="名称" Property="c => c.Name"/>
+        <PropertyColumn Title="描述" Property="c => c.Description"/>
+        <ActionColumn Title="操作">
+            <AuthorizeView>
+                @if (context.CheckPermission(PermissionDefinitions.RoleEdit))
+                {
+                    <CascadingValue Value="@row">
+                        <EditRoleInfo OnRowUpdated="HandleItemUpdated"></EditRoleInfo>
+                    </CascadingValue>
+                }
+            </AuthorizeView>
+            <AuthorizeView>
+                @if (context.CheckPermission(PermissionDefinitions.RoleUpdatePermissions))
+                {
+                    <CascadingValue Value="@row">
+                        <EditRolePermissions></EditRolePermissions>
+                    </CascadingValue>
+                }
+            </AuthorizeView>
+            <AuthorizeView>
+                @if (context.CheckPermission(PermissionDefinitions.RoleDelete))
+                {
+                    <a @onclick="() => Delete(row)">删除</a>
+                }
+            </AuthorizeView>
+        </ActionColumn>
+    </ColumnDefinitions>
+</Table>

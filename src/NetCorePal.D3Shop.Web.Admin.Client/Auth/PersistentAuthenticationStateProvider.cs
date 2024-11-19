@@ -15,10 +15,10 @@ namespace NetCorePal.D3Shop.Web.Admin.Client.Auth
     // cookie that will be included on HttpClient requests to the server.
     internal class PersistentAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private static readonly Task<AuthenticationState> defaultUnauthenticatedTask =
+        private static readonly Task<AuthenticationState> DefaultUnauthenticatedTask =
             Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())));
 
-        private readonly Task<AuthenticationState> authenticationStateTask = defaultUnauthenticatedTask;
+        private readonly Task<AuthenticationState> _authenticationStateTask = DefaultUnauthenticatedTask;
 
         public PersistentAuthenticationStateProvider(PersistentComponentState state)
         {
@@ -29,17 +29,16 @@ namespace NetCorePal.D3Shop.Web.Admin.Client.Auth
 
             Claim[] claims =
             [
-                new Claim(ClaimTypes.NameIdentifier, userInfo.UserId),
+                new(ClaimTypes.NameIdentifier, userInfo.UserId),
                 ..userInfo.Roles.Select(r => new Claim(ClaimTypes.Role, r)),
                 ..userInfo.Permissions.Select(p => new Claim(AppClaim.AdminPermission, p)),
-                new Claim(AppClaim.AccessToken, userInfo.AccessToken)
             ];
 
-            authenticationStateTask = Task.FromResult(
+            _authenticationStateTask = Task.FromResult(
                 new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims,
                     authenticationType: nameof(PersistentAuthenticationStateProvider)))));
         }
 
-        public override Task<AuthenticationState> GetAuthenticationStateAsync() => authenticationStateTask;
+        public override Task<AuthenticationState> GetAuthenticationStateAsync() => _authenticationStateTask;
     }
 }

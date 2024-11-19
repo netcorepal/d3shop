@@ -1,15 +1,16 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using NetCorePal.D3Shop.Admin.Shared.Attribute;
+using NetCorePal.D3Shop.Admin.Shared.Requests;
+using NetCorePal.D3Shop.Admin.Shared.Responses;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate.Dto;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
-using NetCorePal.D3Shop.Web.Controllers.Identity.Requests;
-using NetCorePal.D3Shop.Web.Controllers.Identity.Responses;
+using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Web.Helper;
+using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Mappers;
 using NetCorePal.Extensions.Primitives;
 
@@ -24,7 +25,7 @@ public class AdminUserController(IMediator mediator, IMapperProvider mapperProvi
     private IMapper<AdminUser, AdminUserResponse> AdminUserOutputMapper => mapperProvider.GetMapper<AdminUser, AdminUserResponse>();
 
     [HttpPost]
-    [MustHaveAdminPermission(PermissionDefinitions.AdminUserCreate)]
+    [AdminPermission(PermissionDefinitions.AdminUserCreate)]
     public async Task<ResponseData<AdminUserId>> CreateAdminUser([FromBody] CreateAdminUserRequest request)
     {
         var roles = await roleQuery.GetAllRolesAsync(CancellationToken);
@@ -45,7 +46,7 @@ public class AdminUserController(IMediator mediator, IMapperProvider mapperProvi
     }
 
     [HttpGet]
-    [MustHaveAdminPermission(PermissionDefinitions.AdminUserView)]
+    [AdminPermission(PermissionDefinitions.AdminUserView)]
     public async Task<ResponseData<IEnumerable<AdminUserResponse>>> GetAllAdminUsers()
     {
         var adminUsers = await adminUserQuery.GetAllAdminUsersAsync(CancellationToken);
@@ -54,7 +55,7 @@ public class AdminUserController(IMediator mediator, IMapperProvider mapperProvi
     }
 
     [HttpGet]
-    [MustHaveAdminPermission(PermissionDefinitions.AdminUserView)]
+    [AdminPermission(PermissionDefinitions.AdminUserView)]
     public async Task<ResponseData<IEnumerable<AdminUserResponse>>> GetAdminUsersByCondition([FromQuery] AdminUserQueryRequest request)
     {
         var adminUsers = await adminUserQuery.GetAdminUsersByCondition(request.Name, request.Phone);
@@ -63,7 +64,7 @@ public class AdminUserController(IMediator mediator, IMapperProvider mapperProvi
     }
 
     [HttpGet("{id}")]
-    [MustHaveAdminPermission(PermissionDefinitions.AdminUserView)]
+    [AdminPermission(PermissionDefinitions.AdminUserView)]
     public async Task<ResponseData<AdminUserResponse>> GetAdminUserById([FromRoute] AdminUserId id)
     {
         var adminUser = await adminUserQuery.GetAdminUserByIdAsync(id, CancellationToken) ??
@@ -73,7 +74,7 @@ public class AdminUserController(IMediator mediator, IMapperProvider mapperProvi
     }
 
     [HttpGet("{id}")]
-    [MustHaveAdminPermission(PermissionDefinitions.AdminUserView)]
+    [AdminPermission(PermissionDefinitions.AdminUserView)]
     public async Task<ResponseData<IEnumerable<AdminUserRolesResponse>>> GetAdminUserRoles([FromRoute] AdminUserId id)
     {
         var adminUser = await adminUserQuery.GetAdminUserByIdAsync(id, CancellationToken);
@@ -88,7 +89,7 @@ public class AdminUserController(IMediator mediator, IMapperProvider mapperProvi
     }
 
     [HttpPut("{id}")]
-    [MustHaveAdminPermission(PermissionDefinitions.AdminUserUpdatePassword)]
+    [AdminPermission(PermissionDefinitions.AdminUserUpdatePassword)]
     public async Task<ResponseData> ChangeAdminUserPassword([FromRoute] AdminUserId id,
         [FromBody] UpdateAdminUserPasswordRequest request)
     {
@@ -104,7 +105,7 @@ public class AdminUserController(IMediator mediator, IMapperProvider mapperProvi
     }
 
     [HttpPut("{id}")]
-    [MustHaveAdminPermission(PermissionDefinitions.AdminUserUpdateRoles)]
+    [AdminPermission(PermissionDefinitions.AdminUserUpdateRoles)]
     public async Task<ResponseData> UpdateAdminUserRoles([FromRoute] AdminUserId id, [FromBody] IEnumerable<RoleId> roleIds)
     {
         var allRoles = await roleQuery.GetAllRolesAsync(CancellationToken);
@@ -120,7 +121,7 @@ public class AdminUserController(IMediator mediator, IMapperProvider mapperProvi
     }
 
     [HttpDelete("{id}")]
-    [MustHaveAdminPermission(PermissionDefinitions.AdminUserDelete)]
+    [AdminPermission(PermissionDefinitions.AdminUserDelete)]
     public async Task<ResponseData> DeleteAdminUser([FromRoute] AdminUserId id)
     {
         await mediator.Send(new DeleteAdminUserCommand(id), CancellationToken);

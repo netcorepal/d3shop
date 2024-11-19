@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using NetCorePal.Context;
 using NetCorePal.Extensions.AspNetCore;
+using NetCorePal.Extensions.Dto;
 
 namespace NetCorePal.D3Shop.Web.Tests
 {
