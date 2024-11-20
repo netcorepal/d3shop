@@ -49,11 +49,11 @@ namespace NetCorePal.D3Shop.Web.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime>("LoginExpiryDate")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -64,10 +64,6 @@ namespace NetCorePal.D3Shop.Web.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("RefreshToken")
                         .IsRequired()
                         .HasColumnType("longtext");
 

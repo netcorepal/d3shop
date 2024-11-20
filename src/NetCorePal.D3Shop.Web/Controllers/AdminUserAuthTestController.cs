@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NetCorePal.D3Shop.Admin.Shared.Attribute;
+using NetCorePal.D3Shop.Web.Auth;
 
 namespace NetCorePal.D3Shop.Web.Controllers;
 
@@ -8,14 +8,14 @@ namespace NetCorePal.D3Shop.Web.Controllers;
 public class AdminUserAuthTestController : ControllerBase
 {
     [HttpGet]
-    [MustHaveAdminPermission("AdminUserAuth_Test_Get")]
+    [AdminPermission("AdminUserAuth_Test_Get")]
     public IActionResult Get()
     {
         return Ok("Hello World");
     }
 
     [HttpPost]
-    [MustHaveAdminPermission("AdminUserAuth_Test_Post")]
+    [AdminPermission("AdminUserAuth_Test_Post")]
     public IActionResult Post()
     {
         return Ok("Hello World");

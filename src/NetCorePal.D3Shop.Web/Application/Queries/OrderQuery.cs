@@ -1,7 +1,7 @@
-﻿using NetCorePal.D3Shop.Domain;
+﻿using System.Threading;
+using NetCorePal.D3Shop.Domain;
 using NetCorePal.D3Shop.Domain.AggregatesModel.OrderAggregate;
 using NetCorePal.D3Shop.Infrastructure;
-using System.Threading;
 
 namespace NetCorePal.D3Shop.Web.Application.Queries
 {

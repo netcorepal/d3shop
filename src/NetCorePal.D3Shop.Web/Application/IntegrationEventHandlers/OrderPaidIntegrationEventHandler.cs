@@ -1,6 +1,6 @@
-﻿using NetCorePal.D3Shop.Web.Application.Commands;
-using DotNetCore.CAP;
+﻿using DotNetCore.CAP;
 using MediatR;
+using NetCorePal.D3Shop.Web.Application.Commands;
 using NetCorePal.Extensions.DistributedTransactions;
 using NetCorePal.Extensions.Primitives;
 
