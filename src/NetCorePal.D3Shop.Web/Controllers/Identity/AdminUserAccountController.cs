@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using NetCorePal.D3Shop.Admin.Shared.Const;
 using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
@@ -49,78 +48,15 @@ public class AdminUserAccountController(
         return new ResponseData();
     }
 
-    private static IEnumerable<Claim> GetClaimsAsync(AdminUser user)
+    private static List<Claim> GetClaimsAsync(AdminUser user)
     {
-        var roles = user.Roles;
-        var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role.RoleName)).ToList();
-        //系统默认用户添加超级管理员角色
-        if (user.Name == AppDefaultCredentials.Name)
-            roleClaims.Add(new Claim(ClaimTypes.Role, AppClaim.SuperAdminRole));
-
         var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Name, user.Name),
                 new(ClaimTypes.MobilePhone, user.Phone)
-            }
-            .Union(roleClaims);
+            };
 
         return claims;
     }
-
-
-    /*private static string GenerateRefreshToken()
-    {
-        var randomNumber = new byte[32];
-        using var rnd = RandomNumberGenerator.Create();
-        rnd.GetBytes(randomNumber);
-
-        return Convert.ToBase64String(randomNumber);
-    }
-
-    private string GenerateJwtAsync(AdminUser user)
-    {
-        var token = GenerateEncryptedToken(GetSigningCredentials(), GetClaimsAsync(user));
-        return token;
-    }
-
-    private string GenerateEncryptedToken(SigningCredentials signingCredentials, IEnumerable<Claim> claims)
-    {
-        var token = new JwtSecurityToken(
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(AppConfiguration.TokenExpiryInMinutes),
-            signingCredentials: signingCredentials);
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var encryptedToken = tokenHandler.WriteToken(token);
-        return encryptedToken;
-    }
-
-    private SigningCredentials GetSigningCredentials()
-    {
-        var secret = Encoding.UTF8.GetBytes(AppConfiguration.Secret);
-        return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256);
-    }
-
-    private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
-    {
-        var tokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppConfiguration.Secret)),
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            RoleClaimType = ClaimTypes.Role,
-            ClockSkew = TimeSpan.Zero
-        };
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
-        if (securityToken is not JwtSecurityToken jwtSecurityToken
-            || !jwtSecurityToken.Header.Alg
-                .Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-        {
-            throw new SecurityTokenException("Invalid token");
-        }
-
-        return principal;
-    }*/
 }

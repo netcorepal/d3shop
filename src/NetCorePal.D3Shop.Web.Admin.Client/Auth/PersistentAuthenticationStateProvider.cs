@@ -30,7 +30,7 @@ namespace NetCorePal.D3Shop.Web.Admin.Client.Auth
             Claim[] claims =
             [
                 new(ClaimTypes.NameIdentifier, userInfo.UserId),
-                ..userInfo.Roles.Select(r => new Claim(ClaimTypes.Role, r)),
+                new(ClaimTypes.Name, userInfo.Name),
                 ..userInfo.Permissions.Select(p => new Claim(AppClaim.AdminPermission, p)),
             ];
 

@@ -54,7 +54,8 @@ namespace NetCorePal.D3Shop.Web.Blazor.Components
             if (principal.Identity?.IsAuthenticated == true)
             {
                 var userIdString = principal.FindFirst(_options.ClaimsIdentity.UserIdClaimType)?.Value;
-                if (userIdString != null)
+                var name = principal.FindFirst(_options.ClaimsIdentity.UserNameClaimType)?.Value;
+                if (userIdString != null && name != null)
                 {
                     if (!long.TryParse(userIdString, out var userId))
                         throw new InvalidOperationException("User Id could not be parsed to a valid long value.");
@@ -62,7 +63,7 @@ namespace NetCorePal.D3Shop.Web.Blazor.Components
                     _state.PersistAsJson(nameof(UserInfo), new UserInfo
                     {
                         UserId = userIdString,
-                        Roles = principal.FindAll(_options.ClaimsIdentity.RoleClaimType).Select(c => c.Value),
+                        Name = name,
                         Permissions = permissions ?? []
                     });
                 }
