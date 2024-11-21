@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
-using NetCorePal.D3Shop.Admin.Shared.Requests;
+﻿using Microsoft.AspNetCore.Components.Forms;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
-using NetCorePal.D3Shop.Web.Admin.Client.Services;
 
 namespace NetCorePal.D3Shop.Web.Admin.Client.Components;
 

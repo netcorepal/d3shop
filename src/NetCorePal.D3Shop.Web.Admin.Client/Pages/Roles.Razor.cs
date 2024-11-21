@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using NetCorePal.D3Shop.Admin.Shared.Requests;
-using NetCorePal.D3Shop.Web.Admin.Client.Services;
-
-namespace NetCorePal.D3Shop.Web.Admin.Client.Pages;
+﻿namespace NetCorePal.D3Shop.Web.Admin.Client.Pages;
 
 public sealed partial class Roles : IDisposable
 {
@@ -32,9 +28,10 @@ public sealed partial class Roles : IDisposable
             _roleList = await GetAllRoles();
     }
 
-    private async Task<List<RoleResponse>> GetAllRoles()
+    private async Task<List<RoleResponse>> GetAllRoles(string? name = null, string? description = null)
     {
-        var response = await RolesService.GetAllRoles();
+        var queryRequest = new RoleQueryRequest(name, description);
+        var response = await RolesService.GetAllRoles(queryRequest);
         if (response.Success) return response.Data.ToList();
         _ = Message.Error(response.Message);
         return [];
@@ -75,9 +72,7 @@ public sealed partial class Roles : IDisposable
 
     private async Task OnSearch()
     {
-        var response = await RolesService.GetRolesByCondition(new RoleQueryRequest(_searchString, null));
-        if (response.Success) _roleList = response.Data.ToList();
-        else _ = Message.Error(response.Message);
+        _roleList = await GetAllRoles(_searchString);
     }
 
     public void Dispose()

@@ -1,4 +1,4 @@
-﻿@using NetCorePal.D3Shop.Web.Admin.Client.Services
+﻿@using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
 <a @onclick="ShowModal">配置权限</a>
 <Modal Title="@("配置权限")"
        Visible="@_modalVisible"
@@ -8,7 +8,7 @@
 
     <Tree TItem="string"
           Checkable
-          DefaultCheckedKeys="Row.PermissionCodes.ToArray()"
+          DefaultCheckedKeys="_currentRolePermissions"
           @bind-CheckedKeys="_treeCheckedKeys"
           OnCheck="Tree_OnCheck">
         @foreach (var group in _allPermissions.GroupBy(p => p.GroupName))
@@ -31,26 +31,31 @@
     [Inject] private MessageService Message { get; set; } = default!;
     private string[] _treeCheckedKeys = [];
     private List<Permission> _allPermissions = [];
+    private string[] _currentRolePermissions = [];
     private List<string> _checkedPermission = [];
 
     private bool _modalVisible;
     private bool _modalConfirmLoading;
 
-    protected override void OnInitialized()
-    {
-        _checkedPermission = Row.PermissionCodes.ToList();
-    }
-
     private async Task ShowModal()
     {
         _modalVisible = true;
         _allPermissions = await GetAllPermissions();
+        _currentRolePermissions = await GetRolePermissions(Row.Id);
     }
 
     private async Task<List<Permission>> GetAllPermissions()
     {
         var response = await PermissionsService.GetAll();
         if (response.Success) return response.Data.ToList();
+        _ = Message.Error(response.Message);
+        return [];
+    }
+
+    private async Task<string[]> GetRolePermissions(RoleId id)
+    {
+        var response = await RolesService.GetRolePermissions(id);
+        if (response.Success) return response.Data.ToArray();
         _ = Message.Error(response.Message);
         return [];
     }
@@ -72,7 +77,6 @@
         {
             _modalVisible = false;
             _ = Message.Success("更新成功！");
-            Row.PermissionCodes = _checkedPermission;
         }
         else
         {

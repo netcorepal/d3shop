@@ -13,8 +13,6 @@ using NetCorePal.D3Shop.Web.Admin.Client.Auth;
 using NetCorePal.D3Shop.Web.Admin.Client.Services;
 using NetCorePal.D3Shop.Web.Application.Hubs;
 using NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers;
-using NetCorePal.D3Shop.Web.Application.Queries;
-using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Web.Blazor.Components;
 using NetCorePal.D3Shop.Web.Blazor.Services;
@@ -119,11 +117,9 @@ try
     #endregion
 
     #region Query
-
-    builder.Services.AddScoped<OrderQuery>();
-    builder.Services.AddScoped<AdminUserQuery>();
-    builder.Services.AddScoped<RoleQuery>();
-
+    
+    builder.Services.AddAllQueries(Assembly.GetExecutingAssembly());
+    
     #endregion
 
 
@@ -243,7 +239,7 @@ try
 
     app.UseHttpMetrics();
     app.MapHealthChecks("/health");
-    app.MapMetrics("/metrics"); // 通过   /metrics  访问指标
+    app.MapMetrics(); // 通过   /metrics  访问指标
     app.UseHangfireDashboard();
     app.MapRazorComponents<App>()
         .AddInteractiveServerRenderMode()

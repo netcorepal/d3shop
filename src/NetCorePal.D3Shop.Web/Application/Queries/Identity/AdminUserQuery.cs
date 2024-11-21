@@ -3,14 +3,23 @@ using Microsoft.Extensions.Caching.Memory;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Const;
+using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Queries.Identity;
 
-public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCache memoryCache)
+public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCache memoryCache) : IQuery
 {
     public async Task<AdminUser?> GetAdminUserByIdAsync(AdminUserId id, CancellationToken cancellationToken)
     {
         return await applicationDbContext.AdminUsers.FindAsync([id], cancellationToken);
+    }
+    
+    public async Task<List<RoleId>> GetAssignedRoleIdsForUserAsync(AdminUserId id, CancellationToken cancellationToken)
+    {
+        return await applicationDbContext.AdminUsers
+            .Where(u => u.Id == id)
+            .SelectMany(u => u.Roles.Select(ur => ur.RoleId))
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<List<AdminUser>> GetAdminUsersByCondition(string? name, string? phone)

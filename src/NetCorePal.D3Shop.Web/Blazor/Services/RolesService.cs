@@ -14,9 +14,9 @@ public class RolesService(RoleController roleController) : IRolesService
         return await roleController.CreateRole(request);
     }
 
-    public async Task<ResponseData<IEnumerable<RoleResponse>>> GetAllRoles()
+    public async Task<ResponseData<List<RoleResponse>>> GetAllRoles(RoleQueryRequest request)
     {
-        return await roleController.GetAllRoles();
+        return await roleController.GetAllRoles(request);
     }
 
     public async Task<ResponseData> UpdateRoleInfo(RoleId id, UpdateRoleInfoRequest request)
@@ -34,19 +34,7 @@ public class RolesService(RoleController roleController) : IRolesService
         return await roleController.DeleteRole(id);
     }
 
-    public async Task<ResponseData<IEnumerable<RoleResponse>>> GetRolesByCondition(
-        RoleQueryRequest request)
-    {
-        return await roleController.GetRolesByCondition(request);
-    }
-
-    public async Task<ResponseData<RoleResponse>> GetRoleById(RoleId id)
-    {
-        return await roleController.GetRoleById(id);
-    }
-
-    public async Task<ResponseData<IEnumerable<RolePermissionResponse>>>
-        GetRolePermissions(RoleId id)
+    public async Task<ResponseData<List<string>>> GetRolePermissions(RoleId id)
     {
         return await roleController.GetRolePermissions(id);
     }

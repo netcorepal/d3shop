@@ -8,18 +8,14 @@ using NetCorePal.D3Shop.Web.Application.Commands.Identity;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.Extensions.Dto;
-using NetCorePal.Extensions.Mappers;
-using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
-public class RoleController(IMediator mediator, IMapperProvider mapperProvider, RoleQuery roleQuery) : ControllerBase
+public class RoleController(IMediator mediator, RoleQuery roleQuery) : ControllerBase
 {
     private CancellationToken CancellationToken => HttpContext?.RequestAborted ?? CancellationToken.None;
-
-    private IMapper<Role, RoleResponse> RoleOutputMapper => mapperProvider.GetMapper<Role, RoleResponse>();
 
     [HttpPost]
     [AdminPermission(PermissionDefinitions.RoleCreate)]
@@ -38,47 +34,18 @@ public class RoleController(IMediator mediator, IMapperProvider mapperProvider, 
 
     [HttpGet]
     [AdminPermission(PermissionDefinitions.RoleView)]
-    public async Task<ResponseData<IEnumerable<RoleResponse>>> GetAllRoles()
+    public async Task<ResponseData<List<RoleResponse>>> GetAllRoles([FromQuery] RoleQueryRequest request)
     {
-        var roles = await roleQuery.GetAllRolesAsync(CancellationToken);
-        var response = roles.Select(RoleOutputMapper.To);
-        return response.AsResponseData();
-    }
-
-    [HttpGet]
-    [AdminPermission(PermissionDefinitions.RoleView)]
-    public async Task<ResponseData<IEnumerable<RoleResponse>>> GetRolesByCondition([FromQuery] RoleQueryRequest request)
-    {
-        var roles = await roleQuery.GetRolesByCondition(request.Name, request.Description);
-        var response = roles.Select(RoleOutputMapper.To);
-        return response.AsResponseData();
+        var roles = await roleQuery.GetAllRolesAsync(request, CancellationToken);
+        return roles.AsResponseData();
     }
 
     [HttpGet("{id}")]
     [AdminPermission(PermissionDefinitions.RoleView)]
-    public async Task<ResponseData<RoleResponse>> GetRoleById([FromRoute] RoleId id)
+    public async Task<ResponseData<List<string>>> GetRolePermissions([FromRoute] RoleId id)
     {
-        var role = await roleQuery.GetRoleByIdAsync(id, CancellationToken);
-        if (role == null) throw new KnownException($"未找到角色，RoleId = {id}");
-
-        return RoleOutputMapper.To(role).AsResponseData();
-    }
-
-    [HttpGet("{id}")]
-    [AdminPermission(PermissionDefinitions.RoleView)]
-    public async Task<ResponseData<IEnumerable<RolePermissionResponse>>> GetRolePermissions([FromRoute] RoleId id)
-    {
-        var role = await roleQuery.GetRoleByIdAsync(id, CancellationToken);
-        if (role == null) throw new KnownException($"未找到角色，RoleId = {id}");
-
-        var allPermissions = Permissions.AllPermissions;
-        var rolePermissionCodes = role.Permissions.Select(x => x.PermissionCode);
-
-        var response = allPermissions.Select(p =>
-            rolePermissionCodes.Contains(p.Code)
-                ? new RolePermissionResponse(p.Code, p.Remark, p.GroupName, true)
-                : new RolePermissionResponse(p.Code, p.Remark, p.GroupName, false));
-        return response.AsResponseData();
+        var rolePermissions = await roleQuery.GetRolePermissionsAsync(id, CancellationToken);
+        return rolePermissions.AsResponseData();
     }
 
     [HttpPut("{id}")]
