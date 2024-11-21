@@ -30,7 +30,7 @@ namespace NetCorePal.D3Shop.Web.Admin.Client
             builder.Services.AddAuthorizationCore();
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
-            builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            builder.Services.AddSingleton<IAuthorizationPolicyProvider, ClientPermissionPolicyProvider>();
             builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
             builder.Services.AddSingleton<IPermissionChecker, ClientPermissionChecker>();
 
