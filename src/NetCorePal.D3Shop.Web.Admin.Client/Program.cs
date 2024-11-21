@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using NetCorePal.D3Shop.Admin.Shared.Authorization;
 using NetCorePal.D3Shop.Web.Admin.Client.Auth;
-using NetCorePal.D3Shop.Web.Admin.Client.Services;
-using Newtonsoft.Json;
+using NetCorePal.D3Shop.Web.Admin.Client.Extensions;
 
 namespace NetCorePal.D3Shop.Web.Admin.Client
 {
@@ -15,15 +14,8 @@ namespace NetCorePal.D3Shop.Web.Admin.Client
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-            builder.Services.AddRefitClient<IAccountService>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
-
-            var ser = new NewtonsoftJsonContentSerializer(new JsonSerializerSettings { });
-            var settings = new RefitSettings(ser);
-            builder.Services.AddRefitClient<IRolesService>(settings)
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
-            builder.Services.AddRefitClient<IPermissionsService>(settings)
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+            // Services注册
+            builder.Services.AddRefitServices(builder.HostEnvironment.BaseAddress);
 
             #region 身份认证和授权
 

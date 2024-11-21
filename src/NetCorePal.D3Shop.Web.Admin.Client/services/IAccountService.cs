@@ -1,9 +1,8 @@
-﻿using NetCorePal.D3Shop.Admin.Shared.Requests;
-using NetCorePal.D3Shop.Admin.Shared.Responses;
-
+﻿using NetCorePal.D3Shop.Web.Admin.Client.Attributes;
 
 namespace NetCorePal.D3Shop.Web.Admin.Client.Services;
 
+[RefitService]
 public interface IAccountService
 {
     [Post("/api/AdminUserAccount/login")]
