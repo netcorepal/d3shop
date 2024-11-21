@@ -1,5 +1,4 @@
 ﻿@using NetCorePal.D3Shop.Admin.Shared.Requests
-@using NetCorePal.D3Shop.Web.Admin.Client.Models
 @using NetCorePal.D3Shop.Web.Admin.Client.Services
 <a @onclick="ShowModal">编辑</a>
 <Modal Title="@("编辑")"
@@ -30,8 +29,8 @@
 
     private bool _modalVisible;
     private bool _modalConfirmLoading;
-    private Form<UpdateRoleInfoModel> _form = default!;
-    private UpdateRoleInfoModel _roleInfoModel = new();
+    private Form<UpdateRoleInfoRequest> _form = default!;
+    private UpdateRoleInfoRequest _roleInfoModel = new();
 
     private void ShowModal()
     {
@@ -44,7 +43,7 @@
     {
         _modalConfirmLoading = true;
         StateHasChanged();
-        var response = await RolesService.UpdateRoleInfo(Row.Id, new UpdateRoleInfoRequest(_roleInfoModel.Name, _roleInfoModel.Description));
+        var response = await RolesService.UpdateRoleInfo(Row.Id, _roleInfoModel);
         _modalConfirmLoading = false;
         if (response.Success)
         {

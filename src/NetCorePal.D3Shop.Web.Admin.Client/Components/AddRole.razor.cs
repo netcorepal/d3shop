@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components.Forms;
 using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
-using NetCorePal.D3Shop.Web.Admin.Client.Models;
 using NetCorePal.D3Shop.Web.Admin.Client.Services;
 
 namespace NetCorePal.D3Shop.Web.Admin.Client.Components;
@@ -18,12 +17,12 @@ public partial class AddRole
     private List<Permission> _allPermissions = [];
     private bool _modalVisible;
     private bool _modalConfirmLoading;
-    private Form<CreateRoleModel> _form = default!;
+    private Form<CreateRoleRequest> _form = default!;
     private Tabs _tabs = default!;
     private string[] _treeCheckedKeys = [];
 
 
-    private CreateRoleModel _newRoleModel = new();
+    private CreateRoleRequest _newRoleModel = new();
 
     private async Task ShowModal()
     {
@@ -42,7 +41,7 @@ public partial class AddRole
     private void CloseModal()
     {
         _modalVisible = false;
-        _newRoleModel = new CreateRoleModel();
+        _newRoleModel = new CreateRoleRequest();
         _treeCheckedKeys = [];
         _tabs.GoTo(0);
     }
@@ -51,9 +50,7 @@ public partial class AddRole
     {
         _modalConfirmLoading = true;
         StateHasChanged();
-        var request =
-            new CreateRoleRequest(_newRoleModel.Name, _newRoleModel.Description, _newRoleModel.PermissionCodes);
-        var response = await RolesService.CreateRole(request);
+        var response = await RolesService.CreateRole(_newRoleModel);
         if (response.Success)
         {
             _ = Message.Success("创建成功！");

@@ -47,7 +47,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\NetCorePal.D3Shop.Admin.Shared\NetCorePal.D3Shop.Admin.Shared.csproj" />
     <ProjectReference Include="..\NetCorePal.D3Shop.Domain\NetCorePal.D3Shop.Domain.csproj" />
     <ProjectReference Include="..\NetCorePal.D3Shop.Infrastructure\NetCorePal.D3Shop.Infrastructure.csproj" />
     <ProjectReference Include="..\NetCorePal.D3Shop.Web.Admin.Client\NetCorePal.D3Shop.Web.Admin.Client.csproj" />
