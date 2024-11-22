@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NetCorePal.D3Shop.Admin.Shared.Requests;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
+using NetCorePal.D3Shop.Web.Application.Queries.Identity.QueryResult;
 using NetCorePal.D3Shop.Web.Helper;
 using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;
@@ -25,7 +25,7 @@ public class AdminUserAccountController(
     [HttpPost("login")]
     public async Task<ResponseData> LoginAsync([FromBody] AdminUserLoginRequest request)
     {
-        var user = await adminUserQuery.GetAdminUserByNameAsync(request.Name, HttpContext.RequestAborted);
+        var user = await adminUserQuery.GetUserInfoForLoginAsync(request.Name, HttpContext.RequestAborted);
         if (user is null)
             throw new KnownException("Invalid Credentials.");
 
@@ -48,7 +48,7 @@ public class AdminUserAccountController(
         return new ResponseData();
     }
 
-    private static List<Claim> GetClaimsAsync(AdminUser user)
+    private static List<Claim> GetClaimsAsync(AuthenticationUserInfo user)
     {
         var claims = new List<Claim>
             {

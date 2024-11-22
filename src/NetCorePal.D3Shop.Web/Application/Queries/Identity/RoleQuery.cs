@@ -12,13 +12,20 @@ namespace NetCorePal.D3Shop.Web.Application.Queries.Identity;
 public class RoleQuery(ApplicationDbContext dbContext) : IQuery
 {
     private DbSet<Role> RoleSet { get; } = dbContext.Roles;
-    
+
     public async Task<List<RoleResponse>> GetAllRolesAsync(RoleQueryRequest query, CancellationToken cancellationToken)
     {
         return await RoleSet
             .WhereIf(!query.Name.IsNullOrWhiteSpace(), r => r.Name.Contains(query.Name!))
             .WhereIf(!query.Description.IsNullOrWhiteSpace(), r => r.Description.Contains(query.Description!))
             .Select(r => new RoleResponse(r.Id, r.Name, r.Description))
+            .ToListAsync(cancellationToken: cancellationToken);
+    }
+
+    public async Task<List<RoleNameResponse>> GetAllRoleNamesAsync(CancellationToken cancellationToken)
+    {
+        return await RoleSet
+            .Select(r => new RoleNameResponse(r.Id, r.Name))
             .ToListAsync(cancellationToken: cancellationToken);
     }
 

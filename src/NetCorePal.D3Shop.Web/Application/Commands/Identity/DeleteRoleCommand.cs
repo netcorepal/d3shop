@@ -13,11 +13,9 @@ public class DeleteRoleCommandValidator : AbstractValidator<DeleteRoleCommand>
     public DeleteRoleCommandValidator(AdminUserQuery adminUserQuery)
     {
         RuleFor(x => x.RoleId).NotEmpty();
-        RuleFor(x => new { x.RoleId }).Must((r) =>
-        {
-            var s = adminUserQuery.GetAdminUserByRoleIdAsync(r.RoleId, CancellationToken.None).GetAwaiter().GetResult();
-            return s.Count == 0;
-        }).WithMessage("该角色已分配用户，无法删除");
+        RuleFor(x => x.RoleId).MustAsync(async (rId, ct) =>
+            !await adminUserQuery.DoesAdminUserExist(rId, ct)
+        ).WithMessage("该角色已分配用户，无法删除");
     }
 }
 
@@ -26,7 +24,7 @@ public class DeleteRoleCommandHandler(IRoleRepository roleRepository) : ICommand
     public async Task Handle(DeleteRoleCommand request, CancellationToken cancellationToken)
     {
         var role = await roleRepository.GetAsync(request.RoleId, cancellationToken) ??
-                    throw new KnownException($"未找到角色，RoleId = {request.RoleId}");
+                   throw new KnownException($"未找到角色，RoleId = {request.RoleId}");
         await roleRepository.RemoveAsync(role);
     }
 }

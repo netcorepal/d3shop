@@ -10,24 +10,20 @@ using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Web.Helper;
 using NetCorePal.Extensions.Dto;
-using NetCorePal.Extensions.Mappers;
 using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
+[AdminPermission(PermissionDefinitions.AdminUserView)]
 public class AdminUserController(
     IMediator mediator,
-    IMapperProvider mapperProvider,
     AdminUserQuery adminUserQuery,
     RoleQuery roleQuery)
     : ControllerBase
 {
     private CancellationToken CancellationToken => HttpContext.RequestAborted;
-
-    private IMapper<AdminUser, AdminUserResponse> AdminUserOutputMapper =>
-        mapperProvider.GetMapper<AdminUser, AdminUserResponse>();
 
     [HttpPost]
     [AdminPermission(PermissionDefinitions.AdminUserCreate)]
@@ -44,40 +40,25 @@ public class AdminUserController(
     }
 
     [HttpGet]
-    [AdminPermission(PermissionDefinitions.AdminUserView)]
-    public async Task<ResponseData<IEnumerable<AdminUserResponse>>> GetAllAdminUsers()
-    {
-        var adminUsers = await adminUserQuery.GetAllAdminUsersAsync(CancellationToken);
-        var responses = adminUsers.Select(AdminUserOutputMapper.To);
-        return responses.AsResponseData();
-    }
-
-    [HttpGet]
-    [AdminPermission(PermissionDefinitions.AdminUserView)]
-    public async Task<ResponseData<IEnumerable<AdminUserResponse>>> GetAdminUsersByCondition(
+    public async Task<ResponseData<List<AdminUserResponse>>> GetAllAdminUsers(
         [FromQuery] AdminUserQueryRequest request)
     {
-        var adminUsers = await adminUserQuery.GetAdminUsersByCondition(request.Name, request.Phone);
-        var responses = adminUsers.Select(AdminUserOutputMapper.To);
-        return responses.AsResponseData();
+        var adminUsers = await adminUserQuery.GetAllAdminUsersAsync(request, CancellationToken);
+        return adminUsers.AsResponseData();
     }
 
     [HttpGet("{id}")]
-    [AdminPermission(PermissionDefinitions.AdminUserView)]
-    public async Task<ResponseData<AdminUserResponse>> GetAdminUserById([FromRoute] AdminUserId id)
-    {
-        var adminUser = await adminUserQuery.GetAdminUserByIdAsync(id, CancellationToken) ??
-                        throw new KnownException($"该用户不存在，AdminUserId={id}");
-
-        return AdminUserOutputMapper.To(adminUser).AsResponseData();
-    }
-
-    [HttpGet("{id}")]
-    [AdminPermission(PermissionDefinitions.AdminUserView)]
-    public async Task<ResponseData<List<RoleId>>> GetAssignedRoleIdsForUser([FromRoute] AdminUserId id)
+    public async Task<ResponseData<List<RoleId>>> GetAssignedRoleIds([FromRoute] AdminUserId id)
     {
         var roleIds = await adminUserQuery.GetAssignedRoleIdsForUserAsync(id, CancellationToken);
         return roleIds.AsResponseData();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ResponseData<List<string>>> GetAssignedPermissions([FromRoute] AdminUserId id)
+    {
+        var assignedPermissions = await adminUserQuery.GetAssignedPermissionsAsync(id, CancellationToken);
+        return assignedPermissions.AsResponseData();
     }
 
     [HttpPut("{id}")]
@@ -85,7 +66,7 @@ public class AdminUserController(
     public async Task<ResponseData> ChangeAdminUserPassword([FromRoute] AdminUserId id,
         [FromBody] UpdateAdminUserPasswordRequest request)
     {
-        var adminUser = await adminUserQuery.GetAdminUserByIdAsync(id, CancellationToken);
+        var adminUser = await adminUserQuery.GetUserCredentialsIfExists(id, CancellationToken);
         if (adminUser is null) throw new KnownException($"该用户不存在，AdminUserId = {id}");
 
         if (!PasswordHasher.VerifyHashedPassword(adminUser.Password, request.OldPassword))
@@ -112,5 +93,12 @@ public class AdminUserController(
     {
         await mediator.Send(new DeleteAdminUserCommand(id), CancellationToken);
         return new ResponseData();
+    }
+
+    [HttpGet]
+    public async Task<ResponseData<List<RoleNameResponse>>> GetAllRoleNames()
+    {
+        var roles = await roleQuery.GetAllRoleNamesAsync(CancellationToken);
+        return roles.AsResponseData();
     }
 }

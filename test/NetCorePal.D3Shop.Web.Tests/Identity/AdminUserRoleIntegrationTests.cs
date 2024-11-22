@@ -38,7 +38,13 @@ public class AdminUserRoleIntegrationTests
     private async Task<AdminUserId> CreateTestAdminUser(string name, IEnumerable<RoleId> roleIds)
     {
         // Arrange
-        var createAdminUserRequest = new CreateAdminUserRequest(name, "1", "123", roleIds);
+        var createAdminUserRequest = new CreateAdminUserRequest
+        {
+            Name = name,
+            PassWord = "123",
+            Phone = "1",
+            RoleIds = roleIds
+        };
 
         // Act - 期望用户创建成功
         var response =
@@ -60,8 +66,8 @@ public class AdminUserRoleIntegrationTests
     [Fact]
     public async Task CreateAdminUser_And_QueryAdminUserByVariousMethods_ShouldSucceed()
     {
-        var testUserName = "TestQueryUser";
-        var testUserId = await CreateTestAdminUser(testUserName, []);
+        const string testUserName = "TestQueryUser";
+        await CreateTestAdminUser(testUserName, []);
 
         // Act 2: Get all admin users
         var allUsersResponse = await _client.GetAsync("/api/AdminUser/GetAllAdminUsers");
@@ -73,19 +79,12 @@ public class AdminUserRoleIntegrationTests
         Assert.NotEmpty(allUsersData.Data); // 验证返回的用户列表不为空
 
         // Act 3: Get admin users by condition
-        var conditionResponse = await _client.GetAsync($"/api/AdminUser/GetAdminUsersByCondition?Name={testUserName}");
+        var conditionResponse = await _client.GetAsync($"/api/AdminUser/GetAllAdminUsers?Name={testUserName}");
         conditionResponse.EnsureSuccessStatusCode(); // 确保返回 200 OK
         var conditionData = await conditionResponse.Content
             .ReadFromNewtonsoftJsonAsync<ResponseData<IEnumerable<AdminUserResponse>>>();
         Assert.NotNull(conditionData);
         Assert.All(conditionData.Data, user => Assert.Contains(testUserName, user.Name)); // 验证返回的用户符合条件
-
-        // Act 4: Get the created user by ID
-        var getUserResponse = await _client.GetAsync($"/api/AdminUser/GetAdminUserById/{testUserId.Id}");
-        getUserResponse.EnsureSuccessStatusCode(); // 确保返回 200 OK
-        var getUserData = await getUserResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<AdminUserResponse>>();
-        Assert.NotNull(getUserData);
-        Assert.Equal(testUserId, getUserData.Data.Id); // 验证返回的用户 ID 符合请求
     }
 
     /// <summary>
@@ -128,13 +127,19 @@ public class AdminUserRoleIntegrationTests
         var testUserId = await CreateTestAdminUser(testUserName, [roleId]);
 
         // Step 3: 验证用户初始角色和权限
-        var getUserDataResponse = await _client.GetAsync($"/api/AdminUser/GetAdminUserById/{testUserId}");
-        getUserDataResponse.EnsureSuccessStatusCode();
-        var userData = await getUserDataResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<AdminUserResponse>>();
-        Assert.NotNull(userData);
-        Assert.Equal(roleId, userData.Data.Roles.Single().RoleId);
+        var getAssignedRoleIdsResponse = await _client.GetAsync($"/api/AdminUser/GetAssignedRoleIds/{testUserId}");
+        getAssignedRoleIdsResponse.EnsureSuccessStatusCode();
+        var assignedRoleIds =
+            await getAssignedRoleIdsResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<List<RoleId>>>();
+        Assert.NotNull(assignedRoleIds);
+        Assert.Equal(roleId, assignedRoleIds.Data.Single());
+        var getAssignedPermissionsResponse =
+            await _client.GetAsync($"/api/AdminUser/GetAssignedPermissions/{testUserId}");
+        var assignedPermissions =
+            await getAssignedPermissionsResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<List<string>>>();
+        Assert.NotNull(assignedPermissions);
         Assert.Equal(permissionCodes.OrderBy(p => p),
-            userData.Data.Permissions.Select(p => p.PermissionCode).OrderBy(p => p));
+            assignedPermissions.Data.OrderBy(p => p));
 
         // Step 4: 更新用户角色
         permissionCodes = Permissions.AllPermissions.TakeLast(2).Select(p => p.Code).ToList();
@@ -145,13 +150,19 @@ public class AdminUserRoleIntegrationTests
         updateResponse.EnsureSuccessStatusCode();
 
         // Step 5: 验证用户更新后的角色和权限
-        getUserDataResponse = await _client.GetAsync($"/api/AdminUser/GetAdminUserById/{testUserId}");
-        getUserDataResponse.EnsureSuccessStatusCode();
-        userData = await getUserDataResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<AdminUserResponse>>();
-        Assert.NotNull(userData);
-        Assert.Equal(newRoleId, userData.Data.Roles.Single().RoleId);
+        getAssignedRoleIdsResponse = await _client.GetAsync($"/api/AdminUser/GetAssignedRoleIds/{testUserId}");
+        getAssignedRoleIdsResponse.EnsureSuccessStatusCode();
+        assignedRoleIds =
+            await getAssignedRoleIdsResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<List<RoleId>>>();
+        Assert.NotNull(assignedRoleIds);
+        Assert.Equal(newRoleId, assignedRoleIds.Data.Single());
+        getAssignedPermissionsResponse =
+            await _client.GetAsync($"/api/AdminUser/GetAssignedPermissions/{testUserId}");
+        assignedPermissions =
+            await getAssignedPermissionsResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<List<string>>>();
+        Assert.NotNull(assignedPermissions);
         Assert.Equal(permissionCodes.OrderBy(p => p),
-            userData.Data.Permissions.Select(p => p.PermissionCode).OrderBy(p => p)); // 验证权限
+            assignedPermissions.Data.OrderBy(p => p));
     }
 
     /// <summary>
@@ -163,8 +174,8 @@ public class AdminUserRoleIntegrationTests
     {
         await CreateTestRoleAsync("defaultRole", "defaultRole", []);
 
-        var testRoleName = "TestQueryRole";
-        var testRoleId = await CreateTestRoleAsync(testRoleName, "Test role", []);
+        const string testRoleName = "TestQueryRole";
+        await CreateTestRoleAsync(testRoleName, "Test role", []);
 
         var allRolesResponse = await _client.GetAsync("/api/Role/GetAllRoles");
         allRolesResponse.EnsureSuccessStatusCode(); // 确保返回 200 OK
@@ -211,11 +222,12 @@ public class AdminUserRoleIntegrationTests
         Assert.Equal(permissionCodes.OrderBy(p => p), roleData.Data.OrderBy(p => p));
 
         //验证关联用户的权限
-        var getUserResponse = await _client.GetAsync($"/api/AdminUser/GetAdminUserById/{testUserId}");
-        getUserResponse.EnsureSuccessStatusCode();
-        var userData = await getUserResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<AdminUserResponse>>();
-        Assert.NotNull(userData);
+        var getAssignedPermissionsResponse =
+            await _client.GetAsync($"/api/AdminUser/GetAssignedPermissions/{testUserId}");
+        var assignedPermissions =
+            await getAssignedPermissionsResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<List<string>>>();
+        Assert.NotNull(assignedPermissions);
         Assert.Equal(permissionCodes.OrderBy(p => p),
-            userData.Data.Permissions.Select(p => p.PermissionCode).OrderBy(p => p));
+            assignedPermissions.Data.OrderBy(p => p));
     }
 }

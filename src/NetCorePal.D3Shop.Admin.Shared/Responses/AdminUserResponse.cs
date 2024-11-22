@@ -2,4 +2,9 @@
 
 namespace NetCorePal.D3Shop.Admin.Shared.Responses;
 
-public record AdminUserResponse(AdminUserId Id, string Name, string Phone, IEnumerable<AdminUserRole> Roles, IEnumerable<AdminUserPermission> Permissions);
+public class AdminUserResponse(AdminUserId id, string name, string phone)
+{
+    public AdminUserId Id { get; } = id;
+    public string Name { get; set; } = name;
+    public string Phone { get; set; } = phone;
+}
