@@ -1,0 +1,71 @@
+﻿@using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
+@using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
+<a @onclick="ShowModal">配置角色</a>
+<Modal Title="@("配置角色")"
+       Visible="@_modalVisible"
+       OnOk="Modal_HandleOk"
+       OnCancel="() =>  _modalVisible = false"
+       ConfirmLoading="@_modalConfirmLoading">
+
+    <CheckboxGroup Options="@_roleOptions" @bind-Value="@_selectedRoleIds" TValue="RoleId"/>
+</Modal>
+
+@code {
+    [CascadingParameter] public AdminUserResponse Row { get; set; } = default!;
+
+    [Inject] private IAdminUserService AdminUserService { get; set; } = default!;
+    [Inject] private MessageService Message { get; set; } = default!;
+
+    private CheckboxOption<RoleId>[] _roleOptions = [];
+    private RoleId[] _selectedRoleIds = [];
+
+    private bool _modalVisible;
+    private bool _modalConfirmLoading;
+
+    private async Task ShowModal()
+    {
+        _modalVisible = true;
+        var allRoles = await GetAllRoleNames();
+        _roleOptions = allRoles.Select(x => new CheckboxOption<RoleId>
+        {
+            Label = x.Name,
+            Value = x.Id
+        }).ToArray();
+        var assignedRoleIds = await GetAssignedRoleIds(Row.Id);
+        _selectedRoleIds = assignedRoleIds.ToArray();
+    }
+
+    private async Task<List<RoleNameResponse>> GetAllRoleNames()
+    {
+        var response = await AdminUserService.GetAllRoleNames();
+        if (response.Success) return response.Data.ToList();
+        _ = Message.Error(response.Message);
+        return [];
+    }
+
+    private async Task<List<RoleId>> GetAssignedRoleIds(AdminUserId id)
+    {
+        var response = await AdminUserService.GetAssignedRoleIds(id);
+        if (response.Success) return response.Data.ToList();
+        _ = Message.Error(response.Message);
+        return [];
+    }
+
+    private async Task Modal_HandleOk()
+    {
+        _modalConfirmLoading = true;
+        StateHasChanged();
+        var response = await AdminUserService.UpdateAdminUserRoles(Row.Id, _selectedRoleIds);
+        _modalConfirmLoading = false;
+        if (response.Success)
+        {
+            _modalVisible = false;
+            _ = Message.Success("更新成功！");
+        }
+        else
+        {
+            _ = Message.Error(response.Message);
+        }
+    }
+
+}

@@ -1,6 +1,48 @@
 @page "/admin/users"
-<h3>用户列表</h3>
+@using NetCorePal.D3Shop.Web.Admin.Client.Extensions
+@using NetCorePal.D3Shop.Web.Admin.Client.Components.User
+@attribute [ClientPermission(PermissionDefinitions.AdminUserView)]
 
-@code {
-    
-}
+<Table
+    @ref="_table"
+    DataSource="_adminUserList"
+    HidePagination="true">
+    <TitleTemplate>
+        <GridRow Gutter="8" Justify="space-between">
+            <GridCol Span="4">
+                <Title Level="3">用户列表</Title>
+            </GridCol>
+            <GridCol Span="8" Offset="10">
+                <Search Placeholder="搜索名称" @bind-Value="_searchString" OnSearch="() => OnSearch()"/>
+            </GridCol>
+            <GridCol Span="2">
+                <AuthorizeView>
+                    @if (context.CheckPermission(PermissionDefinitions.AdminUserCreate))
+                    {
+                        <AddAdminUser OnItemAdded="HandleItemAdded"></AddAdminUser>
+                    }
+                </AuthorizeView>
+            </GridCol>
+        </GridRow>
+    </TitleTemplate>
+    <ColumnDefinitions Context="row">
+        <PropertyColumn Title="名称" Property="c => c.Name"/>
+        <PropertyColumn Title="手机号" Property="c => c.Phone"/>
+        <ActionColumn Title="操作">
+            <AuthorizeView>
+                @if (context.CheckPermission(PermissionDefinitions.AdminUserUpdateRoles))
+                {
+                    <CascadingValue Value="@row">
+                        <EditUserRoles></EditUserRoles>
+                    </CascadingValue>
+                }
+            </AuthorizeView>
+            <AuthorizeView>
+                @if (context.CheckPermission(PermissionDefinitions.AdminUserDelete))
+                {
+                    <a @onclick="() => Delete(row)">删除</a>
+                }
+            </AuthorizeView>
+        </ActionColumn>
+    </ColumnDefinitions>
+</Table>

@@ -1,0 +1,33 @@
+﻿@using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
+<Button Type="@ButtonType.Primary" OnClick="@ShowModal">新建</Button>
+
+<Modal Title="@("新建用户")"
+       Visible="@_modalVisible"
+       OnOk="() => _form.Submit()"
+       OnCancel="CloseModal"
+       ConfirmLoading="@_modalConfirmLoading">
+
+    <Tabs @ref="_tabs">
+        <TabPane Tab="基本信息">
+            <Form @ref="_form"
+                  Model="@_newUserModel"
+                  OnFinish="Form_OnFinish"
+                  OnFinishFailed="Form_OnFinishFailed"
+                  LabelColSpan="4"
+                  WrapperColSpan="16">
+                <FormItem Label="用户名">
+                    <Input @bind-Value="@context.Name"/>
+                </FormItem>
+                <FormItem Label="手机号">
+                    <Input @bind-Value="@context.Phone"/>
+                </FormItem>
+                <FormItem Label="用户密码">
+                    <Input @bind-Value="@context.PassWord"/>
+                </FormItem>
+            </Form>
+        </TabPane>
+        <TabPane Tab="用户角色">
+            <CheckboxGroup Options="@_roleOptions" @bind-Value="@_selectedRoleIds" TValue="RoleId"/>
+        </TabPane>
+    </Tabs>
+</Modal>

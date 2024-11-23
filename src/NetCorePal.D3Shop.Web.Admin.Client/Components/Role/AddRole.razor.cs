@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
 
-namespace NetCorePal.D3Shop.Web.Admin.Client.Components;
+namespace NetCorePal.D3Shop.Web.Admin.Client.Components.Role;
 
 public partial class AddRole
 {
