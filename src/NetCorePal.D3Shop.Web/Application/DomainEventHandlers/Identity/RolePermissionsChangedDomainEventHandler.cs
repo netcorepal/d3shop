@@ -21,13 +21,12 @@ public class RolePermissionsChangedDomainEventHandler(
         var permissions = notification.Role.Permissions
             .Select(p => new AdminUserPermission(p.PermissionCode, p.PermissionRemark))
             .ToArray();
-        await Task.WhenAll(
-            adminUserIds.Select(async adminUserId =>
-            {
-                memoryCache.Remove($"{CacheKeys.AdminUserPermissions}:{adminUserId}");
-                await mediator.Send(new UpdateAdminUserRolePermissionsCommand(adminUserId, roleId, permissions),
-                    cancellationToken);
-            })
-        );
+
+        foreach (var adminUserId in adminUserIds)
+        {
+            memoryCache.Remove($"{CacheKeys.AdminUserPermissions}:{adminUserId}");
+            await mediator.Send(new UpdateAdminUserRolePermissionsCommand(adminUserId, roleId, permissions),
+                cancellationToken);
+        }
     }
 }

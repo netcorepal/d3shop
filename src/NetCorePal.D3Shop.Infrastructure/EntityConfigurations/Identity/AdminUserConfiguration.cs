@@ -17,15 +17,15 @@ namespace NetCorePal.D3Shop.Infrastructure.EntityConfigurations.Identity
             // 配置 AdminUser 与 AdminUserRole 的一对多关系
             builder.HasMany(au => au.Roles)
                 .WithOne()
-                .HasForeignKey(aur => aur.AdminUserId);
-            //.OnDelete(DeleteBehavior.Cascade); // 当删除用户时，级联删除角色关联
+                .HasForeignKey(aur => aur.AdminUserId)
+                .OnDelete(DeleteBehavior.ClientCascade);
             builder.Navigation(au => au.Roles).AutoInclude();
 
             // 配置 AdminUser 与 AdminUserPermission 的一对多关系
             builder.HasMany(au => au.Permissions)
                 .WithOne()
-                .HasForeignKey(aup => aup.AdminUserId);
-            //.OnDelete(DeleteBehavior.Cascade); // 当删除用户时，级联删除权限关联
+                .HasForeignKey(aup => aup.AdminUserId)
+                .OnDelete(DeleteBehavior.ClientCascade);
             builder.Navigation(au => au.Permissions).AutoInclude();
 
             builder.HasQueryFilter(au => !au.IsDeleted);
@@ -38,7 +38,6 @@ namespace NetCorePal.D3Shop.Infrastructure.EntityConfigurations.Identity
         {
             builder.ToTable("adminUserRoles");
             builder.HasKey(aur => new { aur.AdminUserId, aur.RoleId });
-            builder.HasOne<Role>().WithMany().HasForeignKey(aur => aur.RoleId);
         }
     }
 
@@ -48,7 +47,8 @@ namespace NetCorePal.D3Shop.Infrastructure.EntityConfigurations.Identity
         {
             builder.ToTable("adminUserPermissions");
             builder.HasKey(aup => new { aup.AdminUserId, aup.PermissionCode });
-            builder.Property(p => p.SourceRoleIds).HasConversion(v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+            builder.Property(p => p.SourceRoleIds).HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
                 v => JsonSerializer.Deserialize<List<RoleId>>(v, (JsonSerializerOptions?)null) ??
                      new List<RoleId>(),
                 new ValueComparer<IList<RoleId>>(

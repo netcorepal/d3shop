@@ -38,6 +38,14 @@
                 }
             </AuthorizeView>
             <AuthorizeView>
+                @if (context.CheckPermission(PermissionDefinitions.AdminUserSetPermissions))
+                {
+                    <CascadingValue Value="@row">
+                        <EditUserPermissions></EditUserPermissions>
+                    </CascadingValue>
+                }
+            </AuthorizeView>
+            <AuthorizeView>
                 @if (context.CheckPermission(PermissionDefinitions.AdminUserDelete))
                 {
                     <a @onclick="() => Delete(row)">删除</a>

@@ -77,11 +77,11 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
 
         private void RemoveRolePermissions(RoleId roleId)
         {
-            var permissionsToRemove = Permissions.Where(p =>
-                p.SourceRoleIds.Remove(roleId) && p.SourceRoleIds.Count == 0).ToArray();
-
-            foreach (var permission in permissionsToRemove)
-                Permissions.Remove(permission);
+            foreach (var permission in Permissions.Where(p => p.SourceRoleIds.Remove(roleId)).ToArray())
+            {
+                if (permission.SourceRoleIds.Count == 0)
+                    Permissions.Remove(permission);
+            }
         }
 
         private void AddRolePermissions(RoleId roleId, IEnumerable<AdminUserPermission> permissions)

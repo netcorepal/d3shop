@@ -55,10 +55,22 @@ public class AdminUserController(
     }
 
     [HttpGet("{id}")]
-    public async Task<ResponseData<List<string>>> GetAssignedPermissions([FromRoute] AdminUserId id)
+    public async Task<ResponseData<List<AdminUserPermissionResponse>>> GetAssignedPermissions(
+        [FromRoute] AdminUserId id)
     {
         var assignedPermissions = await adminUserQuery.GetAssignedPermissionsAsync(id, CancellationToken);
         return assignedPermissions.AsResponseData();
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ResponseData> SetAdminUserSpecificPermissions(AdminUserId id,
+        [FromBody] IEnumerable<string> permissionCodes)
+    {
+        var allPermissions = Permissions.AllPermissions;
+        var permissionsToBeAssigned = allPermissions.Where(x => permissionCodes.Contains(x.Code))
+            .Select(p => new AdminUserPermission(p.Code, p.Remark));
+        await mediator.Send(new SetAdminUserSpecificPermissions(id, permissionsToBeAssigned), CancellationToken);
+        return new ResponseData();
     }
 
     [HttpPut("{id}")]

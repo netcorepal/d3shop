@@ -39,4 +39,14 @@ public class AdminUserService(AdminUserController adminUserController) : IAdminU
     {
         return adminUserController.GetAllRoleNames();
     }
+
+    public Task<ResponseData<List<AdminUserPermissionResponse>>> GetAssignedPermissions(AdminUserId id)
+    {
+        return adminUserController.GetAssignedPermissions(id);
+    }
+
+    public Task<ResponseData> SetAdminUserSpecificPermissions(AdminUserId id, IEnumerable<string> permissionCodes)
+    {
+        return adminUserController.SetAdminUserSpecificPermissions(id, permissionCodes);
+    }
 }

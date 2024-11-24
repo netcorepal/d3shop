@@ -32,11 +32,13 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCa
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<string>> GetAssignedPermissionsAsync(AdminUserId id, CancellationToken cancellationToken)
+    public async Task<List<AdminUserPermissionResponse>> GetAssignedPermissionsAsync(AdminUserId id,
+        CancellationToken cancellationToken)
     {
         return await AdminUserSet
             .Where(au => au.Id == id)
-            .SelectMany(au => au.Permissions.Select(aup => aup.PermissionCode))
+            .SelectMany(au => au.Permissions
+                .Select(aup => new AdminUserPermissionResponse(aup.PermissionCode, aup.SourceRoleIds.Count != 0)))
             .ToListAsync(cancellationToken);
     }
 
@@ -68,7 +70,7 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCa
             .Select(x => x.Id)
             .ToListAsync(cancellationToken);
     }
-    
+
     public async Task<bool> DoesAdminUserExist(string userName, CancellationToken cancellationToken)
     {
         return await AdminUserSet.AnyAsync(au => au.Name == userName, cancellationToken);

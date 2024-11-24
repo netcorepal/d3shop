@@ -136,10 +136,11 @@ public class AdminUserRoleIntegrationTests
         var getAssignedPermissionsResponse =
             await _client.GetAsync($"/api/AdminUser/GetAssignedPermissions/{testUserId}");
         var assignedPermissions =
-            await getAssignedPermissionsResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<List<string>>>();
+            await getAssignedPermissionsResponse.Content
+                .ReadFromNewtonsoftJsonAsync<ResponseData<List<AdminUserPermissionResponse>>>();
         Assert.NotNull(assignedPermissions);
         Assert.Equal(permissionCodes.OrderBy(p => p),
-            assignedPermissions.Data.OrderBy(p => p));
+            assignedPermissions.Data.Select(p => p.Code).OrderBy(p => p));
 
         // Step 4: 更新用户角色
         permissionCodes = Permissions.AllPermissions.TakeLast(2).Select(p => p.Code).ToList();
@@ -159,10 +160,11 @@ public class AdminUserRoleIntegrationTests
         getAssignedPermissionsResponse =
             await _client.GetAsync($"/api/AdminUser/GetAssignedPermissions/{testUserId}");
         assignedPermissions =
-            await getAssignedPermissionsResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<List<string>>>();
+            await getAssignedPermissionsResponse.Content
+                .ReadFromNewtonsoftJsonAsync<ResponseData<List<AdminUserPermissionResponse>>>();
         Assert.NotNull(assignedPermissions);
         Assert.Equal(permissionCodes.OrderBy(p => p),
-            assignedPermissions.Data.OrderBy(p => p));
+            assignedPermissions.Data.Select(p => p.Code).OrderBy(p => p));
     }
 
     /// <summary>
@@ -203,6 +205,7 @@ public class AdminUserRoleIntegrationTests
         var permissionCodes = Permissions.AllPermissions.Take(2).Select(p => p.Code).ToList();
         var testRoleId = await CreateTestRoleAsync("TestUpdatePermissionRole", "", permissionCodes);
         var testUserId = await CreateTestAdminUser("TestUpdateRolePermissionsUser", [testRoleId]);
+        var testUserId2 = await CreateTestAdminUser("TestUpdateRolePermissionsUser2", [testRoleId]);
 
         var getRoleResponse = await _client.GetAsync($"api/Role/GetRolePermissions/{testRoleId}");
         getRoleResponse.EnsureSuccessStatusCode();
@@ -225,9 +228,44 @@ public class AdminUserRoleIntegrationTests
         var getAssignedPermissionsResponse =
             await _client.GetAsync($"/api/AdminUser/GetAssignedPermissions/{testUserId}");
         var assignedPermissions =
-            await getAssignedPermissionsResponse.Content.ReadFromNewtonsoftJsonAsync<ResponseData<List<string>>>();
+            await getAssignedPermissionsResponse.Content
+                .ReadFromNewtonsoftJsonAsync<ResponseData<List<AdminUserPermissionResponse>>>();
         Assert.NotNull(assignedPermissions);
         Assert.Equal(permissionCodes.OrderBy(p => p),
-            assignedPermissions.Data.OrderBy(p => p));
+            assignedPermissions.Data.Select(p => p.Code).OrderBy(p => p));
+    }
+
+    /// <summary>
+    /// 设置用户权限测试
+    /// </summary>
+    /// <returns></returns>
+    [Fact]
+    public async Task SetAdminUserSpecificPermissions_Test()
+    {
+        List<string> rolePermissionCodes = [PermissionDefinitions.RoleCreate, PermissionDefinitions.RoleDelete];
+        var testRoleId = await CreateTestRoleAsync("TestSetAdminUserSpecificPermissionsRole", "", rolePermissionCodes);
+        var testUserId = await CreateTestAdminUser("TestSetAdminUserSpecificPermissionsUser", [testRoleId]);
+
+        var userPermissionsResponse = await _client.GetAsync($"/api/AdminUser/GetAssignedPermissions/{testUserId}");
+        userPermissionsResponse.EnsureSuccessStatusCode(); // 确保返回 200 OK
+
+        var userPermissions = (await userPermissionsResponse.Content
+            .ReadFromNewtonsoftJsonAsync<ResponseData<List<AdminUserPermissionResponse>>>())?.Data;
+        Assert.NotNull(userPermissions);
+        Assert.True(userPermissions.All(p => rolePermissionCodes.Contains(p.Code) && p.IsFromRole));
+
+        const string specificPermission = PermissionDefinitions.AdminUserSetPermissions;
+        var updateResponse =
+            await _client.PutAsJsonAsync<List<string>>($"/api/AdminUser/SetAdminUserSpecificPermissions/{testUserId}",
+                [specificPermission]);
+        updateResponse.EnsureSuccessStatusCode();
+
+        userPermissionsResponse = await _client.GetAsync($"/api/AdminUser/GetAssignedPermissions/{testUserId}");
+        userPermissionsResponse.EnsureSuccessStatusCode(); // 确保返回 200 OK
+        userPermissions = (await userPermissionsResponse.Content
+            .ReadFromNewtonsoftJsonAsync<ResponseData<List<AdminUserPermissionResponse>>>())?.Data;
+        Assert.NotNull(userPermissions);
+        Assert.True(userPermissions.Count == 3);
+        Assert.False(userPermissions.Single(p => p.Code == specificPermission).IsFromRole);
     }
 }

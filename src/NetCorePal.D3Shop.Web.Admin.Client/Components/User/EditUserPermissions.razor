@@ -1,4 +1,4 @@
-﻿@using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
+﻿@using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
 <a @onclick="ShowModal">配置权限</a>
 <Modal Title="@("配置权限")"
        Visible="@_modalVisible"
@@ -8,14 +8,16 @@
 
     <Tree TItem="string"
           Checkable
-          DefaultCheckedKeys="_currentRolePermissions"
           @bind-CheckedKeys="_treeCheckedKeys">
         @foreach (var group in _allPermissions.GroupBy(p => p.GroupName))
         {
             <TreeNode Title="@group.Key" Key="@group.Key">
                 @foreach (var permission in group)
                 {
-                    <TreeNode Title="@permission.Remark" Key="@permission.Code"/>
+                    var assigned = _currentAssignedPermissions.FirstOrDefault(p => p.Code == permission.Code);
+                    var isDisableCheckBox = assigned?.IsFromRole is true;
+                    <TreeNode Title="@permission.Remark" Key="@permission.Code" Checked="@(assigned is not null)"
+                              DisableCheckbox="isDisableCheckBox"/>
                 }
             </TreeNode>
         }
@@ -23,14 +25,14 @@
 </Modal>
 
 @code {
-    [CascadingParameter] public RoleResponse Row { get; set; } = default!;
-    [Inject] private IRolesService RolesService { get; set; } = default!;
+    [CascadingParameter] public AdminUserResponse Row { get; set; } = default!;
+    [Inject] private IAdminUserService AdminUserService { get; set; } = default!;
     [Inject] private IPermissionsService PermissionsService { get; set; } = default!;
 
     [Inject] private MessageService Message { get; set; } = default!;
     private string[] _treeCheckedKeys = [];
     private List<Permission> _allPermissions = [];
-    private string[] _currentRolePermissions = [];
+    private AdminUserPermissionResponse[] _currentAssignedPermissions = [];
 
     private bool _modalVisible;
     private bool _modalConfirmLoading;
@@ -39,7 +41,7 @@
     {
         _modalVisible = true;
         _allPermissions = await GetAllPermissions();
-        _currentRolePermissions = await GetRolePermissions(Row.Id);
+        _currentAssignedPermissions = await GetAssignedPermissions(Row.Id);
     }
 
     private async Task<List<Permission>> GetAllPermissions()
@@ -50,9 +52,9 @@
         return [];
     }
 
-    private async Task<string[]> GetRolePermissions(RoleId id)
+    private async Task<AdminUserPermissionResponse[]> GetAssignedPermissions(AdminUserId id)
     {
-        var response = await RolesService.GetRolePermissions(id);
+        var response = await AdminUserService.GetAssignedPermissions(id);
         if (response.Success) return response.Data.ToArray();
         _ = Message.Error(response.Message);
         return [];
@@ -62,7 +64,9 @@
     {
         _modalConfirmLoading = true;
         StateHasChanged();
-        var response = await RolesService.UpdateRolePermissions(Row.Id, _treeCheckedKeys.ToList());
+        var permissions = _treeCheckedKeys.Except(
+            _currentAssignedPermissions.Where(p => p.IsFromRole).Select(p => p.Code));
+        var response = await AdminUserService.SetAdminUserSpecificPermissions(Row.Id, permissions);
         _modalConfirmLoading = false;
         if (response.Success)
         {
