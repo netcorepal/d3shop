@@ -36,7 +36,7 @@
 + [Swashbuckle.AspNetCore.Swagger](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
 + [Ant Design Blazor](https://antblazor.com/)
 
-## Admin IU
+## Admin UI
 
 基于 Ant Design Blazor 实现，参见：
 
