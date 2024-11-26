@@ -10,12 +10,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NetCorePal.D3Shop.Admin.Shared.Authorization;
 using NetCorePal.D3Shop.Web.Admin.Client.Auth;
-using NetCorePal.D3Shop.Web.Admin.Client.Services;
 using NetCorePal.D3Shop.Web.Application.Hubs;
 using NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers;
 using NetCorePal.D3Shop.Web.Auth;
+using NetCorePal.D3Shop.Web.Blazor;
 using NetCorePal.D3Shop.Web.Blazor.Components;
-using NetCorePal.D3Shop.Web.Blazor.Services;
 using NetCorePal.D3Shop.Web.Clients;
 using NetCorePal.D3Shop.Web.Extensions;
 using NetCorePal.Extensions.AspNetCore.Json;
@@ -117,9 +116,9 @@ try
     #endregion
 
     #region Query
-    
+
     builder.Services.AddAllQueries(Assembly.GetExecutingAssembly());
-    
+
     #endregion
 
 
@@ -200,8 +199,8 @@ try
     builder.Services.AddCascadingAuthenticationState();
     builder.Services.AddSingleton<IAuthorizationPolicyProvider, ClientPermissionPolicyProvider>();
     builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
-    builder.Services.AddScoped<IRolesService, RolesService>();
-    builder.Services.AddScoped<IAdminUserService,AdminUserService>();
+
+    builder.Services.AddClientServices();
 
     #endregion
 

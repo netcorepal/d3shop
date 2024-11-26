@@ -7,6 +7,7 @@ using NetCorePal.Extensions.Dto;
 
 namespace NetCorePal.D3Shop.Web.Blazor.Services;
 
+[ServiceExceptionHandler]
 public class RolesService(RoleController roleController) : IRolesService
 {
     public Task<ResponseData<RoleId>> CreateRole(CreateRoleRequest request)

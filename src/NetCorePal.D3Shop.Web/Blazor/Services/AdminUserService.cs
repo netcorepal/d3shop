@@ -8,6 +8,7 @@ using NetCorePal.Extensions.Dto;
 
 namespace NetCorePal.D3Shop.Web.Blazor.Services;
 
+[ServiceExceptionHandler]
 public class AdminUserService(AdminUserController adminUserController) : IAdminUserService
 {
     public Task<ResponseData<AdminUserId>> CreateAdminUser(CreateAdminUserRequest request)
