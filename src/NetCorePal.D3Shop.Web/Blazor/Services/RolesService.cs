@@ -34,8 +34,13 @@ public class RolesService(RoleController roleController) : IRolesService
         return roleController.DeleteRole(id);
     }
 
-    public Task<ResponseData<List<string>>> GetRolePermissions(RoleId id)
+    public Task<ResponseData<List<RolePermissionResponse>>> GetRolePermissions(RoleId id)
     {
         return roleController.GetRolePermissions(id);
+    }
+
+    public Task<ResponseData<IEnumerable<RolePermissionResponse>>> GetAllPermissionsForCreateRole()
+    {
+        return roleController.GetAllPermissionsForCreateRole();
     }
 }

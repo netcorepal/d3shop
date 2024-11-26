@@ -23,7 +23,7 @@ public class AdminUserController(
     RoleQuery roleQuery)
     : ControllerBase
 {
-    private CancellationToken CancellationToken => HttpContext.RequestAborted;
+    private CancellationToken CancellationToken => HttpContext?.RequestAborted ?? default;
 
     [HttpPost]
     [AdminPermission(PermissionDefinitions.AdminUserCreate)]
@@ -48,18 +48,34 @@ public class AdminUserController(
     }
 
     [HttpGet("{id}")]
-    public async Task<ResponseData<List<RoleId>>> GetAssignedRoleIds([FromRoute] AdminUserId id)
+    public async Task<ResponseData<List<AdminUserRoleResponse>>> GetAdminUserRoles([FromRoute] AdminUserId id)
     {
-        var roleIds = await adminUserQuery.GetAssignedRoleIdsForUserAsync(id, CancellationToken);
-        return roleIds.AsResponseData();
+        var allRoles = await roleQuery.GetAllAdminUserRolesAsync(CancellationToken);
+        var assignedRoleIds = await adminUserQuery.GetAssignedRoleIdsAsync(id, CancellationToken);
+        var response = allRoles.Select(r =>
+        {
+            if (assignedRoleIds.Contains(r.RoleId))
+                r.IsAssigned = true;
+            return r;
+        }).ToList();
+        return response.AsResponseData();
     }
 
     [HttpGet("{id}")]
-    public async Task<ResponseData<List<AdminUserPermissionResponse>>> GetAssignedPermissions(
+    public async Task<ResponseData<List<AdminUserPermissionResponse>>> GetAdminUserPermissions(
         [FromRoute] AdminUserId id)
     {
+        var allPermissions = Permissions.AllPermissions;
         var assignedPermissions = await adminUserQuery.GetAssignedPermissionsAsync(id, CancellationToken);
-        return assignedPermissions.AsResponseData();
+        var response = allPermissions.Select(p =>
+            {
+                var assigned = assignedPermissions.Find(ap => ap.PermissionCode == p.Code);
+                var isAssigned = assigned is not null;
+                var isFromRole = assigned?.SourceRoleIds.Count > 0;
+                return new AdminUserPermissionResponse(p.Code, p.GroupName, p.Remark, isAssigned, isFromRole);
+            }
+        ).ToList();
+        return response.AsResponseData();
     }
 
     [HttpPut("{id}")]
@@ -108,9 +124,9 @@ public class AdminUserController(
     }
 
     [HttpGet]
-    public async Task<ResponseData<List<RoleNameResponse>>> GetAllRoleNames()
+    public async Task<ResponseData<List<AdminUserRoleResponse>>> GetAllRolesForCreateUser()
     {
-        var roles = await roleQuery.GetAllRoleNamesAsync(CancellationToken);
+        var roles = await roleQuery.GetAllAdminUserRolesAsync(CancellationToken);
         return roles.AsResponseData();
     }
 }

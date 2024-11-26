@@ -11,8 +11,6 @@ public sealed partial class Users : IDisposable
 
     private List<AdminUserResponse> _adminUserList = [];
 
-    private ITable _table = default!;
-
     protected override async Task OnInitializedAsync()
     {
         const string persistKey = "adminUsers";
@@ -40,11 +38,6 @@ public sealed partial class Users : IDisposable
     private async Task HandleItemAdded()
     {
         _adminUserList = await GetAllAdminUsers();
-    }
-
-    private void HandleItemUpdated()
-    {
-        _table.ReloadData();
     }
 
     private async Task Delete(AdminUserResponse row)

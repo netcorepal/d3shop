@@ -25,27 +25,18 @@
     private async Task ShowModal()
     {
         _modalVisible = true;
-        var allRoles = await GetAllRoleNames();
-        _roleOptions = allRoles.Select(x => new CheckboxOption<RoleId>
+        var roles = await GetAdminUserRoles(Row.Id);
+        _roleOptions = roles.Select(x => new CheckboxOption<RoleId>
         {
-            Label = x.Name,
-            Value = x.Id
+            Label = x.RoleName,
+            Value = x.RoleId,
+            Checked = x.IsAssigned
         }).ToArray();
-        var assignedRoleIds = await GetAssignedRoleIds(Row.Id);
-        _selectedRoleIds = assignedRoleIds.ToArray();
     }
 
-    private async Task<List<RoleNameResponse>> GetAllRoleNames()
+    private async Task<List<AdminUserRoleResponse>> GetAdminUserRoles(AdminUserId id)
     {
-        var response = await AdminUserService.GetAllRoleNames();
-        if (response.Success) return response.Data.ToList();
-        _ = Message.Error(response.Message);
-        return [];
-    }
-
-    private async Task<List<RoleId>> GetAssignedRoleIds(AdminUserId id)
-    {
-        var response = await AdminUserService.GetAssignedRoleIds(id);
+        var response = await AdminUserService.GetAdminUserRoles(id);
         if (response.Success) return response.Data.ToList();
         _ = Message.Error(response.Message);
         return [];

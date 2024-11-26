@@ -8,14 +8,13 @@
 
     <Tree TItem="string"
           Checkable
-          DefaultCheckedKeys="_currentRolePermissions"
           @bind-CheckedKeys="_treeCheckedKeys">
-        @foreach (var group in _allPermissions.GroupBy(p => p.GroupName))
+        @foreach (var group in _permissions.GroupBy(p => p.GroupName))
         {
             <TreeNode Title="@group.Key" Key="@group.Key">
                 @foreach (var permission in group)
                 {
-                    <TreeNode Title="@permission.Remark" Key="@permission.Code"/>
+                    <TreeNode Title="@permission.Remark" Key="@permission.Code" Checked="permission.IsAssigned"/>
                 }
             </TreeNode>
         }
@@ -25,35 +24,24 @@
 @code {
     [CascadingParameter] public RoleResponse Row { get; set; } = default!;
     [Inject] private IRolesService RolesService { get; set; } = default!;
-    [Inject] private IPermissionsService PermissionsService { get; set; } = default!;
 
     [Inject] private MessageService Message { get; set; } = default!;
     private string[] _treeCheckedKeys = [];
-    private List<Permission> _allPermissions = [];
-    private string[] _currentRolePermissions = [];
-
+    private List<RolePermissionResponse> _permissions = [];
+    
     private bool _modalVisible;
     private bool _modalConfirmLoading;
 
     private async Task ShowModal()
     {
         _modalVisible = true;
-        _allPermissions = await GetAllPermissions();
-        _currentRolePermissions = await GetRolePermissions(Row.Id);
+        _permissions = await GetPermissions(Row.Id);
     }
 
-    private async Task<List<Permission>> GetAllPermissions()
-    {
-        var response = await PermissionsService.GetAll();
-        if (response.Success) return response.Data.ToList();
-        _ = Message.Error(response.Message);
-        return [];
-    }
-
-    private async Task<string[]> GetRolePermissions(RoleId id)
+    private async Task<List<RolePermissionResponse>> GetPermissions(RoleId id)
     {
         var response = await RolesService.GetRolePermissions(id);
-        if (response.Success) return response.Data.ToArray();
+        if (response.Success) return response.Data.ToList();
         _ = Message.Error(response.Message);
         return [];
     }

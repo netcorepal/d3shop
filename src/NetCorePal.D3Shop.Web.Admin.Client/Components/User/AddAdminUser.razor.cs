@@ -23,14 +23,14 @@ public partial class AddAdminUser
         var allRoles = await GetAllRoleNames();
         _roleOptions = allRoles.Select(x => new CheckboxOption<RoleId>
         {
-            Label = x.Name,
-            Value = x.Id
+            Label = x.RoleName,
+            Value = x.RoleId
         }).ToArray();
     }
 
-    private async Task<List<RoleNameResponse>> GetAllRoleNames()
+    private async Task<List<AdminUserRoleResponse>> GetAllRoleNames()
     {
-        var response = await AdminUserService.GetAllRoleNames();
+        var response = await AdminUserService.GetAllRolesForCreateUser();
         if (response.Success) return response.Data.ToList();
         _ = Message.Error(response.Message);
         return [];
@@ -68,10 +68,4 @@ public partial class AddAdminUser
     {
         _tabs.GoTo(0);
     }
-
-    // private void CheckboxGroup_OnChange(RoleId[] checkedRoleIds)
-    // {
-    //     _newUserModel.RoleIds = checkedRoleIds
-    //         .ToList();
-    // }
 }

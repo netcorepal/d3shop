@@ -24,7 +24,7 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCa
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<List<RoleId>> GetAssignedRoleIdsForUserAsync(AdminUserId id, CancellationToken cancellationToken)
+    public async Task<List<RoleId>> GetAssignedRoleIdsAsync(AdminUserId id, CancellationToken cancellationToken)
     {
         return await AdminUserSet
             .Where(u => u.Id == id)
@@ -32,13 +32,12 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCa
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<AdminUserPermissionResponse>> GetAssignedPermissionsAsync(AdminUserId id,
+    public async Task<List<AdminUserPermission>> GetAssignedPermissionsAsync(AdminUserId id,
         CancellationToken cancellationToken)
     {
         return await AdminUserSet
             .Where(au => au.Id == id)
-            .SelectMany(au => au.Permissions
-                .Select(aup => new AdminUserPermissionResponse(aup.PermissionCode, aup.SourceRoleIds.Count != 0)))
+            .SelectMany(au => au.Permissions)
             .ToListAsync(cancellationToken);
     }
 

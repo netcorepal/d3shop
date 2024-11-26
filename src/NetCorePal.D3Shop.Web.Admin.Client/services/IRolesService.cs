@@ -22,5 +22,8 @@ public interface IRolesService
     Task<ResponseData> DeleteRole(RoleId id);
 
     [Get("/api/Role/GetRolePermissions/{id}")]
-    Task<ResponseData<List<string>>> GetRolePermissions(RoleId id);
+    Task<ResponseData<List<RolePermissionResponse>>> GetRolePermissions(RoleId id);
+    
+    [Get("/api/Role/GetAllPermissionsForCreateRole")]
+    Task<ResponseData<IEnumerable<RolePermissionResponse>>> GetAllPermissionsForCreateRole();
 }

@@ -20,9 +20,9 @@ public class AdminUserService(AdminUserController adminUserController) : IAdminU
         return adminUserController.GetAllAdminUsers(request);
     }
 
-    public Task<ResponseData<List<RoleId>>> GetAssignedRoleIds(AdminUserId id)
+    public Task<ResponseData<List<AdminUserRoleResponse>>> GetAdminUserRoles(AdminUserId id)
     {
-        return adminUserController.GetAssignedRoleIds(id);
+        return adminUserController.GetAdminUserRoles(id);
     }
 
     public Task<ResponseData> UpdateAdminUserRoles(AdminUserId id, IEnumerable<RoleId> roleIds)
@@ -35,14 +35,14 @@ public class AdminUserService(AdminUserController adminUserController) : IAdminU
         return adminUserController.DeleteAdminUser(id);
     }
 
-    public Task<ResponseData<List<RoleNameResponse>>> GetAllRoleNames()
+    public Task<ResponseData<List<AdminUserRoleResponse>>> GetAllRolesForCreateUser()
     {
-        return adminUserController.GetAllRoleNames();
+        return adminUserController.GetAllRolesForCreateUser();
     }
 
-    public Task<ResponseData<List<AdminUserPermissionResponse>>> GetAssignedPermissions(AdminUserId id)
+    public Task<ResponseData<List<AdminUserPermissionResponse>>> GetAdminUserPermissions(AdminUserId id)
     {
-        return adminUserController.GetAssignedPermissions(id);
+        return adminUserController.GetAdminUserPermissions(id);
     }
 
     public Task<ResponseData> SetAdminUserSpecificPermissions(AdminUserId id, IEnumerable<string> permissionCodes)

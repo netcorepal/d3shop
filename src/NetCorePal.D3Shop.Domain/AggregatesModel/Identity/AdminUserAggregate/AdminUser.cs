@@ -92,8 +92,9 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
 
                 if (existingPermission is null)
                 {
-                    permission.AddSourceRoleId(roleId);
-                    Permissions.Add(permission);
+                    var newPermission = new AdminUserPermission(permission.PermissionCode,permission.PermissionRemark);
+                    newPermission.AddSourceRoleId(roleId);
+                    Permissions.Add(newPermission);
                 }
                 else
                 {

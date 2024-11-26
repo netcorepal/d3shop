@@ -42,10 +42,16 @@ public class RoleController(IMediator mediator, RoleQuery roleQuery) : Controlle
 
     [HttpGet("{id}")]
     [AdminPermission(PermissionDefinitions.RoleView)]
-    public async Task<ResponseData<List<string>>> GetRolePermissions([FromRoute] RoleId id)
+    public async Task<ResponseData<List<RolePermissionResponse>>> GetRolePermissions([FromRoute] RoleId id)
     {
+        var allPermissions = Permissions.AllPermissions;
         var rolePermissions = await roleQuery.GetRolePermissionsAsync(id, CancellationToken);
-        return rolePermissions.AsResponseData();
+        var response = allPermissions.Select(p =>
+                rolePermissions.Contains(p.Code)
+                    ? new RolePermissionResponse(p.Code, p.GroupName, p.Remark, true)
+                    : new RolePermissionResponse(p.Code, p.GroupName, p.Remark, false))
+            .ToList();
+        return response.AsResponseData();
     }
 
     [HttpPut("{id}")]
@@ -80,5 +86,13 @@ public class RoleController(IMediator mediator, RoleQuery roleQuery) : Controlle
     {
         await mediator.Send(new DeleteRoleCommand(id), CancellationToken);
         return new ResponseData();
+    }
+
+    [HttpGet]
+    public Task<ResponseData<IEnumerable<RolePermissionResponse>>> GetAllPermissionsForCreateRole()
+    {
+        IEnumerable<Permission> permissions = Permissions.AllPermissions;
+        var response = permissions.Select(p => new RolePermissionResponse(p.Code, p.GroupName, p.Remark, false));
+        return Task.FromResult(response.AsResponseData());
     }
 }

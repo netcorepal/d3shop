@@ -201,7 +201,6 @@ try
     builder.Services.AddSingleton<IAuthorizationPolicyProvider, ClientPermissionPolicyProvider>();
     builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
     builder.Services.AddScoped<IRolesService, RolesService>();
-    builder.Services.AddScoped<IPermissionsService, PermissionsService>();
     builder.Services.AddScoped<IAdminUserService,AdminUserService>();
 
     #endregion

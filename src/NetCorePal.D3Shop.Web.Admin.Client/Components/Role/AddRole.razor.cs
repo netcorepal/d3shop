@@ -1,17 +1,15 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
 
 namespace NetCorePal.D3Shop.Web.Admin.Client.Components.Role;
 
 public partial class AddRole
 {
     [Inject] private IRolesService RolesService { get; set; } = default!;
-    [Inject] private IPermissionsService PermissionsService { get; set; } = default!;
     [Inject] private MessageService Message { get; set; } = default!;
 
     [Parameter] public EventCallback OnItemAdded { get; set; }
 
-    private List<Permission> _allPermissions = [];
+    private List<RolePermissionResponse> _allPermissions = [];
     private bool _modalVisible;
     private bool _modalConfirmLoading;
     private Form<CreateRoleRequest> _form = default!;
@@ -27,9 +25,9 @@ public partial class AddRole
         _allPermissions = await GetAllPermissions();
     }
 
-    private async Task<List<Permission>> GetAllPermissions()
+    private async Task<List<RolePermissionResponse>> GetAllPermissions()
     {
-        var response = await PermissionsService.GetAll();
+        var response = await RolesService.GetAllPermissionsForCreateRole();
         if (response.Success) return response.Data.ToList();
         _ = Message.Error(response.Message);
         return [];

@@ -22,10 +22,10 @@ public class RoleQuery(ApplicationDbContext dbContext) : IQuery
             .ToListAsync(cancellationToken: cancellationToken);
     }
 
-    public async Task<List<RoleNameResponse>> GetAllRoleNamesAsync(CancellationToken cancellationToken)
+    public async Task<List<AdminUserRoleResponse>> GetAllAdminUserRolesAsync(CancellationToken cancellationToken)
     {
         return await RoleSet
-            .Select(r => new RoleNameResponse(r.Id, r.Name))
+            .Select(r => new AdminUserRoleResponse(r.Id, r.Name, false))
             .ToListAsync(cancellationToken: cancellationToken);
     }
 
