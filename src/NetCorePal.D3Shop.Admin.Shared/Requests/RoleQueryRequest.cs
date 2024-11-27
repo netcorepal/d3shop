@@ -1,3 +1,9 @@
-﻿namespace NetCorePal.D3Shop.Admin.Shared.Requests;
+﻿using NetCorePal.Extensions.Dto;
 
-public record RoleQueryRequest(string? Name, string? Description);
+namespace NetCorePal.D3Shop.Admin.Shared.Requests;
+
+public class RoleQueryRequest : PageRequest
+{
+    public string? Name { get; set; }
+    public string? Description { get; set; }
+}

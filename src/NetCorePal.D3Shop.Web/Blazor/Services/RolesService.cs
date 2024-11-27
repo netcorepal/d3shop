@@ -15,7 +15,7 @@ public class RolesService(RoleController roleController) : IRolesService
         return roleController.CreateRole(request);
     }
 
-    public Task<ResponseData<List<RoleResponse>>> GetAllRoles(RoleQueryRequest request)
+    public Task<ResponseData<PagedData<RoleResponse>>> GetAllRoles(RoleQueryRequest request)
     {
         return roleController.GetAllRoles(request);
     }

@@ -5,6 +5,7 @@ using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate.Dto;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Extensions;
+using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Queries.Identity;
@@ -13,13 +14,14 @@ public class RoleQuery(ApplicationDbContext dbContext) : IQuery
 {
     private DbSet<Role> RoleSet { get; } = dbContext.Roles;
 
-    public async Task<List<RoleResponse>> GetAllRolesAsync(RoleQueryRequest query, CancellationToken cancellationToken)
+    public async Task<PagedData<RoleResponse>> GetAllRolesAsync(RoleQueryRequest query,
+        CancellationToken cancellationToken)
     {
         return await RoleSet
             .WhereIf(!query.Name.IsNullOrWhiteSpace(), r => r.Name.Contains(query.Name!))
             .WhereIf(!query.Description.IsNullOrWhiteSpace(), r => r.Description.Contains(query.Description!))
             .Select(r => new RoleResponse(r.Id, r.Name, r.Description))
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToPagedDataAsync(query, cancellationToken: cancellationToken);
     }
 
     public async Task<List<AdminUserRoleResponse>> GetAllAdminUserRolesAsync(CancellationToken cancellationToken)

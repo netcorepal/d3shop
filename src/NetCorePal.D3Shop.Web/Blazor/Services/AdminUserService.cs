@@ -16,7 +16,7 @@ public class AdminUserService(AdminUserController adminUserController) : IAdminU
         return adminUserController.CreateAdminUser(request);
     }
 
-    public Task<ResponseData<List<AdminUserResponse>>> GetAllAdminUsers(AdminUserQueryRequest request)
+    public Task<ResponseData<PagedData<AdminUserResponse>>> GetAllAdminUsers(AdminUserQueryRequest request)
     {
         return adminUserController.GetAllAdminUsers(request);
     }

@@ -10,7 +10,7 @@ public interface IRolesService
     Task<ResponseData<RoleId>> CreateRole([Body] CreateRoleRequest request);
 
     [Get("/api/Role/GetAllRoles")]
-    Task<ResponseData<List<RoleResponse>>> GetAllRoles([Query] RoleQueryRequest request);
+    Task<ResponseData<PagedData<RoleResponse>>> GetAllRoles([Query] RoleQueryRequest request);
 
     [Put("/api/Role/UpdateRoleInfo/{id}")]
     Task<ResponseData> UpdateRoleInfo(RoleId id, [Body] UpdateRoleInfoRequest request);

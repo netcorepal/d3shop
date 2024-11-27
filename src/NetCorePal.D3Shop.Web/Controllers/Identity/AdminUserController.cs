@@ -40,7 +40,7 @@ public class AdminUserController(
     }
 
     [HttpGet]
-    public async Task<ResponseData<List<AdminUserResponse>>> GetAllAdminUsers(
+    public async Task<ResponseData<PagedData<AdminUserResponse>>> GetAllAdminUsers(
         [FromQuery] AdminUserQueryRequest request)
     {
         var adminUsers = await adminUserQuery.GetAllAdminUsersAsync(request, CancellationToken);

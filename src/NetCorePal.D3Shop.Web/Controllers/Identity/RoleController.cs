@@ -34,7 +34,7 @@ public class RoleController(IMediator mediator, RoleQuery roleQuery) : Controlle
 
     [HttpGet]
     [AdminPermission(PermissionDefinitions.RoleView)]
-    public async Task<ResponseData<List<RoleResponse>>> GetAllRoles([FromQuery] RoleQueryRequest request)
+    public async Task<ResponseData<PagedData<RoleResponse>>> GetAllRoles([FromQuery] RoleQueryRequest request)
     {
         var roles = await roleQuery.GetAllRolesAsync(request, CancellationToken);
         return roles.AsResponseData();

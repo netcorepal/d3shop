@@ -7,6 +7,7 @@ using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity.QueryResult;
 using NetCorePal.D3Shop.Web.Const;
 using NetCorePal.D3Shop.Web.Extensions;
+using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Queries.Identity;
@@ -50,14 +51,14 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCa
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
     }
 
-    public async Task<List<AdminUserResponse>> GetAllAdminUsersAsync(AdminUserQueryRequest queryRequest,
+    public async Task<PagedData<AdminUserResponse>> GetAllAdminUsersAsync(AdminUserQueryRequest queryRequest,
         CancellationToken cancellationToken)
     {
-        var adminUsers = await AdminUserSet
+        var adminUsers =  await AdminUserSet
             .WhereIf(!queryRequest.Name.IsNullOrWhiteSpace(), au => au.Name.Contains(queryRequest.Name!))
             .WhereIf(!queryRequest.Phone.IsNullOrWhiteSpace(), au => au.Phone.Contains(queryRequest.Phone!))
             .Select(au => new AdminUserResponse(au.Id, au.Name, au.Phone))
-            .ToListAsync(cancellationToken);
+            .ToPagedDataAsync(queryRequest, cancellationToken);
         return adminUsers;
     }
 

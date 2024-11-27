@@ -3,7 +3,7 @@
 <Modal Title="@("配置权限")"
        Visible="@_modalVisible"
        OnOk="Modal_HandleOk"
-       OnCancel="() => { _modalVisible = false;_tree.UncheckAll();}"
+       OnCancel="() => _modalVisible = false"
        ConfirmLoading="@_modalConfirmLoading">
 
     <Tree @ref="_tree"

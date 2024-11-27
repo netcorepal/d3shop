@@ -8,7 +8,7 @@ namespace NetCorePal.D3Shop.Web.Extensions;
 public static class QueryableExtensions
 {
     
-    /// <summary>
+    /*/// <summary>
     /// 根据指定的条件，在 <see cref="IQueryable{T}"/> 上应用筛选操作。
     /// </summary>
     /// <param name="query">要应用筛选的 IQueryable</param>
@@ -21,7 +21,7 @@ public static class QueryableExtensions
         return condition
             ? query.Where(predicate)
             : query;
-    }
+    }*/
 
     /// <summary>
     /// 根据指定的条件，在 <see cref="IQueryable{T}"/> 上应用筛选操作。

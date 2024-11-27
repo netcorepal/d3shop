@@ -1,4 +1,6 @@
-﻿namespace NetCorePal.D3Shop.Web.Admin.Client.Pages;
+﻿using AntDesign.TableModels;
+
+namespace NetCorePal.D3Shop.Web.Admin.Client.Pages;
 
 public sealed partial class Users : IDisposable
 {
@@ -9,35 +11,41 @@ public sealed partial class Users : IDisposable
 
     private PersistingComponentStateSubscription _persistingSubscription;
 
-    private List<AdminUserResponse> _adminUserList = [];
+    private PagedData<AdminUserResponse> _pagedAdminUsers = default!;
 
     protected override async Task OnInitializedAsync()
     {
         const string persistKey = "adminUsers";
         _persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
         {
-            ApplicationState.PersistAsJson(persistKey, _adminUserList);
+            ApplicationState.PersistAsJson(persistKey, _pagedAdminUsers);
             return Task.CompletedTask;
         });
 
-        if (ApplicationState.TryTakeFromJson<List<AdminUserResponse>>(persistKey, out var restored))
-            _adminUserList = restored!;
+        if (ApplicationState.TryTakeFromJson<PagedData<AdminUserResponse>>(persistKey, out var restored))
+            _pagedAdminUsers = restored!;
         else
-            _adminUserList = await GetAllAdminUsers();
+            await GetPagedAdminUsers();
     }
 
-    private async Task<List<AdminUserResponse>> GetAllAdminUsers(string? name = null, string? phone = null)
+    private readonly AdminUserQueryRequest _adminUserQueryRequest =
+        new() { PageIndex = 1, PageSize = 10, CountTotal = true };
+
+    private async Task GetPagedAdminUsers()
     {
-        var queryRequest = new AdminUserQueryRequest(name, phone);
-        var response = await AdminUserService.GetAllAdminUsers(queryRequest);
-        if (response.Success) return response.Data.ToList();
-        _ = Message.Error(response.Message);
-        return [];
+        var response = await AdminUserService.GetAllAdminUsers(_adminUserQueryRequest);
+        if (response.Success)
+        {
+            _pagedAdminUsers = response.Data;
+            _adminUserQueryRequest.PageIndex = _pagedAdminUsers.PageIndex;
+            _adminUserQueryRequest.PageSize = _pagedAdminUsers.PageSize;
+        }
+        else _ = Message.Error(response.Message);
     }
 
     private async Task HandleItemAdded()
     {
-        _adminUserList = await GetAllAdminUsers();
+        await GetPagedAdminUsers();
     }
 
     private async Task Delete(AdminUserResponse row)
@@ -48,7 +56,7 @@ public sealed partial class Users : IDisposable
         if (response.Success)
         {
             _ = Message.Success("删除成功！");
-            _adminUserList = await GetAllAdminUsers();
+            await GetPagedAdminUsers();
         }
         else
         {
@@ -65,7 +73,12 @@ public sealed partial class Users : IDisposable
 
     private async Task OnSearch()
     {
-        _adminUserList = await GetAllAdminUsers(_searchString);
+        await GetPagedAdminUsers();
+    }
+
+    private async Task Table_OnChange(QueryModel<AdminUserResponse> obj)
+    {
+        await GetPagedAdminUsers();
     }
 
     public void Dispose()

@@ -1,4 +1,6 @@
-﻿namespace NetCorePal.D3Shop.Web.Admin.Client.Pages;
+﻿using AntDesign.TableModels;
+
+namespace NetCorePal.D3Shop.Web.Admin.Client.Pages;
 
 public sealed partial class Roles : IDisposable
 {
@@ -9,7 +11,7 @@ public sealed partial class Roles : IDisposable
 
     private PersistingComponentStateSubscription _persistingSubscription;
 
-    private List<RoleResponse> _roleList = [];
+    private PagedData<RoleResponse> _pagedRoles = default!;
 
     private ITable _table = default!;
 
@@ -18,28 +20,34 @@ public sealed partial class Roles : IDisposable
         const string persistKey = "roles";
         _persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
         {
-            ApplicationState.PersistAsJson(persistKey, _roleList);
+            ApplicationState.PersistAsJson(persistKey, _pagedRoles);
             return Task.CompletedTask;
         });
 
-        if (ApplicationState.TryTakeFromJson<List<RoleResponse>>(persistKey, out var restored))
-            _roleList = restored!;
+        if (ApplicationState.TryTakeFromJson<PagedData<RoleResponse>>(persistKey, out var restored))
+            _pagedRoles = restored!;
         else
-            _roleList = await GetAllRoles();
+            await GetPagedRoles();
     }
 
-    private async Task<List<RoleResponse>> GetAllRoles(string? name = null, string? description = null)
+    private readonly RoleQueryRequest _roleQueryRequest =
+        new() { PageIndex = 1, PageSize = 10, CountTotal = true };
+
+    private async Task GetPagedRoles()
     {
-        var queryRequest = new RoleQueryRequest(name, description);
-        var response = await RolesService.GetAllRoles(queryRequest);
-        if (response.Success) return response.Data.ToList();
-        _ = Message.Error(response.Message);
-        return [];
+        var response = await RolesService.GetAllRoles(_roleQueryRequest);
+        if (response.Success)
+        {
+            _pagedRoles = response.Data;
+            _roleQueryRequest.PageIndex = _pagedRoles.PageIndex;
+            _roleQueryRequest.PageSize = _pagedRoles.PageSize;
+        }
+        else _ = Message.Error(response.Message);
     }
 
     private async Task HandleItemAdded()
     {
-        _roleList = await GetAllRoles();
+        await GetPagedRoles();
     }
 
     private void HandleItemUpdated()
@@ -55,7 +63,7 @@ public sealed partial class Roles : IDisposable
         if (response.Success)
         {
             _ = Message.Success("删除成功！");
-            _roleList = await GetAllRoles();
+            await GetPagedRoles();
         }
         else
         {
@@ -68,11 +76,14 @@ public sealed partial class Roles : IDisposable
         return await ConfirmService.Show(message, "警告", ConfirmButtons.YesNo, ConfirmIcon.Warning) == ConfirmResult.Yes;
     }
 
-    private string _searchString = default!;
-
     private async Task OnSearch()
     {
-        _roleList = await GetAllRoles(_searchString);
+        await GetPagedRoles();
+    }
+
+    private async Task Table_OnChange(QueryModel<RoleResponse> obj)
+    {
+        await GetPagedRoles();
     }
 
     public void Dispose()

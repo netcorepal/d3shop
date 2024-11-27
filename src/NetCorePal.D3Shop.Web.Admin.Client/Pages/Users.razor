@@ -1,11 +1,24 @@
 @page "/admin/users"
 @using NetCorePal.D3Shop.Web.Admin.Client.Extensions
 @using NetCorePal.D3Shop.Web.Admin.Client.Components.User
+
 @attribute [ClientPermission(PermissionDefinitions.AdminUserView)]
 
 <Table
-    DataSource="_adminUserList"
-    HidePagination="true">
+    TItem="AdminUserResponse"
+    DataSource="_pagedAdminUsers.Items"
+    Total="_pagedAdminUsers.Total"
+    @bind-PageIndex="_adminUserQueryRequest.PageIndex"
+    @bind-PageSize="_adminUserQueryRequest.PageSize"
+    OnChange="Table_OnChange">
+    <PaginationTemplate>
+        <Pagination Class="@context.PaginationClass"
+                    Total="context.Total"
+                    PageSize="context.PageSize"
+                    Current="context.PageIndex"
+                    ShowSizeChanger
+                    OnChange="context.HandlePageChange"/>
+    </PaginationTemplate>
     <TitleTemplate>
         <GridRow Gutter="8" Justify="space-between">
             <GridCol Span="4">

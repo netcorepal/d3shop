@@ -11,7 +11,7 @@ public interface IAdminUserService
     Task<ResponseData<AdminUserId>> CreateAdminUser([Body] CreateAdminUserRequest request);
 
     [Get("/api/AdminUser/GetAllAdminUsers")]
-    Task<ResponseData<List<AdminUserResponse>>> GetAllAdminUsers([Query] AdminUserQueryRequest request);
+    Task<ResponseData<PagedData<AdminUserResponse>>> GetAllAdminUsers([Query] AdminUserQueryRequest request);
 
     [Get("/api/AdminUser/GetAdminUserRoles/{id}")]
     Task<ResponseData<List<AdminUserRoleResponse>>> GetAdminUserRoles(AdminUserId id);
