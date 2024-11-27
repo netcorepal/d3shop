@@ -1,8 +1,3 @@
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
-using NetCorePal.Extensions.AspNetCore.Json;
-using Xunit;
-
 namespace NetCorePal.D3Shop.Web.Tests
 {
     [Collection("web")]

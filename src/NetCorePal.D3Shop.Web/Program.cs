@@ -9,19 +9,17 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NetCorePal.D3Shop.Admin.Shared.Authorization;
-using NetCorePal.D3Shop.Web.Admin.Client.Services;
+using NetCorePal.D3Shop.Web.Admin.Client.Auth;
 using NetCorePal.D3Shop.Web.Application.Hubs;
 using NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers;
-using NetCorePal.D3Shop.Web.Application.Queries;
-using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.D3Shop.Web.Auth;
+using NetCorePal.D3Shop.Web.Blazor;
 using NetCorePal.D3Shop.Web.Blazor.Components;
-using NetCorePal.D3Shop.Web.Blazor.Services;
 using NetCorePal.D3Shop.Web.Clients;
 using NetCorePal.D3Shop.Web.Extensions;
-using NetCorePal.Extensions.AspNetCore.Json;
 using NetCorePal.Extensions.Domain.Json;
 using NetCorePal.Extensions.MultiEnv;
+using NetCorePal.Extensions.NewtonsoftJson;
 using NetCorePal.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -119,9 +117,7 @@ try
 
     #region Query
 
-    builder.Services.AddScoped<OrderQuery>();
-    builder.Services.AddScoped<AdminUserQuery>();
-    builder.Services.AddScoped<RoleQuery>();
+    builder.Services.AddAllQueries(Assembly.GetExecutingAssembly());
 
     #endregion
 
@@ -149,8 +145,7 @@ try
     builder.Services.AddIntegrationEventServices(typeof(Program))
         .AddIIntegrationEventConverter(typeof(Program))
         .UseCap(typeof(Program))
-        .AddContextIntegrationFilters()
-        .AddEnvIntegrationFilters(_ => { });
+        .AddContextIntegrationFilters();
     builder.Services.AddCap(x =>
     {
         x.UseEntityFramework<ApplicationDbContext>();
@@ -201,9 +196,10 @@ try
     builder.Services.AddAntDesign();
 
     builder.Services.AddCascadingAuthenticationState();
+    builder.Services.AddSingleton<IAuthorizationPolicyProvider, ClientPermissionPolicyProvider>();
     builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
-    builder.Services.AddScoped<IRolesService, RolesService>();
-    builder.Services.AddScoped<IPermissionsService, PermissionsService>();
+
+    builder.Services.AddClientServices();
 
     #endregion
 
@@ -241,7 +237,7 @@ try
 
     app.UseHttpMetrics();
     app.MapHealthChecks("/health");
-    app.MapMetrics("/metrics"); // 通过   /metrics  访问指标
+    app.MapMetrics(); // 通过   /metrics  访问指标
     app.UseHangfireDashboard();
     app.MapRazorComponents<App>()
         .AddInteractiveServerRenderMode()

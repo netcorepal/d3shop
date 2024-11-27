@@ -7,7 +7,11 @@ using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity;
 
-public record CreateAdminUserCommand(string Name, string Phone, string Password, IEnumerable<AssignAdminUserRoleDto> RolesToBeAssigned)
+public record CreateAdminUserCommand(
+    string Name,
+    string Phone,
+    string Password,
+    IEnumerable<AssignAdminUserRoleDto> RolesToBeAssigned)
     : ICommand<AdminUserId>;
 
 public class CreateAdminUserCommandValidator : AbstractValidator<CreateAdminUserCommand>
@@ -17,8 +21,7 @@ public class CreateAdminUserCommandValidator : AbstractValidator<CreateAdminUser
         RuleFor(u => u.Name).NotEmpty().WithMessage("用户名不能为空");
         RuleFor(u => u.Phone).NotEmpty().WithMessage("手机号不能为空");
         RuleFor(u => u.Password).NotEmpty().WithMessage("密码不能为空");
-        RuleFor(u => u.Name).Must(n =>
-                adminUserQuery.GetAdminUserByNameAsync(n, CancellationToken.None).GetAwaiter().GetResult() is null)
+        RuleFor(u => u.Name).MustAsync(async (n, ct) => !await adminUserQuery.DoesAdminUserExist(n, ct))
             .WithMessage(u => $"该用户已存在，Name={u.Name}");
     }
 }

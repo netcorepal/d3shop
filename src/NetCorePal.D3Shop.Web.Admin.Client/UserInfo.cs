@@ -5,8 +5,7 @@ namespace NetCorePal.D3Shop.Web.Admin.Client
     public class UserInfo
     {
         public required string UserId { get; init; }
-        public required IEnumerable<string> Roles { get; init; }
-
+        public required string Name { get; init; }
         public required IEnumerable<string> Permissions { get; init; }
     }
 }

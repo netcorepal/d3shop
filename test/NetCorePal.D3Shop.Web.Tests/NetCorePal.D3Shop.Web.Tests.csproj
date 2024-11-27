@@ -16,7 +16,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(FrameworkVersion)" />
     <PackageReference Include="Moq" Version="4.20.69" />
-    <PackageReference Include="NetCorePal.Extensions.NewtonsoftJson" Version="2.0.0-preview.1.2411041514" />
+    <PackageReference Include="NetCorePal.Extensions.NewtonsoftJson" Version="$(NetCorePalVersion)" />
     <PackageReference Include="Testcontainers" Version="$(TestcontainersVersion)" />
     <PackageReference Include="Testcontainers.MySql" Version="$(TestcontainersVersion)" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="$(TestcontainersVersion)" />

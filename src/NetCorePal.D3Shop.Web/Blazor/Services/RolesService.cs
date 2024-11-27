@@ -7,47 +7,41 @@ using NetCorePal.Extensions.Dto;
 
 namespace NetCorePal.D3Shop.Web.Blazor.Services;
 
+[ServiceExceptionHandler]
 public class RolesService(RoleController roleController) : IRolesService
 {
-    public async Task<ResponseData<RoleId>> CreateRole(CreateRoleRequest request)
+    public Task<ResponseData<RoleId>> CreateRole(CreateRoleRequest request)
     {
-        return await roleController.CreateRole(request);
+        return roleController.CreateRole(request);
     }
 
-    public async Task<ResponseData<IEnumerable<RoleResponse>>> GetAllRoles()
+    public Task<ResponseData<PagedData<RoleResponse>>> GetAllRoles(RoleQueryRequest request)
     {
-        return await roleController.GetAllRoles();
+        return roleController.GetAllRoles(request);
     }
 
-    public async Task<ResponseData> UpdateRoleInfo(RoleId id, UpdateRoleInfoRequest request)
+    public Task<ResponseData> UpdateRoleInfo(RoleId id, UpdateRoleInfoRequest request)
     {
-        return await roleController.UpdateRoleInfo(id, request);
+        return roleController.UpdateRoleInfo(id, request);
     }
 
-    public async Task<ResponseData> UpdateRolePermissions(RoleId id, List<string> permissionCodes)
+    public Task<ResponseData> UpdateRolePermissions(RoleId id, List<string> permissionCodes)
     {
-        return await roleController.UpdateRolePermissions(id, permissionCodes);
+        return roleController.UpdateRolePermissions(id, permissionCodes);
     }
 
-    public async Task<ResponseData> DeleteRole(RoleId id)
+    public Task<ResponseData> DeleteRole(RoleId id)
     {
-        return await roleController.DeleteRole(id);
+        return roleController.DeleteRole(id);
     }
 
-    public async Task<ResponseData<IEnumerable<RoleResponse>>> GetRolesByCondition(
-        RoleQueryRequest request)
+    public Task<ResponseData<List<RolePermissionResponse>>> GetRolePermissions(RoleId id)
     {
-        return await roleController.GetRolesByCondition(request);
+        return roleController.GetRolePermissions(id);
     }
 
-    public async Task<ResponseData<RoleResponse>> GetRoleById(RoleId id)
+    public Task<ResponseData<IEnumerable<RolePermissionResponse>>> GetAllPermissionsForCreateRole()
     {
-        return await roleController.GetRoleById(id);
-    }
-
-    public async Task<ResponseData<IEnumerable<RolePermissionResponse>>>
-        GetRolePermissions(RoleId id)
-    {
-        return await roleController.GetRolePermissions(id);
+        return roleController.GetAllPermissionsForCreateRole();
     }
 }

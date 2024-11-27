@@ -6,6 +6,7 @@ public static class PermissionDefinitions
     public const string AdminUserCreate = nameof(AdminUserCreate);
     public const string AdminUserEdit = nameof(AdminUserEdit);
     public const string AdminUserUpdateRoles = nameof(AdminUserUpdateRoles);
+    public const string AdminUserSetPermissions = nameof(AdminUserSetPermissions);
     public const string AdminUserView = nameof(AdminUserView);
     public const string AdminUserUpdatePassword = nameof(AdminUserUpdatePassword);
     public const string AdminUserDelete = nameof(AdminUserDelete);

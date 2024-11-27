@@ -6,14 +6,15 @@ using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity;
 
-public record CreateRoleCommand(string Name, string Description, IEnumerable<RolePermission> Permissions) : ICommand<RoleId>;
+public record CreateRoleCommand(string Name, string Description, IEnumerable<RolePermission> Permissions)
+    : ICommand<RoleId>;
 
 public class CreateRoleCommandValidator : AbstractValidator<CreateRoleCommand>
 {
     public CreateRoleCommandValidator(RoleQuery roleQuery)
     {
         RuleFor(x => x.Name).NotEmpty().WithMessage("角色名称不能为空");
-        RuleFor(x => x.Name).Must((n) => roleQuery.GetRoleByNameAsync(n, CancellationToken.None).GetAwaiter().GetResult() is null)
+        RuleFor(x => x.Name).MustAsync(async (n, ct) => !await roleQuery.RoleExistsByNameAsync(n, ct))
             .WithMessage(r => $"角色名称重复，Name={r.Name}");
     }
 }
