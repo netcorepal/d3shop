@@ -70,21 +70,21 @@ public class AdminUserRoleIntegrationTests
         await CreateTestAdminUser(testUserName, []);
 
         // Act 2: Get all admin users
-        var allUsersResponse = await _client.GetAsync("/api/AdminUser/GetAllAdminUsers");
+        var allUsersResponse = await _client.GetAsync("/api/AdminUser/GetAllAdminUsers?PageIndex=1");
         allUsersResponse.EnsureSuccessStatusCode(); // 确保返回 200 OK
 
         var allUsersData = await allUsersResponse.Content
-            .ReadFromNewtonsoftJsonAsync<ResponseData<IEnumerable<AdminUserResponse>>>();
+            .ReadFromNewtonsoftJsonAsync<ResponseData<PagedData<AdminUserResponse>>>();
         Assert.NotNull(allUsersData);
-        Assert.NotEmpty(allUsersData.Data); // 验证返回的用户列表不为空
+        Assert.NotEmpty(allUsersData.Data.Items); // 验证返回的用户列表不为空
 
         // Act 3: Get admin users by condition
-        var conditionResponse = await _client.GetAsync($"/api/AdminUser/GetAllAdminUsers?Name={testUserName}");
+        var conditionResponse = await _client.GetAsync($"/api/AdminUser/GetAllAdminUsers?Name={testUserName}&PageIndex=1");
         conditionResponse.EnsureSuccessStatusCode(); // 确保返回 200 OK
         var conditionData = await conditionResponse.Content
-            .ReadFromNewtonsoftJsonAsync<ResponseData<IEnumerable<AdminUserResponse>>>();
+            .ReadFromNewtonsoftJsonAsync<ResponseData<PagedData<AdminUserResponse>>>();
         Assert.NotNull(conditionData);
-        Assert.All(conditionData.Data, user => Assert.Contains(testUserName, user.Name)); // 验证返回的用户符合条件
+        Assert.All(conditionData.Data.Items, user => Assert.Contains(testUserName, user.Name)); // 验证返回的用户符合条件
     }
 
     /// <summary>
@@ -181,20 +181,20 @@ public class AdminUserRoleIntegrationTests
         const string testRoleName = "TestQueryRole";
         await CreateTestRoleAsync(testRoleName, "Test role", []);
 
-        var allRolesResponse = await _client.GetAsync("/api/Role/GetAllRoles");
+        var allRolesResponse = await _client.GetAsync("/api/Role/GetAllRoles?PageIndex=1");
         allRolesResponse.EnsureSuccessStatusCode(); // 确保返回 200 OK
 
         var allRolesData = await allRolesResponse.Content
-            .ReadFromNewtonsoftJsonAsync<ResponseData<IEnumerable<RoleResponse>>>();
+            .ReadFromNewtonsoftJsonAsync<ResponseData<PagedData<RoleResponse>>>();
         Assert.NotNull(allRolesData);
-        Assert.NotEmpty(allRolesData.Data); // 验证返回的角色列表不为空
+        Assert.NotEmpty(allRolesData.Data.Items); // 验证返回的角色列表不为空
 
-        var conditionResponse = await _client.GetAsync($"/api/Role/GetAllRoles?Name={testRoleName}");
+        var conditionResponse = await _client.GetAsync($"/api/Role/GetAllRoles?Name={testRoleName}&PageIndex=1");
         conditionResponse.EnsureSuccessStatusCode(); // 确保返回 200 OK
         var conditionData = await conditionResponse.Content
-            .ReadFromNewtonsoftJsonAsync<ResponseData<IEnumerable<RoleResponse>>>();
+            .ReadFromNewtonsoftJsonAsync<ResponseData<PagedData<RoleResponse>>>();
         Assert.NotNull(conditionData);
-        Assert.All(conditionData.Data, r => Assert.Contains(testRoleName, r.Name)); // 验证返回的用户符合条件
+        Assert.All(conditionData.Data.Items, r => Assert.Contains(testRoleName, r.Name)); // 验证返回的用户符合条件
     }
 
     /// <summary>
