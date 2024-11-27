@@ -1,18 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.10" />
-    <PackageReference Include="NetCorePal.Extensions.Dto" Version="$(NetCorePalVersion)" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.10"/>
+        <PackageReference Include="NetCorePal.Extensions.Dto" Version="$(NetCorePalVersion)"/>
+        <PackageReference Include="NetCorePal.Extensions.NewtonsoftJson" Version="$(NetCorePalVersion)"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\NetCorePal.D3Shop.Domain\NetCorePal.D3Shop.Domain.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\NetCorePal.D3Shop.Domain\NetCorePal.D3Shop.Domain.csproj"/>
+    </ItemGroup>
 
 </Project>

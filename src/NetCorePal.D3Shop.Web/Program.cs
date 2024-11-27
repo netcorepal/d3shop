@@ -17,9 +17,9 @@ using NetCorePal.D3Shop.Web.Blazor;
 using NetCorePal.D3Shop.Web.Blazor.Components;
 using NetCorePal.D3Shop.Web.Clients;
 using NetCorePal.D3Shop.Web.Extensions;
-using NetCorePal.Extensions.AspNetCore.Json;
 using NetCorePal.Extensions.Domain.Json;
 using NetCorePal.Extensions.MultiEnv;
+using NetCorePal.Extensions.NewtonsoftJson;
 using NetCorePal.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -145,8 +145,7 @@ try
     builder.Services.AddIntegrationEventServices(typeof(Program))
         .AddIIntegrationEventConverter(typeof(Program))
         .UseCap(typeof(Program))
-        .AddContextIntegrationFilters()
-        .AddEnvIntegrationFilters(_ => { });
+        .AddContextIntegrationFilters();
     builder.Services.AddCap(x =>
     {
         x.UseEntityFramework<ApplicationDbContext>();

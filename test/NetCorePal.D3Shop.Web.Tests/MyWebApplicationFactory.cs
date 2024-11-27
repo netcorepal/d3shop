@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Hosting;
-using NetCorePal.Extensions.AspNetCore.Json;
 
 namespace NetCorePal.D3Shop.Web.Tests
 {
