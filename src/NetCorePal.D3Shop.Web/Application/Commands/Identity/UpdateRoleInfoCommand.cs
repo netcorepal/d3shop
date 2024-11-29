@@ -15,10 +15,8 @@ public class UpdateRoleInfoCommandValidator : AbstractValidator<UpdateRoleInfoCo
         RuleFor(x => x.RoleId).NotEmpty();
         RuleFor(x => x.Name).NotEmpty();
         RuleFor(x => new { x.Name, x.RoleId }).MustAsync(async (r, ct) =>
-        {
-            var s = await roleQuery.GetRoleByNameAsync(r.Name, ct);
-            return s is null || s.Id == r.RoleId;
-        });
+            !await roleQuery.RoleExistsByNameAsync(r.Name, r.RoleId, ct)
+        );
     }
 }
 
@@ -27,7 +25,7 @@ public class UpdateRoleInfoCommandHandler(IRoleRepository roleRepository) : ICom
     public async Task Handle(UpdateRoleInfoCommand request, CancellationToken cancellationToken)
     {
         var role = await roleRepository.GetAsync(request.RoleId, cancellationToken) ??
-                    throw new KnownException($"未找到角色，RoleId = {request.RoleId}");
+                   throw new KnownException($"未找到角色，RoleId = {request.RoleId}");
         role.UpdateRoleInfo(request.Name, request.Description);
     }
 }

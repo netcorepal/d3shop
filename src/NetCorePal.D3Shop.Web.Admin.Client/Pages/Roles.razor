@@ -1,19 +1,32 @@
 @page "/admin/roles"
-@using NetCorePal.D3Shop.Web.Admin.Client.Components
+@using NetCorePal.D3Shop.Web.Admin.Client.Components.Role
 @using NetCorePal.D3Shop.Web.Admin.Client.Extensions
+
 @attribute [ClientPermission(PermissionDefinitions.RoleView)]
 
 <Table
+    TItem="RoleResponse"
     @ref="_table"
-    DataSource="_roleList"
-    HidePagination="true">
+    DataSource="_pagedRoles.Items"
+    Total="_pagedRoles.Total"
+    @bind-PageIndex="_roleQueryRequest.PageIndex"
+    @bind-PageSize="_roleQueryRequest.PageSize"
+    OnChange="Table_OnChange">
+    <PaginationTemplate>
+        <Pagination Class="@context.PaginationClass"
+                    Total="context.Total"
+                    PageSize="context.PageSize"
+                    Current="context.PageIndex"
+                    ShowSizeChanger
+                    OnChange="context.HandlePageChange"/>
+    </PaginationTemplate>
     <TitleTemplate>
         <GridRow Gutter="8" Justify="space-between">
             <GridCol Span="4">
                 <Title Level="3">角色列表</Title>
             </GridCol>
             <GridCol Span="8" Offset="10">
-                <Search Placeholder="搜索名称" @bind-Value="_searchString" OnSearch="() => OnSearch()"/>
+                <Search Placeholder="搜索名称" @bind-Value="_roleQueryRequest.Name" OnSearch="() => OnSearch()"/>
             </GridCol>
             <GridCol Span="2">
                 <AuthorizeView>

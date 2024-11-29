@@ -1,11 +1,9 @@
-﻿using System.Threading;
-using NetCorePal.D3Shop.Domain;
-using NetCorePal.D3Shop.Domain.AggregatesModel.OrderAggregate;
-using NetCorePal.D3Shop.Infrastructure;
+﻿using NetCorePal.D3Shop.Domain.AggregatesModel.OrderAggregate;
+using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Queries
 {
-    public class OrderQuery(ApplicationDbContext applicationDbContext)
+    public class OrderQuery(ApplicationDbContext applicationDbContext) : IQuery
     {
         public async Task<Order?> QueryOrder(OrderId orderId, CancellationToken cancellationToken)
         {

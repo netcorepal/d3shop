@@ -17,17 +17,16 @@ public class RolePermissionsChangedDomainEventHandler(
     public async Task Handle(RolePermissionChangedDomainEvent notification, CancellationToken cancellationToken)
     {
         var roleId = notification.Role.Id;
-        var adminUsers = await adminUserQuery.GetAdminUserByRoleIdAsync(roleId, cancellationToken);
+        var adminUserIds = await adminUserQuery.GetAdminUserIdsByRoleIdAsync(roleId, cancellationToken);
         var permissions = notification.Role.Permissions
             .Select(p => new AdminUserPermission(p.PermissionCode, p.PermissionRemark))
             .ToArray();
-        await Task.WhenAll(
-            adminUsers.Select(async adminUser =>
-            {
-                memoryCache.Remove($"{CacheKeys.AdminUserPermissions}:{adminUser.Id}");
-                await mediator.Send(new UpdateAdminUserRolePermissionsCommand(adminUser.Id, roleId, permissions),
-                    cancellationToken);
-            })
-        );
+
+        foreach (var adminUserId in adminUserIds)
+        {
+            memoryCache.Remove($"{CacheKeys.AdminUserPermissions}:{adminUserId}");
+            await mediator.Send(new UpdateAdminUserRolePermissionsCommand(adminUserId, roleId, permissions),
+                cancellationToken);
+        }
     }
 }

@@ -1,0 +1,66 @@
+﻿@using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
+<a @onclick="ShowModal">配置权限</a>
+<Modal Title="@("配置权限")"
+       Visible="@_modalVisible"
+       OnOk="Modal_HandleOk"
+       OnCancel="() =>  _modalVisible = false"
+       ConfirmLoading="@_modalConfirmLoading">
+
+    <Tree TItem="string"
+          Checkable
+          @bind-CheckedKeys="_treeCheckedKeys">
+        @foreach (var group in _permissions.GroupBy(p => p.GroupName))
+        {
+            <TreeNode Title="@group.Key" Key="@group.Key">
+                @foreach (var permission in group)
+                {
+                    <TreeNode Title="@permission.Remark" Key="@permission.Code" Checked="permission.IsAssigned"/>
+                }
+            </TreeNode>
+        }
+    </Tree>
+</Modal>
+
+@code {
+    [CascadingParameter] public RoleResponse Row { get; set; } = default!;
+    [Inject] private IRolesService RolesService { get; set; } = default!;
+
+    [Inject] private MessageService Message { get; set; } = default!;
+    private string[] _treeCheckedKeys = [];
+    private List<RolePermissionResponse> _permissions = [];
+    
+    private bool _modalVisible;
+    private bool _modalConfirmLoading;
+
+    private async Task ShowModal()
+    {
+        _modalVisible = true;
+        _permissions = await GetPermissions(Row.Id);
+    }
+
+    private async Task<List<RolePermissionResponse>> GetPermissions(RoleId id)
+    {
+        var response = await RolesService.GetRolePermissions(id);
+        if (response.Success) return response.Data.ToList();
+        _ = Message.Error(response.Message);
+        return [];
+    }
+
+    private async Task Modal_HandleOk()
+    {
+        _modalConfirmLoading = true;
+        StateHasChanged();
+        var response = await RolesService.UpdateRolePermissions(Row.Id, _treeCheckedKeys.ToList());
+        _modalConfirmLoading = false;
+        if (response.Success)
+        {
+            _modalVisible = false;
+            _ = Message.Success("更新成功！");
+        }
+        else
+        {
+            _ = Message.Error(response.Message);
+        }
+    }
+
+}
