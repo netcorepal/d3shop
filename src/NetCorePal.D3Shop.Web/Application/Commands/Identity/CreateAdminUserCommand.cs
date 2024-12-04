@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate.Dto;
 using NetCorePal.D3Shop.Infrastructure.Repositories.Identity;
+using NetCorePal.D3Shop.Web.Application.Commands.Identity.Dto;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.Extensions.Primitives;
 
@@ -31,7 +31,22 @@ public class CreateAdminUserCommandHandler(IAdminUserRepository adminUserReposit
 {
     public async Task<AdminUserId> Handle(CreateAdminUserCommand request, CancellationToken cancellationToken)
     {
-        var adminUser = new AdminUser(request.Name, request.Phone, request.Password, request.RolesToBeAssigned);
+        List<AdminUserRole> adminUserRoles = [];
+        List<AdminUserPermission> adminUserPermissions = [];
+
+        foreach (var (roleId, roleName, permissions) in request.RolesToBeAssigned)
+        {
+            adminUserRoles.Add(new AdminUserRole(roleId, roleName));
+
+            adminUserPermissions.AddRange(
+                permissions.Select(permission =>
+                    new AdminUserPermission(permission.PermissionCode, permission.PermissionRemark, roleId))
+            );
+        }
+
+        var adminUser = new AdminUser(request.Name, request.Phone, request.Password,
+            adminUserRoles, adminUserPermissions);
+
         await adminUserRepository.AddAsync(adminUser, cancellationToken);
         return adminUser.Id;
     }

@@ -1,5 +1,4 @@
-﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate.Dto;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
+﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.Extensions.Domain;
 using NetCorePal.Extensions.Primitives;
 
@@ -25,20 +24,20 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         public DateTime? DeletedAt { get; private set; }
 
         public AdminUser(string name, string phone, string password,
-            IEnumerable<AssignAdminUserRoleDto> rolesToBeAssigned)
+            IEnumerable<AdminUserRole> roles, IEnumerable<AdminUserPermission> permissions)
         {
             CreatedAt = DateTime.Now;
             Name = name;
             Phone = phone;
             Password = password;
-            foreach (var roleDto in rolesToBeAssigned)
+            foreach (var adminUserRole in roles)
             {
-                Roles.Add(new AdminUserRole(roleDto.RoleId, roleDto.RoleName));
-                foreach (var rolePermission in roleDto.Permissions)
-                {
-                    rolePermission.SourceRoleIds.Add(roleDto.RoleId);
-                    Permissions.Add(rolePermission);
-                }
+                Roles.Add(adminUserRole);
+            }
+
+            foreach (var adminUserPermission in permissions)
+            {
+                Permissions.Add(adminUserPermission);
             }
         }
 
@@ -48,7 +47,8 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
             savedRole?.UpdateRoleInfo(roleName);
         }
 
-        public void UpdateRoles(IEnumerable<AssignAdminUserRoleDto> rolesToBeAssigned)
+        public void UpdateRoles(IEnumerable<AdminUserRole> rolesToBeAssigned,
+            IEnumerable<AdminUserPermission> permissions)
         {
             var currentRoleMap = Roles.ToDictionary(r => r.RoleId);
             var targetRoleMap = rolesToBeAssigned.ToDictionary(r => r.RoleId);
@@ -64,42 +64,43 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
             foreach (var roleId in roleIdsToAdd)
             {
                 var targetRole = targetRoleMap[roleId];
-                Roles.Add(new AdminUserRole(roleId, targetRole.RoleName));
-                AddRolePermissions(roleId, targetRole.Permissions);
+                Roles.Add(targetRole);
             }
+
+            AddPermissions(permissions);
         }
 
         public void UpdateRolePermissions(RoleId roleId, IEnumerable<AdminUserPermission> newPermissions)
         {
             RemoveRolePermissions(roleId);
-            AddRolePermissions(roleId, newPermissions);
+            AddPermissions(newPermissions);
+        }
+
+        private void AddPermissions(IEnumerable<AdminUserPermission> permissions)
+        {
+            foreach (var permission in permissions)
+            {
+                var existedPermission = Permissions.SingleOrDefault(p => p.PermissionCode == permission.PermissionCode);
+                if (existedPermission is not null)
+                {
+                    foreach (var permissionSourceRoleId in permission.SourceRoleIds)
+                        existedPermission.AddSourceRoleId(permissionSourceRoleId);
+                }
+                else
+                {
+                    Permissions.Add(permission);
+                }
+            }
         }
 
         private void RemoveRolePermissions(RoleId roleId)
         {
-            foreach (var permission in Permissions.Where(p => p.SourceRoleIds.Remove(roleId)).ToArray())
+            foreach (var permission in Permissions.Where(
+                             p => p.SourceRoleIds.Remove(roleId) &&
+                                  p.SourceRoleIds.Count == 0)
+                         .ToArray())
             {
-                if (permission.SourceRoleIds.Count == 0)
-                    Permissions.Remove(permission);
-            }
-        }
-
-        private void AddRolePermissions(RoleId roleId, IEnumerable<AdminUserPermission> permissions)
-        {
-            foreach (var permission in permissions)
-            {
-                var existingPermission = Permissions.FirstOrDefault(p => p.PermissionCode == permission.PermissionCode);
-
-                if (existingPermission is null)
-                {
-                    var newPermission = new AdminUserPermission(permission.PermissionCode,permission.PermissionRemark);
-                    newPermission.AddSourceRoleId(roleId);
-                    Permissions.Add(newPermission);
-                }
-                else
-                {
-                    existingPermission.AddSourceRoleId(roleId);
-                }
+                Permissions.Remove(permission);
             }
         }
 
