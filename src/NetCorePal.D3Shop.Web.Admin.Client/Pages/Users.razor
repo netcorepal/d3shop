@@ -6,6 +6,7 @@
 
 <Table
     TItem="AdminUserResponse"
+    @ref="_table"
     DataSource="_pagedAdminUsers.Items"
     Total="_pagedAdminUsers.Total"
     @bind-PageIndex="_adminUserQueryRequest.PageIndex"
@@ -25,7 +26,7 @@
                 <Title Level="3">用户列表</Title>
             </GridCol>
             <GridCol Span="8" Offset="10">
-                <Search Placeholder="搜索名称" @bind-Value="_searchString" OnSearch="() => OnSearch()"/>
+                <Search Placeholder="搜索名称" @bind-Value="_adminUserQueryRequest.Name" OnSearch="() => OnSearch()"/>
             </GridCol>
             <GridCol Span="2">
                 <AuthorizeView>
