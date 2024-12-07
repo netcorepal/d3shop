@@ -2,34 +2,23 @@
 
 namespace NetCorePal.D3Shop.Web.Admin.Client.Pages;
 
-public sealed partial class Users : IDisposable
+public sealed partial class Users
 {
     [Inject] private IAdminUserService AdminUserService { get; set; } = default!;
     [Inject] private MessageService Message { get; set; } = default!;
     [Inject] private ConfirmService ConfirmService { get; set; } = default!;
-    [Inject] private PersistentComponentState ApplicationState { get; set; } = default!;
 
-    private PersistingComponentStateSubscription _persistingSubscription;
+    private PagedData<AdminUserResponse> _pagedAdminUsers = new(default!, default, default, default);
 
-    private PagedData<AdminUserResponse> _pagedAdminUsers = default!;
+    private Table<AdminUserResponse> _table = default!;
 
-    protected override async Task OnInitializedAsync()
+    private readonly AdminUserQueryRequest _adminUserQueryRequest = new() { CountTotal = true };
+
+    protected override void OnAfterRender(bool firstRender)
     {
-        const string persistKey = "adminUsers";
-        _persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
-        {
-            ApplicationState.PersistAsJson(persistKey, _pagedAdminUsers);
-            return Task.CompletedTask;
-        });
-
-        if (ApplicationState.TryTakeFromJson<PagedData<AdminUserResponse>>(persistKey, out var restored))
-            _pagedAdminUsers = restored!;
-        else
-            await GetPagedAdminUsers();
+        if (!firstRender) return;
+        _table.ReloadData(1, 10);
     }
-
-    private readonly AdminUserQueryRequest _adminUserQueryRequest =
-        new() { PageIndex = 1, PageSize = 10, CountTotal = true };
 
     private async Task GetPagedAdminUsers()
     {
@@ -37,8 +26,8 @@ public sealed partial class Users : IDisposable
         if (response.Success)
         {
             _pagedAdminUsers = response.Data;
-            _adminUserQueryRequest.PageIndex = _pagedAdminUsers.PageIndex;
-            _adminUserQueryRequest.PageSize = _pagedAdminUsers.PageSize;
+            _adminUserQueryRequest.PageIndex = response.Data.PageIndex;
+            _adminUserQueryRequest.PageSize = response.Data.PageSize;
         }
         else _ = Message.Error(response.Message);
     }
@@ -69,8 +58,6 @@ public sealed partial class Users : IDisposable
         return await ConfirmService.Show(message, "警告", ConfirmButtons.YesNo, ConfirmIcon.Warning) == ConfirmResult.Yes;
     }
 
-    private string _searchString = default!;
-
     private async Task OnSearch()
     {
         await GetPagedAdminUsers();
@@ -79,10 +66,5 @@ public sealed partial class Users : IDisposable
     private async Task Table_OnChange(QueryModel<AdminUserResponse> obj)
     {
         await GetPagedAdminUsers();
-    }
-
-    public void Dispose()
-    {
-        _persistingSubscription.Dispose();
     }
 }

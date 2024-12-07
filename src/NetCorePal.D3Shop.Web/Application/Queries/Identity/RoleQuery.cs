@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Admin.Shared.Responses;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate.Dto;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
+using NetCorePal.D3Shop.Web.Application.Commands.Identity.Dto;
 using NetCorePal.D3Shop.Web.Extensions;
 using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;
@@ -40,7 +39,7 @@ public class RoleQuery(ApplicationDbContext dbContext) : IQuery
                 r.Id,
                 r.Name,
                 r.Permissions.Select(rp =>
-                    new AdminUserPermission(rp.PermissionCode, rp.PermissionRemark)))
+                    new AdminUserPermissionDto(rp.PermissionCode, rp.PermissionRemark)))
             )
             .ToListAsync(cancellationToken: cancellationToken);
     }

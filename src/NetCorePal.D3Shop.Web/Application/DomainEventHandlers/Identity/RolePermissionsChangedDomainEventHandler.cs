@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Caching.Memory;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.DomainEvents.Identity;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity;
+using NetCorePal.D3Shop.Web.Application.Commands.Identity.Dto;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.D3Shop.Web.Const;
 using NetCorePal.Extensions.Domain;
@@ -19,7 +19,7 @@ public class RolePermissionsChangedDomainEventHandler(
         var roleId = notification.Role.Id;
         var adminUserIds = await adminUserQuery.GetAdminUserIdsByRoleIdAsync(roleId, cancellationToken);
         var permissions = notification.Role.Permissions
-            .Select(p => new AdminUserPermission(p.PermissionCode, p.PermissionRemark))
+            .Select(p => new AdminUserPermissionDto(p.PermissionCode, p.PermissionRemark))
             .ToArray();
 
         foreach (var adminUserId in adminUserIds)

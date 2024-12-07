@@ -8,7 +8,10 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
 
     public class Role : Entity<RoleId>, IAggregateRoot
     {
-        protected Role() { }
+        protected Role()
+        {
+        }
+
         public string Name { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;
         public DateTime CreatedAt { get; init; }
@@ -48,6 +51,5 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
 
             AddDomainEvent(new RolePermissionChangedDomainEvent(this));
         }
-
     }
 }

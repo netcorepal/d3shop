@@ -12,7 +12,6 @@
   <ItemGroup>
     <PackageReference Include="AspNet.Security.OAuth.Feishu" Version="8.0.0" />
     <PackageReference Include="AspNet.Security.OAuth.Weixin" Version="8.0.0" />
-    <PackageReference Include="DependencyInjection.StaticAccessor.Blazor" Version="8.0.0" />
     <PackageReference Include="DotNetCore.CAP.Dashboard" Version="8.2.0" />
     <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="8.2.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
@@ -42,7 +41,6 @@
     <PackageReference Include="prometheus-net.AspNetCore.HealthChecks" Version="8.0.1" />
     <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
     <PackageReference Include="Refit.Newtonsoft.Json" Version="8.0.0" />
-    <PackageReference Include="Rougamo.Extensions.DependencyInjection.Microsoft" Version="8.0.1" />
     <PackageReference Include="Rougamo.Fody" Version="4.0.4" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
     <PackageReference Include="Serilog.Enrichers.ClientInfo" Version="2.1.0" />
@@ -64,6 +62,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="Blazor\Components\Account\Login.razor" />
     <AdditionalFiles Include="Blazor\Components\App.razor" />
     <AdditionalFiles Include="Blazor\Components\Pages\Error.razor" />
     <AdditionalFiles Include="Blazor\Components\_Imports.razor" />

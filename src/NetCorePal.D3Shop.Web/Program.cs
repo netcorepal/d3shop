@@ -75,7 +75,7 @@ try
 
     #region Controller
 
-    builder.Services.AddControllers().AddControllersAsServices().AddJsonOptions(options =>
+    builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new EntityIdJsonConverterFactory());
     });

@@ -1,0 +1,34 @@
+﻿@using NetCorePal.D3Shop.Web.Admin.Client.Layouts
+@layout UserLayout
+@page "/admin/login"
+
+<div class="main__b__0">
+    <div class="login">
+        <Form Model="@LoginModel" Name="loginForm" Method="post" OnFinish="HandleSubmit">
+            <FormItem>
+                <AntDesign.Input Placeholder="Name" Size="large" @bind-Value="@LoginModel.Name">
+                    <Prefix>
+                        <Icon Type="user"/>
+                    </Prefix>
+                </AntDesign.Input>
+            </FormItem>
+            <FormItem>
+                <AntDesign.Input Placeholder="Password" Size="large" @bind-Value="@LoginModel.Password"
+                                 Type="password">
+                    <Prefix>
+                        <Icon Type="lock"/>
+                    </Prefix>
+                </AntDesign.Input>
+            </FormItem>
+            <div>
+                <Checkbox Checked="@LoginModel.IsPersistent">
+                    Auto Login
+                </Checkbox>
+                <a style="float: right;">
+                    Forgot Password
+                </a>
+            </div>
+            <Button Type="@ButtonType.Primary" HtmlType="submit" Class="submit" Size="large" Block>Log in </Button>
+        </Form>
+    </div>
+</div>

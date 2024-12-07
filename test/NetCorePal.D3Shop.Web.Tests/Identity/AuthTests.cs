@@ -10,7 +10,7 @@ namespace NetCorePal.D3Shop.Web.Tests.Identity;
 public class AuthTests
 {
     private readonly HttpClient _client;
-    private readonly AdminUser _testUser = new("Test", "", "", []);
+    private readonly AdminUser _testUser = new("Test", "", "", [], []);
 
     public AuthTests(MyWebApplicationFactory factory)
     {

@@ -2,36 +2,23 @@
 
 namespace NetCorePal.D3Shop.Web.Admin.Client.Pages;
 
-public sealed partial class Roles : IDisposable
+public sealed partial class Roles
 {
     [Inject] private IRolesService RolesService { get; set; } = default!;
     [Inject] private MessageService Message { get; set; } = default!;
     [Inject] private ConfirmService ConfirmService { get; set; } = default!;
-    [Inject] private PersistentComponentState ApplicationState { get; set; } = default!;
 
-    private PersistingComponentStateSubscription _persistingSubscription;
-
-    private PagedData<RoleResponse> _pagedRoles = default!;
+    private PagedData<RoleResponse> _pagedRoles = new(default!, default, default, default);
 
     private ITable _table = default!;
 
-    protected override async Task OnInitializedAsync()
+    private readonly RoleQueryRequest _roleQueryRequest = new() { CountTotal = true };
+
+    protected override void OnAfterRender(bool firstRender)
     {
-        const string persistKey = "roles";
-        _persistingSubscription = ApplicationState.RegisterOnPersisting(() =>
-        {
-            ApplicationState.PersistAsJson(persistKey, _pagedRoles);
-            return Task.CompletedTask;
-        });
-
-        if (ApplicationState.TryTakeFromJson<PagedData<RoleResponse>>(persistKey, out var restored))
-            _pagedRoles = restored!;
-        else
-            await GetPagedRoles();
+        if (!firstRender) return;
+        _table.ReloadData(1, 10);
     }
-
-    private readonly RoleQueryRequest _roleQueryRequest =
-        new() { PageIndex = 1, PageSize = 10, CountTotal = true };
 
     private async Task GetPagedRoles()
     {
@@ -84,10 +71,5 @@ public sealed partial class Roles : IDisposable
     private async Task Table_OnChange(QueryModel<RoleResponse> obj)
     {
         await GetPagedRoles();
-    }
-
-    public void Dispose()
-    {
-        _persistingSubscription.Dispose();
     }
 }
