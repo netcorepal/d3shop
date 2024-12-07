@@ -5,10 +5,12 @@ using NetCorePal.D3Shop.Admin.Shared.Responses;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
+using NetCorePal.D3Shop.Web.Admin.Client.Services;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity.Dto;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.D3Shop.Web.Auth;
+using NetCorePal.D3Shop.Web.Blazor;
 using NetCorePal.D3Shop.Web.Helper;
 using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;
@@ -17,12 +19,13 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
+[KnownExceptionHandler]
 [AdminPermission(PermissionDefinitions.AdminUserView)]
 public class AdminUserController(
     IMediator mediator,
     AdminUserQuery adminUserQuery,
     RoleQuery roleQuery)
-    : ControllerBase
+    : ControllerBase, IAdminUserService
 {
     private CancellationToken CancellationToken => HttpContext?.RequestAborted ?? default;
 

@@ -4,16 +4,19 @@ using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Admin.Shared.Responses;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
+using NetCorePal.D3Shop.Web.Admin.Client.Services;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.D3Shop.Web.Auth;
+using NetCorePal.D3Shop.Web.Blazor;
 using NetCorePal.Extensions.Dto;
 
 namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
-public class RoleController(IMediator mediator, RoleQuery roleQuery) : ControllerBase
+[KnownExceptionHandler]
+public class RoleController(IMediator mediator, RoleQuery roleQuery) : ControllerBase, IRolesService
 {
     private CancellationToken CancellationToken => HttpContext?.RequestAborted ?? CancellationToken.None;
 

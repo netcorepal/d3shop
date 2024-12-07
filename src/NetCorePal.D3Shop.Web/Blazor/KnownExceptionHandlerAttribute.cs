@@ -1,4 +1,5 @@
-﻿using NetCorePal.Extensions.Dto;
+﻿using Microsoft.AspNetCore.Mvc;
+using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;
 using Rougamo;
 using Rougamo.Context;
@@ -10,6 +11,9 @@ public class KnownExceptionHandlerAttribute : MoAttribute
 {
     public override void OnException(MethodContext context)
     {
+        // 通过Http调用时不处理
+        if (context.Target is not ControllerBase { HttpContext: null }) return;
+
         // 检查异常是否是 IKnownException 类型
         if (context.Exception is not IKnownException ex) return;
 
