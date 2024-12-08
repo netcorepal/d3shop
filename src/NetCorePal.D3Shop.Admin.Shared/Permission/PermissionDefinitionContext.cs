@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using NetCorePal.Extensions.Primitives;
 
-namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
+namespace NetCorePal.D3Shop.Admin.Shared.Permission;
 
 /// <summary>
 /// 管理权限定义的上下文类，负责初始化和提供权限组及其权限项。

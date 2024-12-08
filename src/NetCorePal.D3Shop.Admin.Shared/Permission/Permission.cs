@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
+namespace NetCorePal.D3Shop.Admin.Shared.Permission;
 
 /// <summary>
 /// 表示一个权限对象，包含权限的基本信息及子权限
