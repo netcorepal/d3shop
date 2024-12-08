@@ -1,8 +1,8 @@
 @page "/admin/users"
 @using NetCorePal.D3Shop.Web.Admin.Client.Extensions
-@using NetCorePal.D3Shop.Web.Admin.Client.Components.User
+@using NetCorePal.D3Shop.Web.Admin.Client.Components.Identity.User
 
-@attribute [ClientPermission(PermissionDefinitions.AdminUserView)]
+@attribute [ClientPermission(PermissionCodes.AdminUserManagement)]
 
 <Table
     TItem="AdminUserResponse"
@@ -30,7 +30,7 @@
             </GridCol>
             <GridCol Span="2">
                 <AuthorizeView>
-                    @if (context.CheckPermission(PermissionDefinitions.AdminUserCreate))
+                    @if (context.CheckPermission(PermissionCodes.AdminUserCreate))
                     {
                         <AddAdminUser OnItemAdded="HandleItemAdded"></AddAdminUser>
                     }
@@ -43,7 +43,7 @@
         <PropertyColumn Title="手机号" Property="c => c.Phone"/>
         <ActionColumn Title="操作">
             <AuthorizeView>
-                @if (context.CheckPermission(PermissionDefinitions.AdminUserUpdateRoles))
+                @if (context.CheckPermission(PermissionCodes.AdminUserUpdateRoles))
                 {
                     <CascadingValue Value="@row">
                         <EditUserRoles></EditUserRoles>
@@ -51,15 +51,15 @@
                 }
             </AuthorizeView>
             <AuthorizeView>
-                @if (context.CheckPermission(PermissionDefinitions.AdminUserSetPermissions))
+                @if (context.CheckPermission(PermissionCodes.AdminUserSetPermissions))
                 {
                     <CascadingValue Value="@row">
-                        <EditUserPermissions></EditUserPermissions>
+                        <EditUserPermissions/>
                     </CascadingValue>
                 }
             </AuthorizeView>
             <AuthorizeView>
-                @if (context.CheckPermission(PermissionDefinitions.AdminUserDelete))
+                @if (context.CheckPermission(PermissionCodes.AdminUserDelete))
                 {
                     <a @onclick="() => Delete(row)">删除</a>
                 }

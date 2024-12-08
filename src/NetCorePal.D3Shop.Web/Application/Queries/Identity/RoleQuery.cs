@@ -44,7 +44,7 @@ public class RoleQuery(ApplicationDbContext dbContext) : IQuery
             .ToListAsync(cancellationToken: cancellationToken);
     }
 
-    public async Task<List<string>> GetRolePermissionsAsync(RoleId id, CancellationToken cancellationToken)
+    public async Task<List<string>> GetAssignedPermissionCodes(RoleId id, CancellationToken cancellationToken)
     {
         return await RoleSet.Where(r => r.Id == id)
             .SelectMany(r => r.Permissions.Select(rp => rp.PermissionCode))

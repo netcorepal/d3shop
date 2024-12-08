@@ -16,14 +16,11 @@ public interface IRolesService
     Task<ResponseData> UpdateRoleInfo(RoleId id, [Body] UpdateRoleInfoRequest request);
 
     [Put("/api/Role/UpdateRolePermissions/{id}")]
-    Task<ResponseData> UpdateRolePermissions(RoleId id, [Body] List<string> permissionCodes);
+    Task<ResponseData> UpdateRolePermissions(RoleId id, [Body] IEnumerable<string> permissionCodes);
 
     [Delete("/api/Role/DeleteRole/{id}")]
     Task<ResponseData> DeleteRole(RoleId id);
 
-    [Get("/api/Role/GetRolePermissions/{id}")]
-    Task<ResponseData<List<RolePermissionResponse>>> GetRolePermissions(RoleId id);
-    
-    [Get("/api/Role/GetAllPermissionsForCreateRole")]
-    Task<ResponseData<IEnumerable<RolePermissionResponse>>> GetAllPermissionsForCreateRole();
+    [Get("/api/Role/GetAssignedPermissionCodes/{id}")]
+    Task<ResponseData<List<string>>> GetAssignedPermissionCodes(RoleId id);
 }

@@ -25,8 +25,8 @@ public interface IAdminUserService
     [Get("/api/AdminUser/GetAllRolesForCreateUser")]
     Task<ResponseData<List<AdminUserRoleResponse>>> GetAllRolesForCreateUser();
 
-    [Get("/api/AdminUser/GetAdminUserPermissions/{id}")]
-    Task<ResponseData<List<AdminUserPermissionResponse>>> GetAdminUserPermissions(AdminUserId id);
+    [Get("/api/AdminUser/GetAssignedPermissions/{id}")]
+    Task<ResponseData<List<AdminUserAssignedPermissionResponse>>> GetAssignedPermissions(AdminUserId id);
 
     [Put("/api/AdminUser/SetAdminUserSpecificPermissions/{id}")]
     Task<ResponseData> SetAdminUserSpecificPermissions(AdminUserId id, [Body] IEnumerable<string> permissionCodes);

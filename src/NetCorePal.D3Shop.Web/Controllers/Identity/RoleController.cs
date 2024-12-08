@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using NetCorePal.D3Shop.Admin.Shared.Permission;
 using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Admin.Shared.Responses;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Admin.Client.Services;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity;
+using NetCorePal.D3Shop.Web.Application.Commands.Identity.Dto;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Web.Blazor;
@@ -16,17 +17,21 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 [Route("api/[controller]/[action]")]
 [ApiController]
 [KnownExceptionHandler]
+[AdminPermission(PermissionCodes.RoleManagement)]
 public class RoleController(IMediator mediator, RoleQuery roleQuery) : ControllerBase, IRolesService
 {
     private CancellationToken CancellationToken => HttpContext?.RequestAborted ?? CancellationToken.None;
 
     [HttpPost]
-    [AdminPermission(PermissionDefinitions.RoleCreate)]
+    [AdminPermission(PermissionCodes.RoleCreate)]
     public async Task<ResponseData<RoleId>> CreateRole([FromBody] CreateRoleRequest request)
     {
-        var allPermissions = Permissions.AllPermissions;
-        var permissionsToBeAssigned = allPermissions.Where(x => request.PermissionCodes.Contains(x.Code))
-            .Select(p => new RolePermission(p.Code, p.Remark));
+        var permissionsToBeAssigned = request.PermissionCodes
+            .Select(code =>
+            {
+                var permission = PermissionDefinitionContext.GetPermission(code);
+                return new RolePermissionDto(permission.Code, permission.DisplayName);
+            });
 
         var roleId = await mediator.Send(
             new CreateRoleCommand(request.Name, request.Description, permissionsToBeAssigned),
@@ -36,7 +41,7 @@ public class RoleController(IMediator mediator, RoleQuery roleQuery) : Controlle
     }
 
     [HttpGet]
-    [AdminPermission(PermissionDefinitions.RoleView)]
+    [AdminPermission(PermissionCodes.RoleView)]
     public async Task<ResponseData<PagedData<RoleResponse>>> GetAllRoles([FromQuery] RoleQueryRequest request)
     {
         var roles = await roleQuery.GetAllRolesAsync(request, CancellationToken);
@@ -44,21 +49,15 @@ public class RoleController(IMediator mediator, RoleQuery roleQuery) : Controlle
     }
 
     [HttpGet("{id}")]
-    [AdminPermission(PermissionDefinitions.RoleView)]
-    public async Task<ResponseData<List<RolePermissionResponse>>> GetRolePermissions([FromRoute] RoleId id)
+    [AdminPermission(PermissionCodes.RoleView)]
+    public async Task<ResponseData<List<string>>> GetAssignedPermissionCodes([FromRoute] RoleId id)
     {
-        var allPermissions = Permissions.AllPermissions;
-        var rolePermissions = await roleQuery.GetRolePermissionsAsync(id, CancellationToken);
-        var response = allPermissions.Select(p =>
-                rolePermissions.Contains(p.Code)
-                    ? new RolePermissionResponse(p.Code, p.GroupName, p.Remark, true)
-                    : new RolePermissionResponse(p.Code, p.GroupName, p.Remark, false))
-            .ToList();
-        return response.AsResponseData();
+        var rolePermissions = await roleQuery.GetAssignedPermissionCodes(id, CancellationToken);
+        return rolePermissions.AsResponseData();
     }
 
     [HttpPut("{id}")]
-    [AdminPermission(PermissionDefinitions.RoleEdit)]
+    [AdminPermission(PermissionCodes.RoleEdit)]
     public async Task<ResponseData> UpdateRoleInfo([FromRoute] RoleId id, [FromBody] UpdateRoleInfoRequest request)
     {
         await mediator.Send(
@@ -69,13 +68,16 @@ public class RoleController(IMediator mediator, RoleQuery roleQuery) : Controlle
     }
 
     [HttpPut("{id}")]
-    [AdminPermission(PermissionDefinitions.RoleUpdatePermissions)]
+    [AdminPermission(PermissionCodes.RoleUpdatePermissions)]
     public async Task<ResponseData> UpdateRolePermissions([FromRoute] RoleId id,
-        [FromBody] List<string> permissionCodes)
+        [FromBody] IEnumerable<string> permissionCodes)
     {
-        var allPermissions = Permissions.AllPermissions;
-        var permissionsToBeAssigned = allPermissions.Where(x => permissionCodes.Contains(x.Code))
-            .Select(p => new RolePermission(p.Code, p.Remark));
+        var permissionsToBeAssigned = permissionCodes
+            .Select(code =>
+            {
+                var permission = PermissionDefinitionContext.GetPermission(code);
+                return new RolePermissionDto(permission.Code, permission.DisplayName);
+            });
 
         await mediator.Send(
             new UpdateRolePermissionsCommand(id, permissionsToBeAssigned),
@@ -84,18 +86,10 @@ public class RoleController(IMediator mediator, RoleQuery roleQuery) : Controlle
     }
 
     [HttpDelete("{id}")]
-    [AdminPermission(PermissionDefinitions.RoleDelete)]
+    [AdminPermission(PermissionCodes.RoleDelete)]
     public async Task<ResponseData> DeleteRole([FromRoute] RoleId id)
     {
         await mediator.Send(new DeleteRoleCommand(id), CancellationToken);
         return new ResponseData();
-    }
-
-    [HttpGet]
-    public Task<ResponseData<IEnumerable<RolePermissionResponse>>> GetAllPermissionsForCreateRole()
-    {
-        IEnumerable<Permission> permissions = Permissions.AllPermissions;
-        var response = permissions.Select(p => new RolePermissionResponse(p.Code, p.GroupName, p.Remark, false));
-        return Task.FromResult(response.AsResponseData());
     }
 }

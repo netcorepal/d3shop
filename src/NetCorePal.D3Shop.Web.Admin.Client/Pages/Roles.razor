@@ -1,8 +1,8 @@
 @page "/admin/roles"
-@using NetCorePal.D3Shop.Web.Admin.Client.Components.Role
 @using NetCorePal.D3Shop.Web.Admin.Client.Extensions
+@using NetCorePal.D3Shop.Web.Admin.Client.Components.Identity.Role
 
-@attribute [ClientPermission(PermissionDefinitions.RoleView)]
+@attribute [ClientPermission(PermissionCodes.RoleManagement)]
 
 <Table
     TItem="RoleResponse"
@@ -30,7 +30,7 @@
             </GridCol>
             <GridCol Span="2">
                 <AuthorizeView>
-                    @if (context.CheckPermission(PermissionDefinitions.RoleCreate))
+                    @if (context.CheckPermission(PermissionCodes.RoleCreate))
                     {
                         <AddRole OnItemAdded="HandleItemAdded"></AddRole>
                     }
@@ -43,7 +43,7 @@
         <PropertyColumn Title="描述" Property="c => c.Description"/>
         <ActionColumn Title="操作">
             <AuthorizeView>
-                @if (context.CheckPermission(PermissionDefinitions.RoleEdit))
+                @if (context.CheckPermission(PermissionCodes.RoleEdit))
                 {
                     <CascadingValue Value="@row">
                         <EditRoleInfo OnRowUpdated="HandleItemUpdated"></EditRoleInfo>
@@ -51,7 +51,7 @@
                 }
             </AuthorizeView>
             <AuthorizeView>
-                @if (context.CheckPermission(PermissionDefinitions.RoleUpdatePermissions))
+                @if (context.CheckPermission(PermissionCodes.RoleUpdatePermissions))
                 {
                     <CascadingValue Value="@row">
                         <EditRolePermissions></EditRolePermissions>
@@ -59,7 +59,7 @@
                 }
             </AuthorizeView>
             <AuthorizeView>
-                @if (context.CheckPermission(PermissionDefinitions.RoleDelete))
+                @if (context.CheckPermission(PermissionCodes.RoleDelete))
                 {
                     <a @onclick="() => Delete(row)">删除</a>
                 }

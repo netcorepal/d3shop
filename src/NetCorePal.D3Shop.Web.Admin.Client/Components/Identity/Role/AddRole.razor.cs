@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 
-namespace NetCorePal.D3Shop.Web.Admin.Client.Components.Role;
+namespace NetCorePal.D3Shop.Web.Admin.Client.Components.Identity.Role;
 
 public partial class AddRole
 {
@@ -9,35 +9,28 @@ public partial class AddRole
 
     [Parameter] public EventCallback OnItemAdded { get; set; }
 
-    private List<RolePermissionResponse> _allPermissions = [];
-    private bool _modalVisible;
-    private bool _modalConfirmLoading;
     private Form<CreateRoleRequest> _form = default!;
-    private Tabs _tabs = default!;
-    private string[] _treeCheckedKeys = [];
 
+    private Tabs _tabs = default!;
+
+    private List<string> _assignedPermissionCodes = [];
 
     private CreateRoleRequest _newRoleModel = new();
 
-    private async Task ShowModal()
+    private bool _modalVisible;
+    private bool _modalConfirmLoading;
+
+    private void ShowModal()
     {
         _modalVisible = true;
-        _allPermissions = await GetAllPermissions();
     }
 
-    private async Task<List<RolePermissionResponse>> GetAllPermissions()
-    {
-        var response = await RolesService.GetAllPermissionsForCreateRole();
-        if (response.Success) return response.Data.ToList();
-        _ = Message.Error(response.Message);
-        return [];
-    }
 
     private void CloseModal()
     {
         _modalVisible = false;
         _newRoleModel = new CreateRoleRequest();
-        _treeCheckedKeys = [];
+        _assignedPermissionCodes.Clear();
         _tabs.GoTo(0);
     }
 
@@ -45,6 +38,7 @@ public partial class AddRole
     {
         _modalConfirmLoading = true;
         StateHasChanged();
+        _newRoleModel.PermissionCodes = _assignedPermissionCodes;
         var response = await RolesService.CreateRole(_newRoleModel);
         if (response.Success)
         {
@@ -63,13 +57,5 @@ public partial class AddRole
     private void Form_OnFinishFailed(EditContext editContext)
     {
         _tabs.GoTo(0);
-    }
-
-    private void Tree_OnCheck(TreeEventArgs<string> e)
-    {
-        _newRoleModel.PermissionCodes = _allPermissions
-            .Where(p => _treeCheckedKeys.Contains(p.Code))
-            .Select(p => p.Code)
-            .ToList();
     }
 }

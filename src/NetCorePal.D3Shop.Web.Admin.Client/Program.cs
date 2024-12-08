@@ -29,6 +29,8 @@ namespace NetCorePal.D3Shop.Web.Admin.Client
             #endregion
 
             builder.Services.AddAntDesign();
+            // 设置默认语言
+            LocaleProvider.SetLocale("zh-CN");
 
             builder.Services.Configure<ProSettings>(builder.Configuration.GetSection("ProSettings"));
 
