@@ -1,0 +1,44 @@
+﻿@{
+       const string buttonType = ButtonType.Dashed;
+       // ReSharper disable once AccessToStaticMemberViaDerivedType
+       const string buttonSize = ButtonSize.Small;
+}
+<GridRow Gutter="16">
+       <GridCol>
+              <Button Type="@buttonType" Size="@buttonSize"
+                      @onclick="() => { foreach (var tree in _treeDir.Values) tree.CheckAll();}">
+                     全选
+              </Button>
+       </GridCol>
+       <GridCol>
+              <Button Type="@buttonType" Size="@buttonSize"
+                      @onclick="() => { foreach (var tree in _treeDir.Values) tree.UncheckAll(); }">
+                     取消全选
+              </Button>
+       </GridCol>
+</GridRow>
+<Divider/>
+<Tabs DefaultActiveKey="@PermissionGroups.FirstOrDefault()?.Name" TabPosition="TabPosition.Left">
+       @foreach (var permissionGroup in PermissionGroups)
+       {
+              <TabPane Key="@permissionGroup.Name" Tab="@permissionGroup.Name">
+                     <GridRow @key="permissionGroup.Name" Gutter="16">
+                            <GridCol Span="10">
+                                   <h3>@permissionGroup.Name</h3>
+                            </GridCol>
+                            <GridCol Offset="3">
+                                   <Button Type="@buttonType" Size="@buttonSize"
+                                           @onclick="() => _treeDir[permissionGroup.Name].CheckAll()">全选
+                                   </Button>
+                            </GridCol>
+                            <GridCol>
+                                   <Button Type="@buttonType" Size="@buttonSize"
+                                           @onclick="() => _treeDir[permissionGroup.Name].UncheckAll()">取消全选
+                                   </Button>
+                            </GridCol>
+                     </GridRow>
+                     <Divider/>
+                     <span @key="Id">@BuildTree(permissionGroup)</span>
+              </TabPane>
+       }
+</Tabs>

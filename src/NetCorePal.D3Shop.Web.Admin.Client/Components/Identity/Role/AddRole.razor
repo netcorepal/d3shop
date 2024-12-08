@@ -1,10 +1,12 @@
-﻿<Button Type="@ButtonType.Primary" OnClick="@ShowModal">新建</Button>
+﻿@using NetCorePal.D3Shop.Web.Admin.Client.Components.Identity
+<Button Type="@ButtonType.Primary" OnClick="@ShowModal">新建</Button>
 
 <Modal Title="@("新建角色")"
        Visible="@_modalVisible"
        OnOk="() => _form.Submit()"
        OnCancel="CloseModal"
-       ConfirmLoading="@_modalConfirmLoading">
+       ConfirmLoading="@_modalConfirmLoading"
+       Resizable = "@(true)">
 
     <Tabs @ref="_tabs">
         <TabPane Tab="基本信息">
@@ -23,20 +25,7 @@
             </Form>
         </TabPane>
         <TabPane Tab="角色权限">
-            <Tree TItem="string"
-                  Checkable
-                  @bind-CheckedKeys="_treeCheckedKeys"
-                  OnCheck="Tree_OnCheck">
-                @foreach (var group in _allPermissions.GroupBy(p => p.GroupName))
-                {
-                    <TreeNode Title="@group.Key" Key="@group.Key">
-                        @foreach (var permission in group)
-                        {
-                            <TreeNode Title="@permission.Remark" Key="@permission.Code"/>
-                        }
-                    </TreeNode>
-                }
-            </Tree>
+            <PermissionManager @bind-AssignedPermissionCodes="_assignedPermissionCodes"/>
         </TabPane>
     </Tabs>
 </Modal>

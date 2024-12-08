@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 
-namespace NetCorePal.D3Shop.Web.Admin.Client.Components.User;
+namespace NetCorePal.D3Shop.Web.Admin.Client.Components.Identity.User;
 
 public partial class AddAdminUser
 {

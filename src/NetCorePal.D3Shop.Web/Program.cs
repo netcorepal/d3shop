@@ -1,4 +1,5 @@
 using System.Reflection;
+using AntDesign;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
@@ -32,7 +33,7 @@ using _Imports = NetCorePal.D3Shop.Web.Admin.Client._Imports;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.WithClientIp()
-    .WriteTo.Console(new JsonFormatter())
+    .WriteTo.Console( /*new JsonFormatter()*/)
     .CreateLogger();
 try
 {
@@ -194,6 +195,8 @@ try
         .AddInteractiveWebAssemblyComponents();
 
     builder.Services.AddAntDesign();
+    // 设置默认语言
+    LocaleProvider.SetLocale("zh-CN");
 
     builder.Services.AddCascadingAuthenticationState();
     builder.Services.AddSingleton<IAuthorizationPolicyProvider, ClientPermissionPolicyProvider>();

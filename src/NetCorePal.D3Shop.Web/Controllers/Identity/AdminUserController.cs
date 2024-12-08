@@ -20,7 +20,7 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 [Route("api/[controller]/[action]")]
 [ApiController]
 [KnownExceptionHandler]
-[AdminPermission(PermissionDefinitions.AdminUserView)]
+[AdminPermission(PermissionCodes.AdminUserManagement)]
 public class AdminUserController(
     IMediator mediator,
     AdminUserQuery adminUserQuery,
@@ -30,7 +30,7 @@ public class AdminUserController(
     private CancellationToken CancellationToken => HttpContext?.RequestAborted ?? default;
 
     [HttpPost]
-    [AdminPermission(PermissionDefinitions.AdminUserCreate)]
+    [AdminPermission(PermissionCodes.AdminUserCreate)]
     public async Task<ResponseData<AdminUserId>> CreateAdminUser([FromBody] CreateAdminUserRequest request)
     {
         var rolesToBeAssigned = await roleQuery.GetAdminRolesForAssignmentAsync(request.RoleIds, CancellationToken);
@@ -66,35 +66,29 @@ public class AdminUserController(
     }
 
     [HttpGet("{id}")]
-    public async Task<ResponseData<List<AdminUserPermissionResponse>>> GetAdminUserPermissions(
+    public async Task<ResponseData<List<AdminUserAssignedPermissionResponse>>> GetAssignedPermissions(
         [FromRoute] AdminUserId id)
     {
-        var allPermissions = Permissions.AllPermissions;
         var assignedPermissions = await adminUserQuery.GetAssignedPermissionsAsync(id, CancellationToken);
-        var response = allPermissions.Select(p =>
-            {
-                var assigned = assignedPermissions.Find(ap => ap.PermissionCode == p.Code);
-                var isAssigned = assigned is not null;
-                var isFromRole = assigned?.SourceRoleIds.Count > 0;
-                return new AdminUserPermissionResponse(p.Code, p.GroupName, p.Remark, isAssigned, isFromRole);
-            }
-        ).ToList();
-        return response.AsResponseData();
+        return assignedPermissions.AsResponseData();
     }
 
     [HttpPut("{id}")]
     public async Task<ResponseData> SetAdminUserSpecificPermissions(AdminUserId id,
         [FromBody] IEnumerable<string> permissionCodes)
     {
-        var allPermissions = Permissions.AllPermissions;
-        var permissionsToBeAssigned = allPermissions.Where(x => permissionCodes.Contains(x.Code))
-            .Select(p => new AdminUserPermissionDto(p.Code, p.Remark));
+        var permissionsToBeAssigned = permissionCodes
+            .Select(code =>
+            {
+                var permission = PermissionDefinitionContext.GetPermission(code);
+                return new AdminUserPermissionDto(permission.Code, permission.DisplayName);
+            });
         await mediator.Send(new SetAdminUserSpecificPermissions(id, permissionsToBeAssigned), CancellationToken);
         return new ResponseData();
     }
 
     [HttpPut("{id}")]
-    [AdminPermission(PermissionDefinitions.AdminUserUpdatePassword)]
+    [AdminPermission(PermissionCodes.AdminUserUpdatePassword)]
     public async Task<ResponseData> ChangeAdminUserPassword([FromRoute] AdminUserId id,
         [FromBody] UpdateAdminUserPasswordRequest request)
     {
@@ -110,7 +104,7 @@ public class AdminUserController(
     }
 
     [HttpPut("{id}")]
-    [AdminPermission(PermissionDefinitions.AdminUserUpdateRoles)]
+    [AdminPermission(PermissionCodes.AdminUserUpdateRoles)]
     public async Task<ResponseData> UpdateAdminUserRoles([FromRoute] AdminUserId id,
         [FromBody] IEnumerable<RoleId> roleIds)
     {
@@ -120,7 +114,7 @@ public class AdminUserController(
     }
 
     [HttpDelete("{id}")]
-    [AdminPermission(PermissionDefinitions.AdminUserDelete)]
+    [AdminPermission(PermissionCodes.AdminUserDelete)]
     public async Task<ResponseData> DeleteAdminUser([FromRoute] AdminUserId id)
     {
         await mediator.Send(new DeleteAdminUserCommand(id), CancellationToken);

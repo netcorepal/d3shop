@@ -2,6 +2,4 @@
 
 public record RolePermissionResponse(
     string Code,
-    string GroupName,
-    string Remark,
-    bool IsAssigned);
+    string Remark);

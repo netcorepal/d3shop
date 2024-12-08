@@ -1,61 +1,72 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Immutable;
 
-namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission
+namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.Permission;
+
+/// <summary>
+/// 表示一个权限对象，包含权限的基本信息及子权限
+/// </summary>
+public sealed class Permission
 {
-    public record Permission(string Code, string GroupName, string Remark);
+    /// <summary>
+    /// 权限的唯一名称（代码）
+    /// </summary>
+    public string Code { get; }
 
-    public static class Permissions
+    /// <summary>
+    /// 权限的显示名称
+    /// </summary>
+    public string DisplayName { get; }
+
+    /// <summary>
+    /// 当前权限的所有子权限
+    /// 子权限是只读的
+    /// </summary>
+    public IReadOnlyList<Permission> Children => _children.ToImmutableList();
+
+    private readonly List<Permission> _children;
+
+    /// <summary>
+    /// 指示当前权限是否启用
+    /// 默认情况下权限是启用的
+    /// 禁用的权限无法被授予，但仍然可以检查其值（始终为 false）
+    /// 禁用权限可以用来隐藏相关的应用功能
+    /// 默认值：true（启用）
+    /// </summary>
+    public bool IsEnabled { get; }
+
+    /// <summary>
+    /// 创建一个新的权限对象。
+    /// </summary>
+    /// <param name="code">权限的唯一代码。</param>
+    /// <param name="displayName">权限的显示名称。</param>
+    /// <param name="isEnabled">是否启用此权限，默认为 true。</param>
+    internal Permission(
+        string code,
+        string displayName,
+        bool isEnabled = true)
     {
-        private static readonly Permission[] All =
-        [
-            #region AdminUserManagement
+        ArgumentException.ThrowIfNullOrWhiteSpace(code);
+        ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
 
-            new(PermissionDefinitions.AdminUserCreate,
-                PermissionGroup.SystemAccess,
-                "创建管理员用户"),
-            new(PermissionDefinitions.AdminUserEdit,
-                PermissionGroup.SystemAccess,
-                "更新管理员用户信息"),
-            new(PermissionDefinitions.AdminUserDelete,
-                PermissionGroup.SystemAccess,
-                "删除管理员用户"),
-            new(PermissionDefinitions.AdminUserView,
-                PermissionGroup.SystemAccess,
-                "查询管理员用户"),
-            new(PermissionDefinitions.AdminUserUpdateRoles,
-                PermissionGroup.SystemAccess,
-                "更新管理员用户角色"),
-            new(PermissionDefinitions.AdminUserUpdatePassword,
-                PermissionGroup.SystemAccess,
-                "更新管理员用户密码"),
-            new(PermissionDefinitions.AdminUserSetPermissions,
-                PermissionGroup.SystemAccess,
-                "配置管理员用户权限"),
+        Code = code;
+        DisplayName = displayName;
+        IsEnabled = isEnabled;
+        _children = [];
+    }
 
-            #endregion
+    /// <summary>
+    /// 向当前权限添加一个子权限。
+    /// </summary>
+    /// <param name="code">子权限的唯一代码。</param>
+    /// <param name="displayName">子权限的显示名称。</param>
+    /// <param name="isEnabled">子权限是否启用，默认为 true。</param>
+    /// <returns>返回创建的子权限对象。</returns>
+    public Permission AddChild(string code, string displayName, bool isEnabled = true)
+    {
+        var child = new Permission(code, displayName, isEnabled);
 
-            #region RoleManagement
+        _children.Add(child);
 
-            new(PermissionDefinitions.RoleCreate,
-                PermissionGroup.SystemAccess,
-                "创建角色"),
-            new(PermissionDefinitions.RoleEdit,
-                PermissionGroup.SystemAccess,
-                "更新角色信息"),
-            new(PermissionDefinitions.RoleUpdatePermissions,
-                PermissionGroup.SystemAccess,
-                "更新角色权限"),
-            new(PermissionDefinitions.RoleView,
-                PermissionGroup.SystemAccess,
-                "查询角色"),
-            new(PermissionDefinitions.RoleDelete,
-                PermissionGroup.SystemAccess,
-                "删除角色"),
-
-            #endregion
-        ];
-
-        public static IReadOnlyList<Permission> AllPermissions { get; } =
-            new ReadOnlyCollection<Permission>(All);
+        return child;
     }
 }
