@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
-using NetCorePal.D3Shop.Web.Application.Queries.Identity.QueryResult;
+using NetCorePal.D3Shop.Web.Controllers.Identity.Dto;
 using NetCorePal.D3Shop.Web.Helper;
 
 namespace NetCorePal.D3Shop.Web.Blazor.Components.Account;
