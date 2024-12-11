@@ -19,6 +19,7 @@ public class RoleQuery(ApplicationDbContext dbContext) : IQuery
         return await RoleSet.AsNoTracking()
             .WhereIf(!query.Name.IsNullOrWhiteSpace(), r => r.Name.Contains(query.Name!))
             .WhereIf(!query.Description.IsNullOrWhiteSpace(), r => r.Description.Contains(query.Description!))
+            .OrderBy(r => r.Id)
             .Select(r => new RoleResponse(r.Id, r.Name, r.Description))
             .ToPagedDataAsync(query, cancellationToken: cancellationToken);
     }

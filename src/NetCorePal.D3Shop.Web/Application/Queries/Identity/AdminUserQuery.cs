@@ -58,6 +58,7 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCa
         var adminUsers = await AdminUserSet.AsNoTracking()
             .WhereIf(!queryRequest.Name.IsNullOrWhiteSpace(), au => au.Name.Contains(queryRequest.Name!))
             .WhereIf(!queryRequest.Phone.IsNullOrWhiteSpace(), au => au.Phone.Contains(queryRequest.Phone!))
+            .OrderBy(au => au.Id)
             .Select(au => new AdminUserResponse(au.Id, au.Name, au.Phone))
             .ToPagedDataAsync(queryRequest, cancellationToken);
         return adminUsers;
