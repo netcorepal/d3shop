@@ -6,54 +6,56 @@
 <GridRow Gutter="16">
     <GridCol>
         <Button Type="@buttonType" Size="@buttonSize"
-                @onclick="() => { foreach (var tree in _treeDir.Values) tree.CheckAll();}">
+                OnClick="OnCheckAll">
             全选
         </Button>
     </GridCol>
     <GridCol>
         <Button Type="@buttonType" Size="@buttonSize"
-                @onclick="() => { foreach (var tree in _treeDir.Values) tree.UncheckAll(); }">
+                OnClick="OnUncheckAll">
             取消全选
         </Button>
     </GridCol>
 </GridRow>
-<Divider />
+<Divider/>
 <Tabs DefaultActiveKey="@PermissionGroups.FirstOrDefault()?.Name" TabPosition="TabPosition.Left">
     @foreach (var permissionGroup in PermissionGroups)
     {
-        <TabPane Key="@permissionGroup.Name" Tab="@permissionGroup.Name">
-            <GridRow @key="permissionGroup.Name" Gutter="16">
+        var groupName = permissionGroup.Name;
+
+        <TabPane Key="@groupName" Tab="@groupName">
+            <GridRow @key="groupName" Gutter="16">
                 <GridCol Span="10">
-                    <h3>@permissionGroup.Name</h3>
+                    <h3>@groupName</h3>
                 </GridCol>
                 <GridCol Offset="3">
                     <Button Type="@buttonType" Size="@buttonSize"
-                            @onclick="() => _treeDir[permissionGroup.Name].CheckAll()">
+                            OnClick="() => OnCheckGroupAll(groupName)">
                         全选
                     </Button>
                 </GridCol>
                 <GridCol>
                     <Button Type="@buttonType" Size="@buttonSize"
-                            @onclick="() => _treeDir[permissionGroup.Name].UncheckAll()">
+                            @onclick="() => OnUncheckGroupAll(groupName)">
                         取消全选
                     </Button>
                 </GridCol>
             </GridRow>
-            <Divider />
-            <Tree @key="@Id"
+            <Divider/>
+            <Tree @key="@TreeComponentKey"
                   TItem="Permission"
-                  @ref="_treeDir[permissionGroup.Name]"
-                  Id="@permissionGroup.Name"
+                  @ref="_treeDir[groupName]"
+                  Id="@groupName"
                   Checkable="true"
                   DataSource="permissionGroup.Permissions"
                   TitleExpression="x => x.DataItem.DisplayName"
                   KeyExpression="x => x.DataItem.Code"
-                  ChildrenExpression="x =>  x.DataItem.Children"
-                  DefaultCheckedKeys="AssignedPermissionCodes.Intersect(_treeKeysDir[permissionGroup.Name]).ToArray()"
+                  ChildrenExpression="x => x.DataItem.Children"
+                  DefaultCheckedKeys="AssignedPermissionCodes.Intersect(_treeKeysDir[groupName]).ToArray()"
                   DisabledExpression="x => DisabledPermissionCodes.Contains(x.DataItem.Code) || !x.DataItem.IsEnabled"
                   CheckStrictly="true"
                   DefaultExpandAll="true"
-                  OnCheck="_treeOnChangeEventDir[permissionGroup.Name]" />
+                  OnCheck="args => OnTreeChange(args,groupName)"/>
         </TabPane>
     }
 </Tabs>

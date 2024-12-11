@@ -25,7 +25,7 @@
     {
         _modalVisible = true;
         _assignedPermissionCodes = await GetAssignedPermissionCodes(Row.Id);
-        _permissionManagerComponent.Update();
+        _permissionManagerComponent.ReRenderTree();
     }
 
     private async Task<List<string>> GetAssignedPermissionCodes(RoleId id)
