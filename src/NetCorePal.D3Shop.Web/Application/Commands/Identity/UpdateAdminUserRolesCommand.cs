@@ -14,7 +14,6 @@ public class UpdateAdminUserRolesCommandValidator : AbstractValidator<UpdateAdmi
     public UpdateAdminUserRolesCommandValidator()
     {
         RuleFor(x => x.AdminUserId).NotEmpty();
-        RuleFor(x => x.RolesToBeAssigned).NotEmpty();
     }
 }
 
