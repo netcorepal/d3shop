@@ -11,7 +11,8 @@
     Total="_pagedRoles.Total"
     @bind-PageIndex="_roleQueryRequest.PageIndex"
     @bind-PageSize="_roleQueryRequest.PageSize"
-    OnChange="Table_OnChange">
+    OnChange="Table_OnChange"
+    Loading="_loading">
     <PaginationTemplate>
         <Pagination Class="@context.PaginationClass"
                     Total="context.Total"
