@@ -34,7 +34,7 @@
         _assignedPermissionCodes = adminUserPermissions.Select(p => p.Code).ToList();
 
         _permissionManagerComponent.DisabledPermissionCodes = _permissionCodesFromRoles;
-        _permissionManagerComponent.Update();
+        _permissionManagerComponent.ReRenderTree();
     }
 
     private async Task<AdminUserAssignedPermissionResponse[]> GetAssignedPermissions(AdminUserId id)

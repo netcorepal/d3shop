@@ -14,6 +14,8 @@ public sealed partial class Roles
 
     private readonly RoleQueryRequest _roleQueryRequest = new() { CountTotal = true };
 
+    private bool _loading;
+
     protected override void OnAfterRender(bool firstRender)
     {
         if (!firstRender) return;
@@ -65,11 +67,14 @@ public sealed partial class Roles
 
     private async Task OnSearch()
     {
+        _roleQueryRequest.PageIndex = 1;
         await GetPagedRoles();
     }
 
     private async Task Table_OnChange(QueryModel<RoleResponse> obj)
     {
+        _loading = true;
         await GetPagedRoles();
+        _loading = false;
     }
 }

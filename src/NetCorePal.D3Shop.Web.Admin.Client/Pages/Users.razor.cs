@@ -14,6 +14,8 @@ public sealed partial class Users
 
     private readonly AdminUserQueryRequest _adminUserQueryRequest = new() { CountTotal = true };
 
+    private bool _loading;
+
     protected override void OnAfterRender(bool firstRender)
     {
         if (!firstRender) return;
@@ -60,11 +62,14 @@ public sealed partial class Users
 
     private async Task OnSearch()
     {
+        _adminUserQueryRequest.PageIndex = 1;
         await GetPagedAdminUsers();
     }
 
     private async Task Table_OnChange(QueryModel<AdminUserResponse> obj)
     {
+        _loading = true;
         await GetPagedAdminUsers();
+        _loading = false;
     }
 }

@@ -6,7 +6,7 @@
        OnOk="() => _form.Submit()"
        OnCancel="CloseModal"
        ConfirmLoading="@_modalConfirmLoading"
-       Resizable = "@(true)">
+       DestroyOnClose="@(true)">
 
     <Tabs @ref="_tabs">
         <TabPane Tab="基本信息">

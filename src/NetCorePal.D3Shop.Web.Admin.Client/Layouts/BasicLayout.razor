@@ -5,16 +5,16 @@
     Title="D3Shop"
     BaseURL="/admin"
     Logo="@("https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg")"
-    MenuData="_menuData"
+    MenuData="_menuData.ToArray<MenuDataItem>()"
     MenuAccordion
-    @bind-Collapsed="collapsed">
+    @bind-Collapsed="_collapsed">
     <HeaderContentRender>
         <Space Size="@("24")">
             <SpaceItem>
-                <Icon Class="action" Type="@(collapsed?"menu-unfold":"menu-fold")" OnClick="Toggle" />
+                <Icon Class="action" Type="@(_collapsed ? "menu-unfold" : "menu-fold")" OnClick="Toggle"/>
             </SpaceItem>
             <SpaceItem>
-                <Icon Class="action" Type="reload" Theme="outline" OnClick="Reload" />
+                <Icon Class="action" Type="reload" Theme="outline" OnClick="Reload"/>
             </SpaceItem>
         </Space>
     </HeaderContentRender>
@@ -28,39 +28,39 @@
     </FooterRender>
 </AntDesign.ProLayout.BasicLayout>
 
-<SettingDrawer />
+<SettingDrawer/>
 
 @code{
-    bool collapsed;
+    bool _collapsed;
 
-    public LinkItem[] Links =
-    {
-            new LinkItem
-            {
-                Key = "Ant Design Blazor",
-                Title = "Ant Design Blazor",
-                Href = "https://antblazor.com",
-                BlankTarget = true,
-            },
-            new LinkItem
-            {
-                Key = "github",
-                Title = (RenderFragment)(@<Icon Type="github" />),
-                Href = "https://github.com/ant-design-blazor/ant-design-pro-blazor",
-                BlankTarget = true,
-            },
-            new LinkItem
-            {
-                Key = "Blazor",
-                Title = "Blazor",
-                Href = "https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor?WT.mc_id=DT-MVP-5003987",
-                BlankTarget = true,
-            }
-    };
+    public readonly LinkItem[] Links =
+    [
+        new()
+        {
+            Key = "Ant Design Blazor",
+            Title = "Ant Design Blazor",
+            Href = "https://antblazor.com",
+            BlankTarget = true,
+        },
+        new()
+        {
+            Key = "github",
+            Title = (RenderFragment)(@<Icon Type="github"/>),
+            Href = "https://github.com/ant-design-blazor/ant-design-pro-blazor",
+            BlankTarget = true,
+        },
+        new()
+        {
+            Key = "Blazor",
+            Title = "Blazor",
+            Href = "https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor?WT.mc_id=DT-MVP-5003987",
+            BlankTarget = true,
+        }
+    ];
 
     void Toggle()
     {
-        collapsed = !collapsed;
+        _collapsed = !_collapsed;
     }
 
 }
