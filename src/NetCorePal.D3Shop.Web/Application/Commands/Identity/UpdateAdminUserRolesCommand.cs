@@ -31,9 +31,8 @@ public class UpdateAdminUserRolesCommandHandler(IAdminUserRepository adminUserRe
         foreach (var assignAdminUserRoleDto in request.RolesToBeAssigned)
         {
             roles.Add(new AdminUserRole(assignAdminUserRoleDto.RoleId, assignAdminUserRoleDto.RoleName));
-            permissions.AddRange(assignAdminUserRoleDto.Permissions.Select(permission =>
-                new AdminUserPermission(permission.PermissionCode, permission.PermissionRemark,
-                    assignAdminUserRoleDto.RoleId)));
+            permissions.AddRange(assignAdminUserRoleDto.PermissionCodes.Select(code =>
+                new AdminUserPermission(code, assignAdminUserRoleDto.RoleId)));
         }
 
         adminUser.UpdateRoles(roles, permissions);

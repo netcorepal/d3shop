@@ -1,13 +1,12 @@
 ﻿using FluentValidation;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Infrastructure.Repositories.Identity;
-using NetCorePal.D3Shop.Web.Application.Commands.Identity.Dto;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity;
 
-public record CreateRoleCommand(string Name, string Description, IEnumerable<RolePermissionDto> Permissions)
+public record CreateRoleCommand(string Name, string Description, IEnumerable<string> PermissionCodes)
     : ICommand<RoleId>;
 
 public class CreateRoleCommandValidator : AbstractValidator<CreateRoleCommand>
@@ -24,8 +23,7 @@ public class CreateRoleCommandHandler(IRoleRepository roleRepository) : ICommand
 {
     public async Task<RoleId> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {
-        var permissions = request.Permissions
-            .Select(p => new RolePermission(p.PermissionCode, p.PermissionRemark));
+        var permissions = request.PermissionCodes.Select(code => new RolePermission(code));
 
         var role = new Role(request.Name, request.Description, permissions);
 

@@ -18,6 +18,9 @@
 
     private CheckboxOption<RoleId>[] _roleOptions = [];
     private RoleId[] _selectedRoleIds = [];
+    
+    public record RolesUpdateSucceededEventArgs(AdminUserId AdminUserId, IEnumerable<string> RoleNames);
+    [Parameter] public EventCallback<RolesUpdateSucceededEventArgs> OnUpdateSucceeded { get; set; }
 
     private bool _modalVisible;
     private bool _modalConfirmLoading;
@@ -52,6 +55,9 @@
         {
             _modalVisible = false;
             _ = Message.Success("更新成功！");
+            await OnUpdateSucceeded.InvokeAsync(new RolesUpdateSucceededEventArgs(
+                Row.Id,
+                _roleOptions.Where(r => _selectedRoleIds.Contains(r.Value)).Select(r => r.Label)));
         }
         else
         {

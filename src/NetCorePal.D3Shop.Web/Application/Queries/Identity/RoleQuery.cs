@@ -39,9 +39,7 @@ public class RoleQuery(ApplicationDbContext dbContext) : IQuery
             .Select(r => new AssignAdminUserRoleDto(
                 r.Id,
                 r.Name,
-                r.Permissions.Select(rp =>
-                    new AdminUserPermissionDto(rp.PermissionCode, rp.PermissionRemark)))
-            )
+                r.Permissions.Select(rp => rp.PermissionCode)))
             .ToListAsync(cancellationToken: cancellationToken);
     }
 

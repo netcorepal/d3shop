@@ -18,14 +18,14 @@ public class RolePermissionsChangedDomainEventHandler(
     {
         var roleId = notification.Role.Id;
         var adminUserIds = await adminUserQuery.GetAdminUserIdsByRoleIdAsync(roleId, cancellationToken);
-        var permissions = notification.Role.Permissions
-            .Select(p => new AdminUserPermissionDto(p.PermissionCode, p.PermissionRemark))
+        var permissionCodes = notification.Role.Permissions
+            .Select(p => p.PermissionCode)
             .ToArray();
 
         foreach (var adminUserId in adminUserIds)
         {
             memoryCache.Remove($"{CacheKeys.AdminUserPermissions}:{adminUserId}");
-            await mediator.Send(new UpdateAdminUserRolePermissionsCommand(adminUserId, roleId, permissions),
+            await mediator.Send(new UpdateAdminUserRolePermissionsCommand(adminUserId, roleId, permissionCodes),
                 cancellationToken);
         }
     }

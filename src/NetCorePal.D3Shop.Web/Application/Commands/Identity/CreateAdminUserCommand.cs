@@ -34,14 +34,10 @@ public class CreateAdminUserCommandHandler(IAdminUserRepository adminUserReposit
         List<AdminUserRole> adminUserRoles = [];
         List<AdminUserPermission> adminUserPermissions = [];
 
-        foreach (var (roleId, roleName, permissions) in request.RolesToBeAssigned)
+        foreach (var (roleId, roleName, permissionCodes) in request.RolesToBeAssigned)
         {
             adminUserRoles.Add(new AdminUserRole(roleId, roleName));
-
-            adminUserPermissions.AddRange(
-                permissions.Select(permission =>
-                    new AdminUserPermission(permission.PermissionCode, permission.PermissionRemark, roleId))
-            );
+            adminUserPermissions.AddRange(permissionCodes.Select(code => new AdminUserPermission(code, roleId)));
         }
 
         var adminUser = new AdminUser(request.Name, request.Phone, request.Password,

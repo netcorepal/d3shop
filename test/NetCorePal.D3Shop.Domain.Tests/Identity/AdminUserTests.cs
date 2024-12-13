@@ -14,7 +14,7 @@ namespace NetCorePal.D3Shop.Domain.Tests.Identity
             const string rolePermission = "testPermission";
             _testUser.UpdateRoles(
                 [new AdminUserRole(new RoleId(1), roleName)],
-                [new AdminUserPermission(rolePermission, "test", new RoleId(1))]
+                [new AdminUserPermission(rolePermission, new RoleId(1))]
             );
             Assert.Contains(_testUser.Roles, r => r.RoleName == roleName);
             Assert.True(_testUser.IsInRole(roleName));

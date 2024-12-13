@@ -7,7 +7,6 @@ using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Admin.Client.Services;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity;
-using NetCorePal.D3Shop.Web.Application.Commands.Identity.Dto;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity;
 using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Web.Blazor;
@@ -81,7 +80,7 @@ public class AdminUserController(
             .Select(code =>
             {
                 var permission = PermissionDefinitionContext.GetPermission(code);
-                return new AdminUserPermissionDto(permission.Code, permission.DisplayName);
+                return permission.Code;
             });
         await mediator.Send(new SetAdminUserSpecificPermissions(id, permissionsToBeAssigned), CancellationToken);
         return new ResponseData();

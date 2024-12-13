@@ -18,7 +18,7 @@ public class AuthTests
         {
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             _testUser.SetPassword(PasswordHasher.HashPassword(AppDefaultCredentials.Password));
-            _testUser.SetSpecificPermissions([new AdminUserPermission("AdminUserAuth_Test_Get", "")]);
+            _testUser.SetSpecificPermissions([new AdminUserPermission("AdminUserAuth_Test_Get")]);
             db.AdminUsers.Add(_testUser);
             db.SaveChanges();
         }

@@ -50,16 +50,12 @@
                         <EditRoleInfo OnRowUpdated="HandleItemUpdated"></EditRoleInfo>
                     </CascadingValue>
                 }
-            </AuthorizeView>
-            <AuthorizeView>
                 @if (context.CheckPermission(PermissionCodes.RoleUpdatePermissions))
                 {
                     <CascadingValue Value="@row">
                         <EditRolePermissions></EditRolePermissions>
                     </CascadingValue>
                 }
-            </AuthorizeView>
-            <AuthorizeView>
                 @if (context.CheckPermission(PermissionCodes.RoleDelete))
                 {
                     <a @onclick="() => Delete(row)">删除</a>

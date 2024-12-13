@@ -1,4 +1,5 @@
 ﻿using AntDesign.TableModels;
+using NetCorePal.D3Shop.Web.Admin.Client.Components.Identity.User;
 
 namespace NetCorePal.D3Shop.Web.Admin.Client.Pages;
 
@@ -37,6 +38,12 @@ public sealed partial class Users
     private async Task HandleItemAdded()
     {
         await GetPagedAdminUsers();
+    }
+
+    private void HandleRolesUpdate(EditUserRoles.RolesUpdateSucceededEventArgs args)
+    {
+        var userItem = _pagedAdminUsers.Items.Single(au => au.Id == args.AdminUserId);
+        userItem.Roles = args.RoleNames;
     }
 
     private async Task Delete(AdminUserResponse row)

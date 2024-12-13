@@ -5,7 +5,7 @@ using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity;
 
-public record SetAdminUserSpecificPermissions(AdminUserId Id, IEnumerable<AdminUserPermissionDto> Permissions)
+public record SetAdminUserSpecificPermissions(AdminUserId Id, IEnumerable<string> PermissionCodes)
     : ICommand;
 
 public class SetAdminUserSpecificPermissionsCommandHandler(IAdminUserRepository adminUserRepository)
@@ -16,8 +16,7 @@ public class SetAdminUserSpecificPermissionsCommandHandler(IAdminUserRepository 
         var adminUser = await adminUserRepository.GetAsync(request.Id, cancellationToken) ??
                         throw new KnownException($"用户不存在，AdminUserId={request.Id}");
 
-        var permissions = request.Permissions
-            .Select(p => new AdminUserPermission(p.PermissionCode, p.PermissionRemark));
+        var permissions = request.PermissionCodes.Select(code => new AdminUserPermission(code));
 
         adminUser.SetSpecificPermissions(permissions);
     }

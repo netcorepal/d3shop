@@ -41,25 +41,27 @@
     </TitleTemplate>
     <ColumnDefinitions Context="row">
         <PropertyColumn Title="名称" Property="c => c.Name"/>
+        <PropertyColumn Title="角色" Property="c=>c.Roles">
+            @foreach (var roleName in row.Roles)
+            {
+                <Tag Color="@PresetColor.Green.ToString()">@roleName</Tag>
+            }
+        </PropertyColumn>
         <PropertyColumn Title="手机号" Property="c => c.Phone"/>
         <ActionColumn Title="操作">
             <AuthorizeView>
                 @if (context.CheckPermission(PermissionCodes.AdminUserUpdateRoles))
                 {
                     <CascadingValue Value="@row">
-                        <EditUserRoles></EditUserRoles>
+                        <EditUserRoles OnUpdateSucceeded="HandleRolesUpdate"></EditUserRoles>
                     </CascadingValue>
                 }
-            </AuthorizeView>
-            <AuthorizeView>
                 @if (context.CheckPermission(PermissionCodes.AdminUserSetPermissions))
                 {
                     <CascadingValue Value="@row">
                         <EditUserPermissions/>
                     </CascadingValue>
                 }
-            </AuthorizeView>
-            <AuthorizeView>
                 @if (context.CheckPermission(PermissionCodes.AdminUserDelete))
                 {
                     <a @onclick="() => Delete(row)">删除</a>

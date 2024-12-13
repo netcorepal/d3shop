@@ -10,13 +10,11 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
 
         public AdminUserId AdminUserId { get; private set; } = default!;
         public string PermissionCode { get; private set; } = string.Empty;
-        public string PermissionRemark { get; private set; } = string.Empty;
         public List<RoleId> SourceRoleIds { get; } = [];
 
-        public AdminUserPermission(string permissionCode, string permissionRemark, RoleId? sourceRoleId = null)
+        public AdminUserPermission(string permissionCode, RoleId? sourceRoleId = null)
         {
             PermissionCode = permissionCode;
-            PermissionRemark = permissionRemark;
             if (sourceRoleId is not null)
             {
                 SourceRoleIds.Add(sourceRoleId);

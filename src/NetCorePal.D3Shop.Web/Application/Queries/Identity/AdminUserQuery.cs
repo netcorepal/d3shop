@@ -59,7 +59,7 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCa
             .WhereIf(!queryRequest.Name.IsNullOrWhiteSpace(), au => au.Name.Contains(queryRequest.Name!))
             .WhereIf(!queryRequest.Phone.IsNullOrWhiteSpace(), au => au.Phone.Contains(queryRequest.Phone!))
             .OrderBy(au => au.Id)
-            .Select(au => new AdminUserResponse(au.Id, au.Name, au.Phone))
+            .Select(au => new AdminUserResponse(au.Id, au.Name, au.Phone, au.Roles.Select(r => r.RoleName)))
             .ToPagedDataAsync(queryRequest, cancellationToken);
         return adminUsers;
     }

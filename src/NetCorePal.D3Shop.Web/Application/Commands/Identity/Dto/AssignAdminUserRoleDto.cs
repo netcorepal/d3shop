@@ -2,5 +2,5 @@
 
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Dto
 {
-    public record AssignAdminUserRoleDto(RoleId RoleId, string RoleName, IEnumerable<AdminUserPermissionDto> Permissions);
+    public record AssignAdminUserRoleDto(RoleId RoleId, string RoleName, IEnumerable<string> PermissionCodes);
 }
