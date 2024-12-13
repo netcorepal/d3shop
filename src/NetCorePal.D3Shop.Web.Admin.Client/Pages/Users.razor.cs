@@ -9,7 +9,7 @@ public sealed partial class Users
     [Inject] private MessageService Message { get; set; } = default!;
     [Inject] private ConfirmService ConfirmService { get; set; } = default!;
 
-    private PagedData<AdminUserResponse> _pagedAdminUsers = new(default!, default, default, default);
+    private PagedData<AdminUserResponse> _pagedAdminUsers = PagedData<AdminUserResponse>.Empty;
 
     private Table<AdminUserResponse> _table = default!;
 

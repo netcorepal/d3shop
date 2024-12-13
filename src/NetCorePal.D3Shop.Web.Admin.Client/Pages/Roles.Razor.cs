@@ -8,7 +8,7 @@ public sealed partial class Roles
     [Inject] private MessageService Message { get; set; } = default!;
     [Inject] private ConfirmService ConfirmService { get; set; } = default!;
 
-    private PagedData<RoleResponse> _pagedRoles = new(default!, default, default, default);
+    private PagedData<RoleResponse> _pagedRoles = PagedData<RoleResponse>.Empty;
 
     private ITable _table = default!;
 
