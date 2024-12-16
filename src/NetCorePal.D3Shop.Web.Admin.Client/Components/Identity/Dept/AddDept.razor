@@ -1,0 +1,30 @@
+﻿@using NetCorePal.D3Shop.Web.Admin.Client.Components.Identity
+<Button Type="@ButtonType.Primary" OnClick="@ShowModal">新建</Button>
+
+<Modal Title="@("新建部门")"
+       Visible="@_modalVisible"
+       OnOk="() => _form.Submit()"
+       OnCancel="CloseModal"
+       ConfirmLoading="@_modalConfirmLoading"
+       DestroyOnClose="@(true)">
+
+    <Tabs @ref="_tabs">
+        <TabPane Tab="基本信息">
+            <Form @ref="_form"
+                  Model="@_newRoleModel"
+                  OnFinish="Form_OnFinish"
+                  OnFinishFailed="Form_OnFinishFailed"
+                  LabelColSpan="4"
+                  WrapperColSpan="16">
+                <FormItem Label="名称">
+                    <Input @bind-Value="@context.Name"/>
+                </FormItem>
+                <FormItem Label="描述">
+                    <Input @bind-Value="@context.Description"/>
+                </FormItem>
+            </Form>
+        </TabPane>
+
+    </Tabs>
+</Modal>
+

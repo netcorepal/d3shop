@@ -1,0 +1,63 @@
+@page "/admin/dept"
+@using NetCorePal.D3Shop.Web.Admin.Client.Extensions
+@using NetCorePal.D3Shop.Web.Admin.Client.Components.Identity.Dept
+
+
+@attribute [ClientPermission(PermissionCodes.AdminUserManagement)]
+
+<Table
+    TItem="DepartmentResponse"
+    @ref="_table"
+    DataSource="_pagedDepartments.Items"
+    Total="_pagedDepartments.Total"
+    @bind-PageIndex="_departmentQueryRequest.PageIndex"
+    @bind-PageSize="_departmentQueryRequest.PageSize"
+    OnChange="Table_OnChange"
+    Loading="_loading">
+    <PaginationTemplate>
+        <Pagination Class="@context.PaginationClass"
+                    Total="context.Total"
+                    PageSize="context.PageSize"
+                    Current="context.PageIndex"
+                    ShowSizeChanger
+                    OnChange="context.HandlePageChange"/>
+    </PaginationTemplate>
+    <TitleTemplate>
+        <GridRow Gutter="8" Justify="space-between">
+            <GridCol Span="4">
+                <Title Level="3">用户列表</Title>
+            </GridCol>
+            <GridCol Span="8" Offset="10">
+                <Search Placeholder="搜索名称" @bind-Value="_departmentQueryRequest.Name" OnSearch="() => OnSearch()"/>
+            </GridCol>
+            <GridCol Span="2">
+                <AuthorizeView>
+                    @if (context.CheckPermission(PermissionCodes.DepartmentCreate))
+                    {
+                        <AddDept OnItemAdded="HandleItemAdded"></AddDept>
+                    }
+                </AuthorizeView>
+            </GridCol>
+        </GridRow>
+    </TitleTemplate>
+    <ColumnDefinitions Context="row">
+        <PropertyColumn Title="名称" Property="c => c.Name"/>
+        <ActionColumn Title="操作">
+            <AuthorizeView>
+                @if (context.CheckPermission(PermissionCodes.DepartmentEdit))
+                {
+                    <CascadingValue Value="@row">
+                        <EditDeptInfo></EditDeptInfo>
+                    </CascadingValue>
+                }
+            </AuthorizeView>
+       
+            <AuthorizeView>
+                @if (context.CheckPermission(PermissionCodes.DepartmentDelete))
+                {
+                    <a @onclick="() => Delete(row)">删除</a>
+                }
+            </AuthorizeView>
+        </ActionColumn>
+    </ColumnDefinitions>
+</Table>
