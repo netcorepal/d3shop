@@ -1,11 +1,10 @@
 ﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Infrastructure.Repositories.Identity;
-using NetCorePal.D3Shop.Web.Application.Commands.Identity.Dto;
 using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity;
 
-public record UpdateRolePermissionsCommand(RoleId RoleId, IEnumerable<RolePermissionDto> Permissions) : ICommand;
+public record UpdateRolePermissionsCommand(RoleId RoleId, IEnumerable<string> PermissionCodes) : ICommand;
 
 public class UpdateRolePermissionsCommandHandler(IRoleRepository roleRepository)
     : ICommandHandler<UpdateRolePermissionsCommand>
@@ -15,8 +14,7 @@ public class UpdateRolePermissionsCommandHandler(IRoleRepository roleRepository)
         var role = await roleRepository.GetAsync(request.RoleId, cancellationToken) ??
                    throw new KnownException($"角色不存在，RoleId={request.RoleId}");
 
-        var permissions = request.Permissions
-            .Select(p => new RolePermission(p.PermissionCode, p.PermissionRemark));
+        var permissions = request.PermissionCodes.Select(code => new RolePermission(code));
 
         role.UpdateRolePermissions(permissions);
     }

@@ -8,11 +8,13 @@ public sealed partial class Roles
     [Inject] private MessageService Message { get; set; } = default!;
     [Inject] private ConfirmService ConfirmService { get; set; } = default!;
 
-    private PagedData<RoleResponse> _pagedRoles = new(default!, default, default, default);
+    private PagedData<RoleResponse> _pagedRoles = PagedData<RoleResponse>.Empty;
 
     private ITable _table = default!;
 
     private readonly RoleQueryRequest _roleQueryRequest = new() { CountTotal = true };
+
+    private bool _loading;
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -65,11 +67,14 @@ public sealed partial class Roles
 
     private async Task OnSearch()
     {
+        _roleQueryRequest.PageIndex = 1;
         await GetPagedRoles();
     }
 
     private async Task Table_OnChange(QueryModel<RoleResponse> obj)
     {
+        _loading = true;
         await GetPagedRoles();
+        _loading = false;
     }
 }

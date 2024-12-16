@@ -8,7 +8,7 @@ using NetCorePal.D3Shop.Web.Admin.Client.Extensions;
 
 namespace NetCorePal.D3Shop.Web.Admin.Client
 {
-    public class Program
+    public static class Program
     {
         public static async Task Main(string[] args)
         {

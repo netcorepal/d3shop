@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <NetCorePalVersion>2.0.0-preview.1.2411260738</NetCorePalVersion>
+    <NetCorePalVersion>2.0.0</NetCorePalVersion>
     <FrameworkVersion>8.0.10</FrameworkVersion>
     <ExtensionsVersion>8.0.0</ExtensionsVersion>
     <EntityFrameworkVersion>8.0.0</EntityFrameworkVersion>

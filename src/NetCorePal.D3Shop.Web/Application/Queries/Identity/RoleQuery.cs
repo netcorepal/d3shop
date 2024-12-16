@@ -16,16 +16,17 @@ public class RoleQuery(ApplicationDbContext dbContext) : IQuery
     public async Task<PagedData<RoleResponse>> GetAllRolesAsync(RoleQueryRequest query,
         CancellationToken cancellationToken)
     {
-        return await RoleSet
+        return await RoleSet.AsNoTracking()
             .WhereIf(!query.Name.IsNullOrWhiteSpace(), r => r.Name.Contains(query.Name!))
             .WhereIf(!query.Description.IsNullOrWhiteSpace(), r => r.Description.Contains(query.Description!))
+            .OrderBy(r => r.Id)
             .Select(r => new RoleResponse(r.Id, r.Name, r.Description))
             .ToPagedDataAsync(query, cancellationToken: cancellationToken);
     }
 
     public async Task<List<AdminUserRoleResponse>> GetAllAdminUserRolesAsync(CancellationToken cancellationToken)
     {
-        return await RoleSet
+        return await RoleSet.AsNoTracking()
             .Select(r => new AdminUserRoleResponse(r.Id, r.Name, false))
             .ToListAsync(cancellationToken: cancellationToken);
     }
@@ -33,31 +34,32 @@ public class RoleQuery(ApplicationDbContext dbContext) : IQuery
     public async Task<List<AssignAdminUserRoleDto>> GetAdminRolesForAssignmentAsync(IEnumerable<RoleId> ids,
         CancellationToken cancellationToken)
     {
-        return await RoleSet
+        return await RoleSet.AsNoTracking()
             .Where(r => ids.Contains(r.Id))
             .Select(r => new AssignAdminUserRoleDto(
                 r.Id,
                 r.Name,
-                r.Permissions.Select(rp =>
-                    new AdminUserPermissionDto(rp.PermissionCode, rp.PermissionRemark)))
-            )
+                r.Permissions.Select(rp => rp.PermissionCode)))
             .ToListAsync(cancellationToken: cancellationToken);
     }
 
     public async Task<List<string>> GetAssignedPermissionCodes(RoleId id, CancellationToken cancellationToken)
     {
-        return await RoleSet.Where(r => r.Id == id)
+        return await RoleSet.AsNoTracking()
+            .Where(r => r.Id == id)
             .SelectMany(r => r.Permissions.Select(rp => rp.PermissionCode))
             .ToListAsync(cancellationToken);
     }
 
     public async Task<bool> RoleExistsByNameAsync(string name, CancellationToken cancellationToken)
     {
-        return await RoleSet.AnyAsync(r => r.Name == name, cancellationToken);
+        return await RoleSet.AsNoTracking()
+            .AnyAsync(r => r.Name == name, cancellationToken);
     }
 
     public async Task<bool> RoleExistsByNameAsync(string name, RoleId id, CancellationToken cancellationToken)
     {
-        return await RoleSet.AnyAsync(r => r.Name == name && r.Id != id, cancellationToken);
+        return await RoleSet.AsNoTracking()
+            .AnyAsync(r => r.Name == name && r.Id != id, cancellationToken);
     }
 }

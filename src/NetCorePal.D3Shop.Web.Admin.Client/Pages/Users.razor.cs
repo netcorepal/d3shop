@@ -1,4 +1,5 @@
 ﻿using AntDesign.TableModels;
+using NetCorePal.D3Shop.Web.Admin.Client.Components.Identity.User;
 
 namespace NetCorePal.D3Shop.Web.Admin.Client.Pages;
 
@@ -8,11 +9,13 @@ public sealed partial class Users
     [Inject] private MessageService Message { get; set; } = default!;
     [Inject] private ConfirmService ConfirmService { get; set; } = default!;
 
-    private PagedData<AdminUserResponse> _pagedAdminUsers = new(default!, default, default, default);
+    private PagedData<AdminUserResponse> _pagedAdminUsers = PagedData<AdminUserResponse>.Empty;
 
     private Table<AdminUserResponse> _table = default!;
 
     private readonly AdminUserQueryRequest _adminUserQueryRequest = new() { CountTotal = true };
+
+    private bool _loading;
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -35,6 +38,12 @@ public sealed partial class Users
     private async Task HandleItemAdded()
     {
         await GetPagedAdminUsers();
+    }
+
+    private void HandleRolesUpdate(EditUserRoles.RolesUpdateSucceededEventArgs args)
+    {
+        var userItem = _pagedAdminUsers.Items.Single(au => au.Id == args.AdminUserId);
+        userItem.Roles = args.RoleNames;
     }
 
     private async Task Delete(AdminUserResponse row)
@@ -60,11 +69,14 @@ public sealed partial class Users
 
     private async Task OnSearch()
     {
+        _adminUserQueryRequest.PageIndex = 1;
         await GetPagedAdminUsers();
     }
 
     private async Task Table_OnChange(QueryModel<AdminUserResponse> obj)
     {
+        _loading = true;
         await GetPagedAdminUsers();
+        _loading = false;
     }
 }
