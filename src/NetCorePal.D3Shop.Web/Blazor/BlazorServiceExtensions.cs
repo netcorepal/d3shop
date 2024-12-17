@@ -9,5 +9,7 @@ public static class BlazorServiceExtensions
     {
         services.AddScoped<IRolesService, RoleController>();
         services.AddScoped<IAdminUserService, AdminUserController>();
+        services.AddScoped<IDepartmentService, DepartmentController>();
+        
     }
 }

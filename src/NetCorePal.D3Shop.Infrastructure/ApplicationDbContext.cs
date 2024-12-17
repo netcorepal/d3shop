@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using NetCorePal.D3Shop.Domain.AggregatesModel.DeliverAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
 
 namespace NetCorePal.D3Shop.Infrastructure
 {
@@ -37,6 +38,8 @@ namespace NetCorePal.D3Shop.Infrastructure
         #region Identity
         public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
         public DbSet<Role> Roles => Set<Role>();
+
+        public DbSet<Department> Departments => Set<Department>();
         #endregion
     }
 }

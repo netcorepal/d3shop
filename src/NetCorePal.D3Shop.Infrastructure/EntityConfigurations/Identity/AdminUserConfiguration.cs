@@ -41,6 +41,15 @@ namespace NetCorePal.D3Shop.Infrastructure.EntityConfigurations.Identity
         }
     }
 
+    internal class UserDeptConfiguration : IEntityTypeConfiguration<UserDept>
+    {
+        public void Configure(EntityTypeBuilder<UserDept> builder)
+        {
+            builder.ToTable("userDepts");
+            builder.HasKey(aur => new { aur.AdminUserId, aur.DeptId });
+        }
+    }
+
     internal class AdminUserPermissionConfiguration : IEntityTypeConfiguration<AdminUserPermission>
     {
         public void Configure(EntityTypeBuilder<AdminUserPermission> builder)
