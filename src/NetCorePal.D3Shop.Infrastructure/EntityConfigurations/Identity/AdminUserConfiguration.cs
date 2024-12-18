@@ -28,6 +28,13 @@ namespace NetCorePal.D3Shop.Infrastructure.EntityConfigurations.Identity
                 .OnDelete(DeleteBehavior.ClientCascade);
             builder.Navigation(au => au.Permissions).AutoInclude();
 
+            //配置 AdminUser 与 UserDept 的一对多关系
+            builder.HasMany(au => au.UserDepts)
+           .WithOne()
+           .HasForeignKey(aup => aup.AdminUserId)
+           .OnDelete(DeleteBehavior.ClientCascade);
+            builder.Navigation(au => au.UserDepts).AutoInclude();
+
             builder.HasQueryFilter(au => !au.IsDeleted);
         }
     }
@@ -38,6 +45,17 @@ namespace NetCorePal.D3Shop.Infrastructure.EntityConfigurations.Identity
         {
             builder.ToTable("adminUserRoles");
             builder.HasKey(aur => new { aur.AdminUserId, aur.RoleId });
+        }
+    }
+
+    internal class UserDeptConfiguration : IEntityTypeConfiguration<UserDept>
+    {
+        public void Configure(EntityTypeBuilder<UserDept> builder)
+        {
+            builder.ToTable("userDepts");
+            builder.HasKey(aur => new { aur.AdminUserId, aur.DeptId });
+
+       
         }
     }
 

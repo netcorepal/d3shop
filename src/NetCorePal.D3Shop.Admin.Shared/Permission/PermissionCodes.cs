@@ -25,4 +25,13 @@ public static class PermissionCodes
     public const string RoleView = nameof(RoleView);
 
     #endregion
+
+    #region DepartmentManagement
+    public const string DepartmentManagement = nameof(DepartmentManagement);
+    public const string DepartmentCreate = nameof(DepartmentCreate);
+    public const string DepartmentEdit = nameof(DepartmentEdit);
+    public const string DepartmentView = nameof(DepartmentView);
+    public const string DepartmentDelete = nameof(DepartmentDelete);
+
+    #endregion
 }

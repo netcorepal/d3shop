@@ -1,0 +1,60 @@
+﻿<a @onclick="ShowModal">编辑</a>
+<Modal Title="@("编辑")"
+       Visible="@_modalVisible"
+       OnOk="() => _form.Submit()"
+       OnCancel="() =>  _modalVisible = false"
+       ConfirmLoading="@_modalConfirmLoading">
+
+    <Form @ref="_form"
+          Model="@_deptInfoModel"
+          OnFinish="Form_OnFinish"
+          LabelColSpan="4"
+          WrapperColSpan="16">
+        <FormItem Label="名称">
+            <Input @bind-Value="@context.Name"/>
+        </FormItem>
+        <FormItem Label="描述">
+            <Input @bind-Value="@context.Description"/>
+        </FormItem>
+    </Form>
+</Modal>
+
+@code {
+    [CascadingParameter] public DepartmentResponse Row { get; set; } = default!;
+    [Inject] private IDepartmentService DepartmentService { get; set; } = default!;
+    [Inject] private MessageService Message { get; set; } = default!;
+    [Parameter] public EventCallback OnRowUpdated { get; set; }
+
+    private bool _modalVisible;
+    private bool _modalConfirmLoading;
+    private Form<UpdateDepartmentInfoRequest> _form = default!;
+    private UpdateDepartmentInfoRequest _deptInfoModel = new();
+
+    private void ShowModal()
+    {
+        _modalVisible = true;
+        _deptInfoModel.Name = Row.Name;
+        _deptInfoModel.Description = Row.Description;
+    }
+
+    private async Task Form_OnFinish(EditContext editContext)
+    {
+        _modalConfirmLoading = true;
+        StateHasChanged();
+        var response = await DepartmentService.UpdateDepartmentInfo(Row.Id, _deptInfoModel);
+        _modalConfirmLoading = false;
+        if (response.Success)
+        {
+            _modalVisible = false;
+            _ = Message.Success("更新成功！");
+            Row.Name = _deptInfoModel.Name;
+            Row.Description = _deptInfoModel.Description;
+            await OnRowUpdated.InvokeAsync();
+        }
+        else
+        {
+            _ = Message.Error(response.Message);
+        }
+    }
+
+}
