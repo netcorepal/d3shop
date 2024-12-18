@@ -13,6 +13,11 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
     /// </summary>
     public class DepartmentUser
     {
+        public DepartmentUser()
+        {
+
+        }
+
         /// <summary>
         /// 部门id
         /// </summary>
@@ -28,7 +33,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
         /// </summary>
         public AdminUserId UserId { get; set; } = default!;
 
-        public DepartmentUser( string userName, AdminUserId userId)
+        public DepartmentUser(string userName, AdminUserId userId)
         {
             UserName = userName;
             UserId = userId;

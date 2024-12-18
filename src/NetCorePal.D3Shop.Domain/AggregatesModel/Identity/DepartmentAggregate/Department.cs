@@ -17,7 +17,10 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
     /// </summary>
     public class Department : Entity<DeptId>, IAggregateRoot
     {
-
+        public Department()
+        {
+            
+        }
         /// <summary>
         /// 部门名称
         /// </summary>

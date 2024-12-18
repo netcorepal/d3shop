@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 
 namespace NetCorePal.D3Shop.Infrastructure.EntityConfigurations.Identity
 {
@@ -25,6 +26,15 @@ namespace NetCorePal.D3Shop.Infrastructure.EntityConfigurations.Identity
            .HasForeignKey(aup => aup.DeptId)
            .OnDelete(DeleteBehavior.ClientCascade);
             builder.Navigation(au => au.Users).AutoInclude();
+        }
+
+        internal class DepartmentUserConfiguration : IEntityTypeConfiguration<DepartmentUser>
+        {
+            public void Configure(EntityTypeBuilder<DepartmentUser> builder)
+            {
+                builder.ToTable("departmentUser");
+                builder.HasKey(aur => new { aur.UserId, aur.DeptId });
+            }
         }
     }
 }
