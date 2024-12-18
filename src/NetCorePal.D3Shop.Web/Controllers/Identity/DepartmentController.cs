@@ -35,7 +35,7 @@ public class DepartmentController(
     {
 
         var departmentId = await mediator.Send(
-            new CreateDepartmentCommand(request.Name, request.Description, request.ParentId),
+            new CreateDepartmentCommand(request.Name, request.Description,request.Users, request.ParentId),
             CancellationToken);
 
         return departmentId.AsResponseData();
@@ -57,7 +57,7 @@ public class DepartmentController(
         [FromBody] UpdateDepartmentInfoRequest request)
     {
 
-        await mediator.Send(new UpdateDepartmrntInfoCommand(id, request.Name, request.Description), CancellationToken);
+        await mediator.Send(new UpdateDepartmrntInfoCommand(id, request.Name, request.Description,request.Users), CancellationToken);
         return new ResponseData();
     }
  

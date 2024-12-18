@@ -40,11 +40,18 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
         public bool IsDeleted { get; private set; }
         public DateTime? DeletedAt { get; private set; }
 
-        public Department(string name, string description, DeptId? parentId)
+        public virtual ICollection<DepartmentUser> Users { get; } = [];
+
+        public Department(string name, string description, DeptId? parentId, IEnumerable<DepartmentUser> deptUsers)
         {
             Name = name;
             Description = description;
             ParentId = parentId;
+            CreatedAt = DateTime.Now;
+            foreach (var user in deptUsers)
+            {
+                Users.Add(user);
+            }
         }
 
         /// <summary>
@@ -52,12 +59,38 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
         /// </summary>
         /// <param name="name"></param>
         /// <param name="description"></param>
-        public void UpdateDepartInfo(string name, string description)
+        /// <param name="deptUsers"></param>
+        public void UpdateDepartInfo(string name, string description, IEnumerable<DepartmentUser> deptUsers)
         {
             Name = name;
             Description = description;
+
+            var currentUserMap = Users.ToDictionary(r => r.UserId);
+            var targetUserMap = deptUsers.ToDictionary(r => r.UserId);
+
+            var userIdsToRemove = currentUserMap.Keys.Except(targetUserMap.Keys);
+            foreach (var userId in userIdsToRemove)
+            {
+                Users.Remove(currentUserMap[userId]);
+            }
+
+            var userIdsToAdd = targetUserMap.Keys.Except(currentUserMap.Keys);
+            foreach (var userId in userIdsToAdd)
+            {
+                var targetUser = targetUserMap[userId];
+                Users.Add(targetUser);
+            }
+
             AddDomainEvent(new DepartmentInfoChangedDomainEvent(this));
         }
+
+
+        public void SetUser(AdminUserId userId, string userName)
+        {
+            var savedUser = Users.FirstOrDefault(r => r.UserId == userId);
+            savedUser?.UpdateUserInfo(userName);
+        }
+
 
         public void Delete()
         {

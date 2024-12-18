@@ -7,7 +7,7 @@ using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity;
 
-public record UpdateDepartmrntInfoCommand(DeptId DepartmentId, string Name,string Description) : ICommand;
+public record UpdateDepartmrntInfoCommand(DeptId DepartmentId, string Name, string Description, Dictionary<AdminUserId, string> Users) : ICommand;
 
 public class UpdateDepartmentInfoCommandHandler(DepartmentRepository departmentRepository)
     : ICommandHandler<UpdateDepartmrntInfoCommand>
@@ -17,6 +17,12 @@ public class UpdateDepartmentInfoCommandHandler(DepartmentRepository departmentR
         var department = await departmentRepository.GetAsync(request.DepartmentId, cancellationToken) ??
                    throw new KnownException($"未找到部门，DepartId = {request.DepartmentId}");
 
-        department.UpdateDepartInfo(request.Name, request.Description);
+        List<DepartmentUser> departmentUsers = [];
+        foreach (var user in request.Users)
+        {
+            departmentUsers.Add(new DepartmentUser(user.Value, user.Key));
+        }
+
+        department.UpdateDepartInfo(request.Name, request.Description, departmentUsers);
     }
 }

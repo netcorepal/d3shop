@@ -21,9 +21,9 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         public DateTime CreatedAt { get; init; }
         public virtual ICollection<AdminUserRole> Roles { get; } = [];
 
-        public virtual UserDept UserDept { get; init; } = default!;
+        public virtual ICollection<UserDept> UserDepts { get; } = [];
 
-   
+
 
         public virtual ICollection<AdminUserPermission> Permissions { get; } = [];
         public bool IsDeleted { get; private set; }
@@ -53,9 +53,10 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
             savedRole?.UpdateRoleInfo(roleName);
         }
 
-        public void UpdateDeptInfo(DeptId deptId, string deptName)
+        public void SetUserDepts(DeptId deptId, string deptName)
         {
-            UserDept?.UpdateDeptInfo(deptName);
+            var savedDept = UserDepts.FirstOrDefault(r => r.DeptId == deptId);
+            savedDept?.UpdateDeptInfo(deptName);
         }
 
         public void UpdateRoles(IEnumerable<AdminUserRole> rolesToBeAssigned,

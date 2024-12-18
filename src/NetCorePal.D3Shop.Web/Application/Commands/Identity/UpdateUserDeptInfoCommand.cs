@@ -16,6 +16,6 @@ public class UpdateUserDeptInfoCommandHandler(AdminUserRepository adminUserRepos
         var user = await adminUserRepository.GetAsync(request.AdminUserId, cancellationToken) ??
                    throw new KnownException($"未找到用户，AdminUserId = {request.AdminUserId}");
 
-        user.UpdateDeptInfo(request.DeptId, request.DeptName);
+        user.SetUserDepts(request.DeptId, request.DeptName);
     }
 }

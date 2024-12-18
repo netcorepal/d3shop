@@ -18,6 +18,13 @@ namespace NetCorePal.D3Shop.Infrastructure.EntityConfigurations.Identity
             builder.ToTable("departments");
             builder.HasKey(r => r.Id);
             builder.Property(r => r.Id).ValueGeneratedOnAdd().UseSnowFlakeValueGenerator();
+
+            //配置 Department 与 DepartmentUser 的一对多关系
+            builder.HasMany(au => au.Users)
+           .WithOne()
+           .HasForeignKey(aup => aup.DeptId)
+           .OnDelete(DeleteBehavior.ClientCascade);
+            builder.Navigation(au => au.Users).AutoInclude();
         }
     }
 }
