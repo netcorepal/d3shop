@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using NetCorePal.D3Shop.Admin.Shared.Dtos.Identity;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
 using NetCorePal.D3Shop.Infrastructure.Repositories.Identity;
@@ -12,8 +13,8 @@ namespace NetCorePal.D3Shop.Web.Application.Commands.Identity;
 public record CreateDepartmentCommand(
     string Name,
     string Description,
-    Dictionary<AdminUserId, string> Users,
-    DeptId? ParentId)
+    IEnumerable<CreateDepartmentUserInfoDto> Users,
+    DeptId ParentId)
     : ICommand<DeptId>;
 
 public class CreateDepartmentCommandValidator : AbstractValidator<CreateDepartmentCommand>
@@ -35,7 +36,7 @@ public class CreateDepartmentCommandHandler(IDepartmentRepository departmentRepo
         List<DepartmentUser> departmentUsers = [];
         foreach (var user in request.Users)
         {
-            departmentUsers.Add(new DepartmentUser(user.Value, user.Key));
+            departmentUsers.Add(new DepartmentUser(user.UserName, user.UserId));
         }
         var department = new Department(request.Name, request.Description, request.ParentId, departmentUsers);
         await departmentRepository.AddAsync(department, cancellationToken);

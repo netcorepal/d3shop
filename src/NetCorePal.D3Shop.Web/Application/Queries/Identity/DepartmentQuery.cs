@@ -13,7 +13,7 @@ using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Queries.Identity;
 
-public class DepartmentQuery(ApplicationDbContext applicationDbContext, IMemoryCache memoryCache) : IQuery
+public class DepartmentQuery(ApplicationDbContext applicationDbContext) : IQuery
 {
     private DbSet<Department> DepartmentSet { get; } = applicationDbContext.Departments;
 

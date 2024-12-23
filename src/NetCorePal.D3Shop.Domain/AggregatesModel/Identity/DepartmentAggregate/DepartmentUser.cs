@@ -13,7 +13,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
     /// </summary>
     public class DepartmentUser
     {
-        public DepartmentUser()
+        protected DepartmentUser()
         {
 
         }

@@ -17,10 +17,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
     /// </summary>
     public class Department : Entity<DeptId>, IAggregateRoot
     {
-        public Department()
-        {
-            
-        }
+   
         /// <summary>
         /// 部门名称
         /// </summary>
@@ -36,7 +33,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
         /// 父部门id
         /// </summary>
 
-        public DeptId? ParentId { get; private set; } = default!;
+        public DeptId ParentId { get; private set; } = new DeptId(0);
 
         public DateTime CreatedAt { get; init; }
 
@@ -45,7 +42,13 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
 
         public virtual ICollection<DepartmentUser> Users { get; } = [];
 
-        public Department(string name, string description, DeptId? parentId, IEnumerable<DepartmentUser> deptUsers)
+
+        protected Department()
+        {
+
+        }
+
+        public Department(string name, string description, DeptId parentId, IEnumerable<DepartmentUser> deptUsers)
         {
             Name = name;
             Description = description;
@@ -88,7 +91,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
         }
 
 
-        public void SetUser(AdminUserId userId, string userName)
+        public void UpdateDepartmentUserName(AdminUserId userId, string userName)
         {
             var savedUser = Users.FirstOrDefault(r => r.UserId == userId);
             savedUser?.UpdateUserInfo(userName);
