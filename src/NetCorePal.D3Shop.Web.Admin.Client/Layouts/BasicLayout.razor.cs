@@ -43,6 +43,14 @@ public partial class BasicLayout : LayoutComponentBase
                 Key = "roles",
                 Icon = "crown",
                 BoundPermissionCode = PermissionCodes.RoleManagement
+            },
+            new PermissionMenuDataItem
+            {
+                Path = "/admin/dept",
+                Name = "部门管理",
+                Key = "depts",
+                Icon = "crown",
+                BoundPermissionCode = PermissionCodes.DepartmentManagement
             }
         ];
 

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Admin.Shared.Responses;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Const;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Dto;
@@ -79,6 +80,13 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCa
             .AnyAsync(au => au.Name == userName, cancellationToken);
     }
 
+    public async Task<List<AdminUserId>> GetUserIdsByDeptIdAsync(DeptId deptId, CancellationToken cancellationToken)
+    {
+        return await AdminUserSet.AsNoTracking()
+             .Where(x => x.UserDepts.Any(r => r.DeptId == deptId))
+            .Select(x => x.Id)
+            .ToListAsync(cancellationToken);
+    }
     public async Task<bool> DoesAdminUserExist(RoleId roleId, CancellationToken cancellationToken)
     {
         return await AdminUserSet.AsNoTracking()
