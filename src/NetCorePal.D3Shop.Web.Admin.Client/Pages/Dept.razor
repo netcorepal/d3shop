@@ -48,7 +48,7 @@
                 @if (context.CheckPermission(PermissionCodes.DepartmentEdit))
                 {
                     <CascadingValue Value="@row">
-                        <EditDeptInfo></EditDeptInfo>
+                        <EditDeptInfo OnRowUpdated="HandleItemUpdated"></EditDeptInfo>
                     </CascadingValue>
                 }
             </AuthorizeView>

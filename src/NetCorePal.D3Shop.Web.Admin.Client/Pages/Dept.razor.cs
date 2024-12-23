@@ -39,6 +39,10 @@ public sealed partial class Dept
         await GetPagedDepartments();
     }
 
+    private void HandleItemUpdated()
+    {
+        _table.ReloadData();
+    }
     private async Task Delete(DepartmentResponse row)
     {
         if (!await Confirm($"确认删除部门：{row.Name}?"))
