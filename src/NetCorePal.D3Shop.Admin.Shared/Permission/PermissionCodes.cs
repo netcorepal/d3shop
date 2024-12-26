@@ -2,6 +2,12 @@
 
 public static class PermissionCodes
 {
+
+
+    #region Welcome
+    public const string WelcomeManagement = nameof(WelcomeManagement);
+    #endregion
+
     #region AdminUserManagement
 
     public const string AdminUserManagement = nameof(AdminUserManagement);
