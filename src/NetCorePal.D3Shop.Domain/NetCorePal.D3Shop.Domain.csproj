@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -19,5 +18,4 @@
     <PackageReference Include="NetCorePal.Extensions.Domain.Abstractions" Version="$(NetCorePalVersion)" />
     <PackageReference Include="NetCorePal.Extensions.Primitives" Version="$(NetCorePalVersion)" />
   </ItemGroup>
-
 </Project>

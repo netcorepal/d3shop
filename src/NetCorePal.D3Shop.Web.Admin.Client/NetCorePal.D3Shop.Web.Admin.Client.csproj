@@ -1,28 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="AntDesign.Charts" Version="0.5.6" />
-    <PackageReference Include="AntDesign.Extensions.Localization" Version="1.0.0" />
-    <PackageReference Include="AntDesign.ProLayout" Version="1.0.0" />
+    <PackageReference Include="AntDesign.Extensions.Localization" Version="1.0.1" />
+    <PackageReference Include="AntDesign.ProLayout" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="$(FrameworkVersion)" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="$(FrameworkVersion)" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(ExtensionsVersion)" />
     <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
     <PackageReference Include="Refit.Newtonsoft.Json" Version="8.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\NetCorePal.D3Shop.Admin.Shared\NetCorePal.D3Shop.Admin.Shared.csproj" />
   </ItemGroup>
-  
 </Project>
