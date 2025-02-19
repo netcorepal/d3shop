@@ -1,0 +1,1 @@
+export const NetCorePalD3ShopWebApiUrl = import.meta.env.VITE_NetCorePalD3Shop_WebApiUrl
