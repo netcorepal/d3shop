@@ -1,7 +1,19 @@
 <template>
-  <RouterView></RouterView>
+  <ConfigProvider :theme="appStore.themeVars.themeColor">
+    <router-view></router-view>
+  </ConfigProvider>
 </template>
 
-<style scoped>
-@import './app.css';
-</style>
+<script setup lang="ts">
+import { onMounted } from 'vue';
+import { useAppStore } from '@/store/app';
+import { ConfigProvider } from 'vant';
+
+const appStore = useAppStore();
+
+onMounted(() => {
+  appStore.initThemeColor();
+});
+</script>
+
+<style></style>

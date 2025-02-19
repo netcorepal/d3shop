@@ -1,6 +1,6 @@
 import type {AxiosInstance, AxiosRequestConfig, AxiosError, AxiosResponse} from 'axios';
 import axios from 'axios';
-import { AxiosConfig, NetCorePalD3ShopWebApiUrl } from '@/config';
+import { AxiosConfig, NetCorePalD3ShopWebApiUrl } from '@/config/index';
 
 export class AxiosHttpClient {
 
