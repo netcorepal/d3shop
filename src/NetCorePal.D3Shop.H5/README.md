@@ -57,7 +57,14 @@ pnpm run build-production
 ```
 
 
-# 从这个命令开始
+# 开始
+
+### 进入项目根目录
+```
+pnpm install
+```
+
+### 启动项目
 ```
 pnpm run dev-localhost
 ```
