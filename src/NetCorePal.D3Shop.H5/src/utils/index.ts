@@ -1,1 +1,1 @@
-export * from './axios/index.ts'
+export * from '@/utils/axios/index.js'
