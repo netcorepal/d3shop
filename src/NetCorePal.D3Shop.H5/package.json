@@ -16,7 +16,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/node": "^22.13.4",
     "axios": "^1.7.9",
+    "vant": "^4.9.17",
     "vue": "^3.5.13",
     "vue-router": "4"
   },
