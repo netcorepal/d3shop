@@ -1,12 +1,16 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-
-import router from './router'
-
-// vant ui
-import vant from 'vant';
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import App from './App.vue';
+import router from '@/router';
+import { setupAuth } from './directives/auth';
+import { useAuthStore } from '@/store/auth';
 
 const app = createApp(App);
+const pinia = createPinia();
+app.use(pinia);
 app.use(router);
-app.use(vant);
-app.mount('#app')
+
+const authStore = useAuthStore();
+setupAuth(app, router, authStore);
+
+app.mount('#app');
