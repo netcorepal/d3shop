@@ -41,5 +41,9 @@ internal class UserThirdPartyLoginConfiguration : IEntityTypeConfiguration<UserT
         builder.ToTable("userThirdPartyLogins");
         builder.HasKey(tpl => tpl.Id);
         builder.Property(tpl => tpl.Id).ValueGeneratedOnAdd().UseSnowFlakeValueGenerator();
+        builder.Property(x => x.Provider)
+            .HasConversion(
+                v => v.ToString(),
+                v => Enum.Parse<ThirdPartyProvider>(v));
     }
 }
