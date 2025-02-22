@@ -128,9 +128,11 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
         );
 
         if (setAsDefault)
+        {
             // 确保只有一个默认地址
-            foreach (var addr in DeliveryAddresses.Where(a => a.IsDefault))
-                addr.UnsetDefault();
+            var addr = DeliveryAddresses.SingleOrDefault(a => a.IsDefault);
+            addr?.UnsetDefault();
+        }
 
         DeliveryAddresses.Add(newAddress);
     }
@@ -151,17 +153,30 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
         string phone,
         bool setAsDefault)
     {
-        var deliveryAddress = DeliveryAddresses.FirstOrDefault(a => a.Id == deliveryAddressId) ??
+        var deliveryAddress = DeliveryAddresses.SingleOrDefault(a => a.Id == deliveryAddressId) ??
                               throw new KnownException("地址不存在");
         deliveryAddress.UpdateDetails(address, recipientName, phone);
 
         if (!setAsDefault) return;
 
-        foreach (var addr in DeliveryAddresses.Where(a => a.IsDefault && a.Id != deliveryAddressId))
-            addr.UnsetDefault();
+        var addr = DeliveryAddresses
+            .SingleOrDefault(a => a.IsDefault && a.Id != deliveryAddressId);
+        addr?.UnsetDefault();
 
         if (!deliveryAddress.IsDefault)
             deliveryAddress.SetAsDefault();
+    }
+
+    /// <summary>
+    ///     删除收货地址
+    /// </summary>
+    /// <param name="deliveryAddressId"></param>
+    /// <exception cref="KnownException"></exception>
+    public void RemoveDeliveryAddress(DeliveryAddressId deliveryAddressId)
+    {
+        var deliveryAddress = DeliveryAddresses.SingleOrDefault(a => a.Id == deliveryAddressId) ??
+                              throw new KnownException("地址不存在");
+        DeliveryAddresses.Remove(deliveryAddress);
     }
 
     /// <summary>
@@ -197,7 +212,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <exception cref="KnownException"></exception>
     public void UnbindThirdPartyLogin(ThirdPartyLoginId loginId)
     {
-        var login = ThirdPartyLogins.FirstOrDefault(x => x.Id == loginId);
+        var login = ThirdPartyLogins.SingleOrDefault(x => x.Id == loginId);
         if (login == null) return;
 
         // 规则：至少保留一种登录方式
