@@ -2,7 +2,7 @@
 using NetCorePal.Extensions.Repository;
 using NetCorePal.Extensions.Repository.EntityFrameworkCore;
 
-namespace NetCorePal.D3Shop.Infrastructure.Repositories.Identity
+namespace NetCorePal.D3Shop.Infrastructure.Repositories.Identity.Admin
 {
     public interface IRoleRepository : IRepository<Role, RoleId>;
 

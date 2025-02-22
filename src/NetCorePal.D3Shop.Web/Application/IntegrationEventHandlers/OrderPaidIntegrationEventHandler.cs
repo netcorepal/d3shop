@@ -1,8 +1,6 @@
-﻿using DotNetCore.CAP;
-using MediatR;
+﻿using MediatR;
 using NetCorePal.D3Shop.Web.Application.Commands;
 using NetCorePal.Extensions.DistributedTransactions;
-using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers
 {

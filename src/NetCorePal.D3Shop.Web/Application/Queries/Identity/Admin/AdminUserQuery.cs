@@ -11,7 +11,7 @@ using NetCorePal.D3Shop.Web.Extensions;
 using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;
 
-namespace NetCorePal.D3Shop.Web.Application.Queries.Identity;
+namespace NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
 
 public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCache memoryCache) : IQuery
 {

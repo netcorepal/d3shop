@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
-using NetCorePal.D3Shop.Infrastructure.Repositories.Identity;
-using NetCorePal.D3Shop.Web.Application.Queries.Identity;
+using NetCorePal.D3Shop.Infrastructure.Repositories.Identity.Admin;
+using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
 using NetCorePal.Extensions.Primitives;
 
-namespace NetCorePal.D3Shop.Web.Application.Commands.Identity;
+namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin;
 
 public record CreateRoleCommand(string Name, string Description, IEnumerable<string> PermissionCodes)
     : ICommand<RoleId>;

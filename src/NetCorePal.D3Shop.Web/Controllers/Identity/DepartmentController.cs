@@ -3,18 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using NetCorePal.D3Shop.Admin.Shared.Permission;
 using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Admin.Shared.Responses;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Admin.Client.Services;
-using NetCorePal.D3Shop.Web.Application.Commands.Identity;
-using NetCorePal.D3Shop.Web.Application.Commands.Identity.Dto;
-using NetCorePal.D3Shop.Web.Application.Queries.Identity;
+using NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin;
+using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
 using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Web.Blazor;
-using NetCorePal.D3Shop.Web.Helper;
 using NetCorePal.Extensions.Dto;
-using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Controllers.Identity;
 
@@ -33,9 +28,8 @@ public class DepartmentController(
     [AdminPermission(PermissionCodes.DepartmentCreate)]
     public async Task<ResponseData<DeptId>> CreateDepartment([FromBody] CreateDepartmentRequest request)
     {
-
         var departmentId = await mediator.Send(
-            new CreateDepartmentCommand(request.Name, request.Description,request.Users, request.ParentId),
+            new CreateDepartmentCommand(request.Name, request.Description, request.Users, request.ParentId),
             CancellationToken);
 
         return departmentId.AsResponseData();
@@ -50,17 +44,16 @@ public class DepartmentController(
     }
 
 
-
     [HttpPut("{id}")]
     [AdminPermission(PermissionCodes.DepartmentEdit)]
     public async Task<ResponseData> UpdateDepartmentInfo([FromRoute] DeptId id,
         [FromBody] UpdateDepartmentInfoRequest request)
     {
-
-        await mediator.Send(new UpdateDepartmrntInfoCommand(id, request.Name, request.Description,request.Users), CancellationToken);
+        await mediator.Send(new UpdateDepartmrntInfoCommand(id, request.Name, request.Description, request.Users),
+            CancellationToken);
         return new ResponseData();
     }
- 
+
 
     [HttpDelete("{id}")]
     [AdminPermission(PermissionCodes.DepartmentDelete)]
@@ -69,5 +62,4 @@ public class DepartmentController(
         await mediator.Send(new DeleteDepartmentCommand(id), CancellationToken);
         return new ResponseData();
     }
-
 }

@@ -1,19 +1,10 @@
-﻿using AntDesign;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using NetCorePal.D3Shop.Admin.Shared.Requests;
+﻿using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using Newtonsoft.Json;
 using System.Net.Http.Headers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
 using NetCorePal.D3Shop.Admin.Shared.Dtos.Identity;
 using NetCorePal.Extensions.Dto;
 using NetCorePal.D3Shop.Admin.Shared.Responses;
-using System.Xml.Linq;
 
 namespace NetCorePal.D3Shop.Web.Tests.Identity
 {

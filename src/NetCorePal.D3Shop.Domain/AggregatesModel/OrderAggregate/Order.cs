@@ -1,7 +1,5 @@
 ﻿using NetCorePal.D3Shop.Domain.DomainEvents;
 using NetCorePal.Extensions.Domain;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Domain.AggregatesModel.OrderAggregate

@@ -1,9 +1,8 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Caching.Memory;
-using NetCorePal.D3Shop.Domain.DomainEvents.Identity;
-using NetCorePal.D3Shop.Web.Application.Commands.Identity;
-using NetCorePal.D3Shop.Web.Application.Commands.Identity.Dto;
-using NetCorePal.D3Shop.Web.Application.Queries.Identity;
+using NetCorePal.D3Shop.Domain.DomainEvents.Identity.Admin;
+using NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin;
+using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
 using NetCorePal.D3Shop.Web.Const;
 using NetCorePal.Extensions.Domain;
 

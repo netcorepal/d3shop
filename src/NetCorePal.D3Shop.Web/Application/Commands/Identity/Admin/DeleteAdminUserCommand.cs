@@ -1,8 +1,8 @@
 ﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Infrastructure.Repositories.Identity;
+using NetCorePal.D3Shop.Infrastructure.Repositories.Identity.Admin;
 using NetCorePal.Extensions.Primitives;
 
-namespace NetCorePal.D3Shop.Web.Application.Commands.Identity;
+namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin;
 
 public record DeleteAdminUserCommand(AdminUserId AdminUserId) : ICommand;
 

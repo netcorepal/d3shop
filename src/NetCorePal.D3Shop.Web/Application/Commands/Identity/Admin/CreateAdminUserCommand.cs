@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Infrastructure.Repositories.Identity;
-using NetCorePal.D3Shop.Web.Application.Commands.Identity.Dto;
-using NetCorePal.D3Shop.Web.Application.Queries.Identity;
+using NetCorePal.D3Shop.Infrastructure.Repositories.Identity.Admin;
+using NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin.Dto;
+using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
 using NetCorePal.Extensions.Primitives;
 
-namespace NetCorePal.D3Shop.Web.Application.Commands.Identity;
+namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin;
 
 public record CreateAdminUserCommand(
     string Name,
@@ -40,7 +40,8 @@ public class CreateAdminUserCommandHandler(IAdminUserRepository adminUserReposit
             adminUserPermissions.AddRange(permissionCodes.Select(code => new AdminUserPermission(code, roleId)));
         }
 
-        var adminUser = new AdminUser(request.Name, request.Phone, request.Password,
+        var adminUser = new AdminUser(request.Name, request.Phone,
+            request.Password,
             adminUserRoles, adminUserPermissions);
 
         await adminUserRepository.AddAsync(adminUser, cancellationToken);

@@ -1,4 +1,4 @@
-﻿using NetCorePal.D3Shop.Domain.DomainEvents.Identity;
+﻿using NetCorePal.D3Shop.Domain.DomainEvents.Identity.Admin;
 using NetCorePal.Extensions.Domain;
 // ReSharper disable VirtualMemberCallInConstructor
 

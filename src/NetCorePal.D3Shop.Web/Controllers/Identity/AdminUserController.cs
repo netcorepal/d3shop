@@ -6,8 +6,8 @@ using NetCorePal.D3Shop.Admin.Shared.Responses;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Admin.Client.Services;
-using NetCorePal.D3Shop.Web.Application.Commands.Identity;
-using NetCorePal.D3Shop.Web.Application.Queries.Identity;
+using NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin;
+using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
 using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Web.Blazor;
 using NetCorePal.D3Shop.Web.Helper;
@@ -87,22 +87,6 @@ public class AdminUserController(
     }
 
     [HttpPut("{id}")]
-    [AdminPermission(PermissionCodes.AdminUserUpdatePassword)]
-    public async Task<ResponseData> ChangeAdminUserPassword([FromRoute] AdminUserId id,
-        [FromBody] UpdateAdminUserPasswordRequest request)
-    {
-        var adminUser = await adminUserQuery.GetUserCredentialsIfExists(id, CancellationToken);
-        if (adminUser is null) throw new KnownException($"该用户不存在，AdminUserId = {id}");
-
-        if (!PasswordHasher.VerifyHashedPassword(adminUser.Password, request.OldPassword))
-            throw new KnownException("旧密码不正确");
-
-        var password = PasswordHasher.HashPassword(request.NewPassword);
-        await mediator.Send(new UpdateAdminUserPasswordCommand(adminUser.Id, password), CancellationToken);
-        return new ResponseData();
-    }
-
-    [HttpPut("{id}")]
     [AdminPermission(PermissionCodes.AdminUserUpdateRoles)]
     public async Task<ResponseData> UpdateAdminUserRoles([FromRoute] AdminUserId id,
         [FromBody] IEnumerable<RoleId> roleIds)
@@ -125,5 +109,21 @@ public class AdminUserController(
     {
         var roles = await roleQuery.GetAllAdminUserRolesAsync(CancellationToken);
         return roles.AsResponseData();
+    }
+
+    [HttpPut("{id}")]
+    [AdminPermission(PermissionCodes.AdminUserUpdatePassword)]
+    public async Task<ResponseData> ChangeAdminUserPassword([FromRoute] AdminUserId id,
+        [FromBody] UpdateAdminUserPasswordRequest request)
+    {
+        var adminUser = await adminUserQuery.GetUserCredentialsIfExists(id, CancellationToken);
+        if (adminUser is null) throw new KnownException($"该用户不存在，AdminUserId = {id}");
+
+        if (!PasswordHasher.VerifyHashedPassword(adminUser.Password, request.OldPassword))
+            throw new KnownException("旧密码不正确");
+
+        var password = PasswordHasher.HashPassword(request.NewPassword);
+        await mediator.Send(new UpdateAdminUserPasswordCommand(adminUser.Id, password), CancellationToken);
+        return new ResponseData();
     }
 }

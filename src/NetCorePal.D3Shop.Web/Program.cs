@@ -27,7 +27,6 @@ using Newtonsoft.Json.Serialization;
 using Prometheus;
 using Refit;
 using Serilog;
-using Serilog.Formatting.Json;
 using StackExchange.Redis;
 using _Imports = NetCorePal.D3Shop.Web.Admin.Client._Imports;
 

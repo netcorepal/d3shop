@@ -1,9 +1,5 @@
-using NetCorePal.D3Shop.Infrastructure;
 using NetCorePal.D3Shop.Web.Controllers;
-using Microsoft.EntityFrameworkCore;
-using Moq;
 using NetCorePal.Context;
-using NetCorePal.Extensions.AspNetCore;
 using NetCorePal.Extensions.Dto;
 
 namespace NetCorePal.D3Shop.Web.Tests
