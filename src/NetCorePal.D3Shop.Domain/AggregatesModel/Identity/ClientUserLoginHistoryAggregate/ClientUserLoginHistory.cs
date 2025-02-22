@@ -1,0 +1,24 @@
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate;
+using NetCorePal.Extensions.Domain;
+
+namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserLoginHistoryAggregate;
+
+public partial record UserLoginLogId : IInt64StronglyTypedId;
+
+public class ClientUserLoginHistory : Entity<UserLoginLogId>, IAggregateRoot
+{
+    protected ClientUserLoginHistory()
+    {
+    }
+
+    public ClientUserId UserId { get; private set; } = null!;
+    public string NickName { get; private set; } = string.Empty;
+    public DateTime LoginTime { get; private set; }
+    public string LoginMethod { get; private set; } = string.Empty;
+    public string IpAddress { get; private set; } = string.Empty;
+    public string UserAgent { get; private set; } = string.Empty;
+
+    public void RecordLogin()
+    {
+    }
+}
