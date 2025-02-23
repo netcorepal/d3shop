@@ -3,4 +3,10 @@ using NetCorePal.Extensions.Domain;
 
 namespace NetCorePal.D3Shop.Domain.DomainEvents.Identity.Client;
 
-public record ClientUserLoginEvent(ClientUser User) : IDomainEvent;
+public record ClientUserLoginEvent(
+    ClientUserId UserId,
+    string NickName,
+    DateTime LoginTime,
+    string LoginMethod,
+    string IpAddress,
+    string UserAgent) : IDomainEvent;

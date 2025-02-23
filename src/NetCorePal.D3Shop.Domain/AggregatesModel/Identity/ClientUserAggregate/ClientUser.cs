@@ -31,7 +31,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     public ICollection<UserDeliveryAddress> DeliveryAddresses { get; } = [];
     public ICollection<UserThirdPartyLogin> ThirdPartyLogins { get; } = [];
 
-    public string NickName { get; private set; } = string.Empty;
+    public string NickName { get; } = string.Empty;
     public string Avatar { get; private set; } = string.Empty;
     public string Phone { get; private set; } = string.Empty;
     public string PasswordHash { get; private set; } = string.Empty;
@@ -48,7 +48,16 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     ///     用户登录
     /// </summary>
     /// <param name="passwordHash"></param>
-    public void Login(string passwordHash)
+    /// <param name="loginTime"></param>
+    /// <param name="loginMethod"></param>
+    /// <param name="ipAddress"></param>
+    /// <param name="userAgent"></param>
+    public void Login(
+        string passwordHash,
+        DateTime loginTime,
+        string loginMethod,
+        string ipAddress,
+        string userAgent)
     {
         if (PasswordHash != passwordHash)
         {
@@ -57,8 +66,8 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
         }
 
         PasswordFailedTimes = 0;
-        LastLoginAt = DateTime.UtcNow;
-        AddDomainEvent(new ClientUserLoginEvent(this));
+        LastLoginAt = loginTime;
+        AddDomainEvent(new ClientUserLoginEvent(Id, NickName, loginTime, loginMethod, ipAddress, userAgent));
     }
 
     /// <summary>
