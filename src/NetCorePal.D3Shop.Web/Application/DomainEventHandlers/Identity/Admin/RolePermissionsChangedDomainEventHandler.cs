@@ -6,7 +6,7 @@ using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
 using NetCorePal.D3Shop.Web.Const;
 using NetCorePal.Extensions.Domain;
 
-namespace NetCorePal.D3Shop.Web.Application.DomainEventHandlers.Identity;
+namespace NetCorePal.D3Shop.Web.Application.DomainEventHandlers.Identity.Admin;
 
 public class RolePermissionsChangedDomainEventHandler(
     IMediator mediator,
