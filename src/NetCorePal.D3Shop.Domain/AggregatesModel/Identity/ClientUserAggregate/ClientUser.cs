@@ -91,9 +91,11 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <summary>
     ///     修改密码
     /// </summary>
+    /// <param name="oldPasswordHash"></param>
     /// <param name="newPasswordHash"></param>
-    public void EditPassword(string newPasswordHash)
+    public void EditPassword(string oldPasswordHash, string newPasswordHash)
     {
+        if (PasswordHash != oldPasswordHash) throw new KnownException("旧密码不正确");
         PasswordHash = newPasswordHash;
     }
 
