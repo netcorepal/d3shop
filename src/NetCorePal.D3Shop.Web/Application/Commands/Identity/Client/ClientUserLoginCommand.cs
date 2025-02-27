@@ -19,6 +19,12 @@ public class ClientUserLoginCommandHandler(IClientUserRepository clientUserRepos
     {
         var user = await clientUserRepository.GetAsync(request.UserId, cancellationToken) ??
                    throw new KnownException("用户不存在");
-        user.Login(request.PasswordHash, request.LoginTime, request.LoginMethod, request.IpAddress, request.UserAgent);
+
+        user.Login(
+            request.PasswordHash,
+            request.LoginTime,
+            request.LoginMethod,
+            request.IpAddress,
+            request.UserAgent);
     }
 }

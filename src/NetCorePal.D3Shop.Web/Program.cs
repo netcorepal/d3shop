@@ -18,6 +18,7 @@ using NetCorePal.D3Shop.Web.Blazor;
 using NetCorePal.D3Shop.Web.Blazor.Components;
 using NetCorePal.D3Shop.Web.Clients;
 using NetCorePal.D3Shop.Web.Extensions;
+using NetCorePal.D3Shop.Web.Helper;
 using NetCorePal.Extensions.Domain.Json;
 using NetCorePal.Extensions.MultiEnv;
 using NetCorePal.Extensions.NewtonsoftJson;
@@ -71,6 +72,8 @@ try
     builder.Services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
     builder.Services.AddTransient<IPermissionChecker, ServerPermissionChecker>();
 
+    builder.Services.AddSingleton<TokenGenerator>();
+
     #endregion
 
     #region Controller
@@ -92,7 +95,7 @@ try
     #region 公共服务
 
     builder.Services.AddSingleton<IClock, SystemClock>();
-
+    
     #endregion
 
     #region 集成事件

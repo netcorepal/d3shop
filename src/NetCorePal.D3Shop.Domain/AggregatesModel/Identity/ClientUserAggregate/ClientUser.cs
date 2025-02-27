@@ -17,12 +17,14 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
         string avatar,
         string phone,
         string passwordHash,
+        string passwordSalt,
         string email)
     {
         NickName = nickName;
         Avatar = avatar;
         Phone = phone;
         PasswordHash = passwordHash;
+        PasswordSalt = passwordSalt;
         Email = email;
         CreatedAt = DateTime.Now;
         LastLoginAt = DateTime.Now;
@@ -31,10 +33,11 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     public ICollection<UserDeliveryAddress> DeliveryAddresses { get; } = [];
     public ICollection<UserThirdPartyLogin> ThirdPartyLogins { get; } = [];
 
-    public string NickName { get; } = string.Empty;
+    public string NickName { get; private set; } = string.Empty;
     public string Avatar { get; private set; } = string.Empty;
     public string Phone { get; private set; } = string.Empty;
     public string PasswordHash { get; private set; } = string.Empty;
+    public string PasswordSalt { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
     public DateTime CreatedAt { get; private set; }
     public DateTime LastLoginAt { get; private set; }
@@ -62,7 +65,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
         if (PasswordHash != passwordHash)
         {
             PasswordFailedTimes++;
-            return;
+            throw new KnownException("用户名或密码错误");
         }
 
         PasswordFailedTimes = 0;

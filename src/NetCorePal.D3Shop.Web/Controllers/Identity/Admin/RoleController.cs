@@ -11,7 +11,7 @@ using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Web.Blazor;
 using NetCorePal.Extensions.Dto;
 
-namespace NetCorePal.D3Shop.Web.Controllers.Identity;
+namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin;
 
 [Route("api/[controller]/[action]")]
 [ApiController]

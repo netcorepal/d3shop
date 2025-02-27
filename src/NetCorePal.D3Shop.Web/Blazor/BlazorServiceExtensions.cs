@@ -1,5 +1,5 @@
 ﻿using NetCorePal.D3Shop.Web.Admin.Client.Services;
-using NetCorePal.D3Shop.Web.Controllers.Identity;
+using NetCorePal.D3Shop.Web.Controllers.Identity.Admin;
 
 namespace NetCorePal.D3Shop.Web.Blazor;
 

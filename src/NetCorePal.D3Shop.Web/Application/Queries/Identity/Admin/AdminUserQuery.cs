@@ -6,7 +6,7 @@ using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Const;
-using NetCorePal.D3Shop.Web.Controllers.Identity.Dto;
+using NetCorePal.D3Shop.Web.Controllers.Identity.Admin.Dto;
 using NetCorePal.D3Shop.Web.Extensions;
 using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;

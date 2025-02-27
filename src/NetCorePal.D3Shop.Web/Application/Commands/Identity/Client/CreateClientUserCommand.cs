@@ -10,6 +10,7 @@ public record CreateClientUserCommand(
     string Avatar,
     string Phone,
     string PasswordHash,
+    string PasswordSalt,
     string Email) : ICommand<ClientUserId>;
 
 public class CreateClientUserCommandValidator : AbstractValidator<CreateClientUserCommand>
@@ -27,7 +28,13 @@ public class CreateClientUserCommandHandle(IClientUserRepository clientUserRepos
 {
     public Task<ClientUserId> Handle(CreateClientUserCommand request, CancellationToken cancellationToken)
     {
-        var user = new ClientUser(request.NickName, request.Avatar, request.Phone, request.PasswordHash, request.Email);
+        var user = new ClientUser(
+            request.NickName,
+            request.Avatar,
+            request.Phone,
+            request.PasswordHash,
+            request.PasswordSalt,
+            request.Email);
         clientUserRepository.Add(user);
         return Task.FromResult(user.Id);
     }
