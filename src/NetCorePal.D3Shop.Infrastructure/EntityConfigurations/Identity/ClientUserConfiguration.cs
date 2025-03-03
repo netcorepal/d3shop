@@ -16,11 +16,14 @@ internal class ClientUserConfiguration : IEntityTypeConfiguration<ClientUser>
             .WithOne()
             .HasForeignKey(uda => uda.UserId)
             .OnDelete(DeleteBehavior.ClientCascade);
+        builder.Navigation(cu => cu.DeliveryAddresses).AutoInclude();
+        
         // 配置 ClientUser 与 ThirdPartyLogin 的一对多关系
         builder.HasMany(cu => cu.ThirdPartyLogins)
             .WithOne()
             .HasForeignKey(tpl => tpl.UserId)
             .OnDelete(DeleteBehavior.ClientCascade);
+        builder.Navigation(cu => cu.ThirdPartyLogins).AutoInclude();
     }
 }
 

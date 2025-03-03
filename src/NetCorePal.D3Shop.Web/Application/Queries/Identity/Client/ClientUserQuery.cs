@@ -19,4 +19,43 @@ public class ClientUserQuery(ApplicationDbContext applicationDbContext) : IQuery
 
         return authInfo;
     }
+
+    public async Task<List<ClientUserDeliveryAddressInfo>> GetDeliveryAddressesAsync(ClientUserId userId)
+    {
+        return await ClientUserSet
+            .Where(user => user.Id == userId)
+            .SelectMany(user => user.DeliveryAddresses)
+            .Select(address => new ClientUserDeliveryAddressInfo(
+                address.Id,
+                address.Address,
+                address.RecipientName,
+                address.Phone,
+                address.IsDefault
+            ))
+            .ToListAsync();
+    }
+
+    public async Task<string> GetUserPasswordSaltByIdAsync(ClientUserId userId)
+    {
+        var salt = await ClientUserSet
+                       .Where(user => user.Id == userId)
+                       .Select(user => user.PasswordSalt)
+                       .SingleOrDefaultAsync()
+                   ?? throw new KnownException("用户不存在");
+
+        return salt;
+    }
+
+    public async Task<List<ClientUserThirdPartyLoginInfo>> GetThirdPartyLoginsAsync(ClientUserId userId)
+    {
+        return await ClientUserSet
+            .Where(user => user.Id == userId)
+            .SelectMany(user => user.ThirdPartyLogins.Select(
+                    thirdPartyLogin => new ClientUserThirdPartyLoginInfo(
+                        thirdPartyLogin.Id,
+                        thirdPartyLogin.Provider)
+                )
+            )
+            .ToListAsync();
+    }
 }

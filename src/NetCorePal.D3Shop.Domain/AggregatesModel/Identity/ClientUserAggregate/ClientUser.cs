@@ -127,7 +127,8 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <param name="recipientName"></param>
     /// <param name="phone"></param>
     /// <param name="setAsDefault"></param>
-    public void AddDeliveryAddress(
+    /// <returns></returns>
+    public DeliveryAddressId AddDeliveryAddress(
         string address,
         string recipientName,
         string phone,
@@ -149,6 +150,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
         }
 
         DeliveryAddresses.Add(newAddress);
+        return newAddress.Id;
     }
 
     /// <summary>
@@ -199,8 +201,9 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <param name="provider"></param>
     /// <param name="appId"></param>
     /// <param name="openId"></param>
+    /// <returns></returns>
     /// <exception cref="KnownException"></exception>
-    public void BindThirdPartyLogin(
+    public ThirdPartyLoginId BindThirdPartyLogin(
         ThirdPartyProvider provider,
         string appId,
         string openId)
@@ -217,6 +220,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
         );
 
         ThirdPartyLogins.Add(login);
+        return login.Id;
     }
 
     /// <summary>
@@ -226,12 +230,8 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <exception cref="KnownException"></exception>
     public void UnbindThirdPartyLogin(ThirdPartyLoginId loginId)
     {
-        var login = ThirdPartyLogins.SingleOrDefault(x => x.Id == loginId);
-        if (login == null) return;
-
-        // 规则：至少保留一种登录方式
-        if (ThirdPartyLogins.Count == 1)
-            throw new KnownException("无法解绑最后一种登录方式");
+        var login = ThirdPartyLogins.SingleOrDefault(x => x.Id == loginId) ??
+                    throw new KnownException("登录方式不存在");
 
         ThirdPartyLogins.Remove(login);
     }

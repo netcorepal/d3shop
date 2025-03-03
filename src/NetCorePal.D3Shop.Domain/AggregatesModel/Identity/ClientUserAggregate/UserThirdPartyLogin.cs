@@ -10,7 +10,7 @@ public class UserThirdPartyLogin : Entity<ThirdPartyLoginId>
     {
     }
 
-    internal UserThirdPartyLogin(
+    public UserThirdPartyLogin(
         ClientUserId userId,
         ThirdPartyProvider provider,
         string appId,

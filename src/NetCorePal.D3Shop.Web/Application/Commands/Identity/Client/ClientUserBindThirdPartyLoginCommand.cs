@@ -9,7 +9,7 @@ public record ClientUserBindThirdPartyLoginCommand(
     ClientUserId UserId,
     ThirdPartyProvider ThirdPartyProvider,
     string AppId,
-    string OpenId) : ICommand;
+    string OpenId) : ICommand<ThirdPartyLoginId>;
 
 public class ClientUserBindThirdPartyLoginCommandValidator : AbstractValidator<ClientUserBindThirdPartyLoginCommand>
 {
@@ -22,12 +22,13 @@ public class ClientUserBindThirdPartyLoginCommandValidator : AbstractValidator<C
 }
 
 public class ClientUserBindThirdPartyLoginCommandHandler(ClientUserRepository clientUserRepository)
-    : ICommandHandler<ClientUserBindThirdPartyLoginCommand>
+    : ICommandHandler<ClientUserBindThirdPartyLoginCommand, ThirdPartyLoginId>
 {
-    public async Task Handle(ClientUserBindThirdPartyLoginCommand request, CancellationToken cancellationToken)
+    public async Task<ThirdPartyLoginId> Handle(ClientUserBindThirdPartyLoginCommand request,
+        CancellationToken cancellationToken)
     {
         var user = await clientUserRepository.GetAsync(request.UserId, cancellationToken) ??
                    throw new KnownException("用户不存在");
-        user.BindThirdPartyLogin(request.ThirdPartyProvider, request.AppId, request.OpenId);
+        return user.BindThirdPartyLogin(request.ThirdPartyProvider, request.AppId, request.OpenId);
     }
 }

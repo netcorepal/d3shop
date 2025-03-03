@@ -10,19 +10,20 @@ public record ClientUserAddDeliveryAddressCommand(
     string Address,
     string RecipientName,
     string Phone,
-    bool SetAsDefault) : ICommand;
+    bool SetAsDefault) : ICommand<DeliveryAddressId>;
 
 public class ClientUserAddDeliveryAddressCommandValidator : AbstractValidator<ClientUserAddDeliveryAddressCommand>
 {
 }
 
 public class ClientUserAddDeliveryAddressCommandHandler(ClientUserRepository clientUserRepository)
-    : ICommandHandler<ClientUserAddDeliveryAddressCommand>
+    : ICommandHandler<ClientUserAddDeliveryAddressCommand, DeliveryAddressId>
 {
-    public async Task Handle(ClientUserAddDeliveryAddressCommand request, CancellationToken cancellationToken)
+    public async Task<DeliveryAddressId> Handle(ClientUserAddDeliveryAddressCommand request,
+        CancellationToken cancellationToken)
     {
         var user = await clientUserRepository.GetAsync(request.UserId, cancellationToken) ??
                    throw new KnownException($"用户不存在，UserId={request.UserId}");
-        user.AddDeliveryAddress(request.Address, request.RecipientName, request.Phone, request.SetAsDefault);
+        return user.AddDeliveryAddress(request.Address, request.RecipientName, request.Phone, request.SetAsDefault);
     }
 }

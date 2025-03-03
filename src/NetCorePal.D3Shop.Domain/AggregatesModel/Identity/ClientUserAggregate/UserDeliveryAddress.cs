@@ -10,7 +10,7 @@ public class UserDeliveryAddress : Entity<DeliveryAddressId>
     {
     }
 
-    internal UserDeliveryAddress(
+    public UserDeliveryAddress(
         ClientUserId userId,
         string address,
         string recipientName,
