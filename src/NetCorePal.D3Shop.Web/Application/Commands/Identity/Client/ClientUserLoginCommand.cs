@@ -1,4 +1,5 @@
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate.Dto;
 using NetCorePal.D3Shop.Infrastructure.Repositories.Identity.Client;
 using NetCorePal.Extensions.Primitives;
 
@@ -10,17 +11,17 @@ public record ClientUserLoginCommand(
     DateTime LoginTime,
     string LoginMethod,
     string IpAddress,
-    string UserAgent) : ICommand;
+    string UserAgent) : ICommand<ClientUserLoginResult>;
 
 public class ClientUserLoginCommandHandler(IClientUserRepository clientUserRepository)
-    : ICommandHandler<ClientUserLoginCommand>
+    : ICommandHandler<ClientUserLoginCommand, ClientUserLoginResult>
 {
-    public async Task Handle(ClientUserLoginCommand request, CancellationToken cancellationToken)
+    public async Task<ClientUserLoginResult> Handle(ClientUserLoginCommand request, CancellationToken cancellationToken)
     {
         var user = await clientUserRepository.GetAsync(request.UserId, cancellationToken) ??
                    throw new KnownException("用户不存在");
 
-        user.Login(
+        return user.Login(
             request.PasswordHash,
             request.LoginTime,
             request.LoginMethod,

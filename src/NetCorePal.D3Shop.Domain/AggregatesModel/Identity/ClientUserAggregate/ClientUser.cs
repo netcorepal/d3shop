@@ -1,3 +1,4 @@
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate.Dto;
 using NetCorePal.D3Shop.Domain.DomainEvents.Identity.Client;
 using NetCorePal.Extensions.Domain;
 using NetCorePal.Extensions.Primitives;
@@ -33,7 +34,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     public ICollection<UserDeliveryAddress> DeliveryAddresses { get; } = [];
     public ICollection<UserThirdPartyLogin> ThirdPartyLogins { get; } = [];
 
-    public string NickName { get; private set; } = string.Empty;
+    public string NickName { get; } = string.Empty;
     public string Avatar { get; private set; } = string.Empty;
     public string Phone { get; private set; } = string.Empty;
     public string PasswordHash { get; private set; } = string.Empty;
@@ -55,22 +56,26 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <param name="loginMethod"></param>
     /// <param name="ipAddress"></param>
     /// <param name="userAgent"></param>
-    public void Login(
+    public ClientUserLoginResult Login(
         string passwordHash,
         DateTime loginTime,
         string loginMethod,
         string ipAddress,
         string userAgent)
     {
+        if (IsDisabled)
+            return ClientUserLoginResult.Failure("用户已被禁用");
+
         if (PasswordHash != passwordHash)
         {
             PasswordFailedTimes++;
-            throw new KnownException("用户名或密码错误");
+            return ClientUserLoginResult.Failure("用户名或密码错误");
         }
 
         PasswordFailedTimes = 0;
         LastLoginAt = loginTime;
         AddDomainEvent(new ClientUserLoginEvent(Id, NickName, loginTime, loginMethod, ipAddress, userAgent));
+        return ClientUserLoginResult.Success();
     }
 
     /// <summary>

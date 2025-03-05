@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity.Client;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity.Client;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Client.Requests;
+using NetCorePal.D3Shop.Web.Controllers.Identity.Client.Responses;
 using NetCorePal.D3Shop.Web.Helper;
 using NetCorePal.Extensions.Dto;
-using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Controllers.Identity.Client;
 
@@ -20,12 +20,12 @@ public class ClientUserAccountController(
     TokenGenerator tokenGenerator) : ControllerBase
 {
     [HttpPost("login")]
-    public async Task<ResponseData<string>> LoginAsync([FromBody] ClientUserLoginRequest request)
+    public async Task<ResponseData<ClientUserLoginResponse>> LoginAsync([FromBody] ClientUserLoginRequest request)
     {
         var userAuthInfo = await clientUserQuery.RetrieveClientWithAuthInfoByPhoneAsync(request.Phone);
         var passwordHash = NewPasswordHasher.HashPassword(request.Password, userAuthInfo.PasswordSalt);
 
-        await mediator.Send(new ClientUserLoginCommand(
+        var loginResult = await mediator.Send(new ClientUserLoginCommand(
             userAuthInfo.UserId,
             passwordHash,
             DateTime.UtcNow,
@@ -34,10 +34,13 @@ public class ClientUserAccountController(
             request.UserAgent
         ));
 
+        if (!loginResult.IsSuccess)
+            return ClientUserLoginResponse.Failure(loginResult.FailedMessage).AsResponseData();
+
         var token = tokenGenerator.GenerateJwtAsync([
             new Claim(ClaimTypes.NameIdentifier, userAuthInfo.UserId.ToString())
         ]);
-        return token.AsResponseData();
+        return ClientUserLoginResponse.Success(token).AsResponseData();
     }
 
     [HttpPost("register")]
