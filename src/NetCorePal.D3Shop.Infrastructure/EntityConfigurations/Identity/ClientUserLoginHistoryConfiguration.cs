@@ -10,6 +10,6 @@ internal class ClientUserLoginHistoryConfiguration : IEntityTypeConfiguration<Cl
     {
         builder.ToTable("clientUserLoginHistory");
         builder.HasKey(a => a.Id);
-        builder.Property(a => a.Id).ValueGeneratedOnAdd().UseSnowFlakeValueGenerator();
+        builder.Property(a => a.Id).UseSnowFlakeValueGenerator();
     }
 }

@@ -10,14 +10,14 @@ internal class ClientUserConfiguration : IEntityTypeConfiguration<ClientUser>
     {
         builder.ToTable("clientUsers");
         builder.HasKey(cu => cu.Id);
-        builder.Property(cu => cu.Id).ValueGeneratedOnAdd().UseSnowFlakeValueGenerator();
+        builder.Property(cu => cu.Id).UseSnowFlakeValueGenerator();
         // 配置 ClientUser 与 DeliveryAddress 的一对多关系
         builder.HasMany(cu => cu.DeliveryAddresses)
             .WithOne()
             .HasForeignKey(uda => uda.UserId)
             .OnDelete(DeleteBehavior.ClientCascade);
         builder.Navigation(cu => cu.DeliveryAddresses).AutoInclude();
-        
+
         // 配置 ClientUser 与 ThirdPartyLogin 的一对多关系
         builder.HasMany(cu => cu.ThirdPartyLogins)
             .WithOne()
