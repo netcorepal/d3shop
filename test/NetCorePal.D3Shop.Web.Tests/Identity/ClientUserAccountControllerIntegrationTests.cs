@@ -73,7 +73,6 @@ public class ClientUserAccountControllerIntegrationTests
             "13800138001",
             "Test@123456",
             "1",
-            "127.0.0.1",
             "xUnit"
         );
 
@@ -108,7 +107,6 @@ public class ClientUserAccountControllerIntegrationTests
             "13800138002",
             "WrongPassword",
             "1",
-            "127.0.0.1",
             "xUnit"
         );
 

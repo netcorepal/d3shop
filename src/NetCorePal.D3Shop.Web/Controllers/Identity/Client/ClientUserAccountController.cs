@@ -22,7 +22,8 @@ public class ClientUserAccountController(
     [HttpPost("login")]
     public async Task<ResponseData<ClientUserLoginResponse>> LoginAsync([FromBody] ClientUserLoginRequest request)
     {
-        var userAuthInfo = await clientUserQuery.RetrieveClientWithAuthInfoByPhoneAsync(request.Phone);
+        var userAuthInfo =
+            await clientUserQuery.RetrieveClientWithAuthInfoByPhoneAsync(request.Phone, HttpContext.RequestAborted);
         var passwordHash = NewPasswordHasher.HashPassword(request.Password, userAuthInfo.PasswordSalt);
 
         var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;

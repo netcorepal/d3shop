@@ -9,20 +9,22 @@ public class ClientUserQuery(ApplicationDbContext applicationDbContext) : IQuery
 {
     private DbSet<ClientUser> ClientUserSet { get; } = applicationDbContext.ClientUsers;
 
-    public async Task<ClientUserAuthInfo> RetrieveClientWithAuthInfoByPhoneAsync(string phoneNumber)
+    public async Task<ClientUserAuthInfo> RetrieveClientWithAuthInfoByPhoneAsync(string phoneNumber,
+        CancellationToken cancellationToken)
     {
-        var authInfo = await ClientUserSet
+        var authInfo = await ClientUserSet.AsNoTracking()
                            .Where(user => user.Phone == phoneNumber)
                            .Select(user => new ClientUserAuthInfo(user.Id, user.PasswordSalt))
-                           .SingleOrDefaultAsync()
+                           .SingleOrDefaultAsync(cancellationToken)
                        ?? throw new KnownException("用户不存在");
 
         return authInfo;
     }
 
-    public async Task<List<ClientUserDeliveryAddressInfo>> GetDeliveryAddressesAsync(ClientUserId userId)
+    public async Task<List<ClientUserDeliveryAddressInfo>> GetDeliveryAddressesAsync(ClientUserId userId,
+        CancellationToken cancellationToken)
     {
-        return await ClientUserSet
+        return await ClientUserSet.AsNoTracking()
             .Where(user => user.Id == userId)
             .SelectMany(user => user.DeliveryAddresses)
             .Select(address => new ClientUserDeliveryAddressInfo(
@@ -32,23 +34,24 @@ public class ClientUserQuery(ApplicationDbContext applicationDbContext) : IQuery
                 address.Phone,
                 address.IsDefault
             ))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<string> GetUserPasswordSaltByIdAsync(ClientUserId userId)
+    public async Task<string> GetUserPasswordSaltByIdAsync(ClientUserId userId, CancellationToken cancellationToken)
     {
-        var salt = await ClientUserSet
+        var salt = await ClientUserSet.AsNoTracking()
                        .Where(user => user.Id == userId)
                        .Select(user => user.PasswordSalt)
-                       .SingleOrDefaultAsync()
+                       .SingleOrDefaultAsync(cancellationToken)
                    ?? throw new KnownException("用户不存在");
 
         return salt;
     }
 
-    public async Task<List<ClientUserThirdPartyLoginInfo>> GetThirdPartyLoginsAsync(ClientUserId userId)
+    public async Task<List<ClientUserThirdPartyLoginInfo>> GetThirdPartyLoginsAsync(ClientUserId userId,
+        CancellationToken cancellationToken)
     {
-        return await ClientUserSet
+        return await ClientUserSet.AsNoTracking()
             .Where(user => user.Id == userId)
             .SelectMany(user => user.ThirdPartyLogins.Select(
                     thirdPartyLogin => new ClientUserThirdPartyLoginInfo(
@@ -56,6 +59,12 @@ public class ClientUserQuery(ApplicationDbContext applicationDbContext) : IQuery
                         thirdPartyLogin.Provider)
                 )
             )
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<bool> DoesPhoneExistAsync(string phoneNumber, CancellationToken cancellationToken)
+    {
+        return await ClientUserSet.AsNoTracking()
+            .AnyAsync(user => user.Phone == phoneNumber, cancellationToken);
     }
 }

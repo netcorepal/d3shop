@@ -34,7 +34,7 @@ public class ClientUserController(
     [HttpGet]
     public async Task<ResponseData<List<ClientUserDeliveryAddressInfo>>> GetDeliveryAddresses()
     {
-        var addresses = await clientUserQuery.GetDeliveryAddressesAsync(currentUser.UserId);
+        var addresses = await clientUserQuery.GetDeliveryAddressesAsync(currentUser.UserId, HttpContext.RequestAborted);
         return addresses.AsResponseData();
     }
 
@@ -75,7 +75,8 @@ public class ClientUserController(
     [HttpGet]
     public async Task<ResponseData<List<ClientUserThirdPartyLoginInfo>>> GetThirdPartyLogins()
     {
-        var thirdPartyLogins = await clientUserQuery.GetThirdPartyLoginsAsync(currentUser.UserId);
+        var thirdPartyLogins =
+            await clientUserQuery.GetThirdPartyLoginsAsync(currentUser.UserId, HttpContext.RequestAborted);
         return thirdPartyLogins.AsResponseData();
     }
 
@@ -92,7 +93,7 @@ public class ClientUserController(
     public async Task<ResponseData> EditPassword([FromBody] EditPasswordRequest request)
     {
         var userId = currentUser.UserId;
-        var salt = await clientUserQuery.GetUserPasswordSaltByIdAsync(userId);
+        var salt = await clientUserQuery.GetUserPasswordSaltByIdAsync(userId, HttpContext.RequestAborted);
         var oldPasswordHash = NewPasswordHasher.HashPassword(request.OldPassword, salt);
         var newPasswordHash = NewPasswordHasher.HashPassword(request.NewPassword, salt);
 
