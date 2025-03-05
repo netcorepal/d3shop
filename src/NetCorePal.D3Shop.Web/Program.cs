@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NetCorePal.D3Shop.Admin.Shared.Authorization;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate;
 using NetCorePal.D3Shop.Web.Admin.Client.Auth;
 using NetCorePal.D3Shop.Web.Application.Hubs;
 using NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers;
@@ -77,7 +76,7 @@ try
 
     builder.Services.AddSingleton<TokenGenerator>();
 
-    builder.Services.AddScoped<ICurrentUser<ClientUserId>, ClientCurrentUser>();
+    builder.Services.AddScoped<ICurrentClientUser, CurrentClientUser>();
 
     #endregion
 

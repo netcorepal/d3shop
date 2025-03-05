@@ -21,6 +21,24 @@ public class ClientUserQuery(ApplicationDbContext applicationDbContext) : IQuery
         return authInfo;
     }
 
+    public async Task<ClientUserInfo> GetClientUserInfoByIdAsync(ClientUserId userId,
+        CancellationToken cancellationToken)
+    {
+        var userInfo = await ClientUserSet.AsNoTracking()
+                           .Where(user => user.Id == userId)
+                           .Select(user => new ClientUserInfo(
+                               user.Id,
+                               user.NickName,
+                               user.Avatar,
+                               user.Phone,
+                               user.Email
+                           ))
+                           .SingleOrDefaultAsync(cancellationToken)
+                       ?? throw new KnownException("用户不存在");
+
+        return userInfo;
+    }
+
     public async Task<List<ClientUserDeliveryAddressInfo>> GetDeliveryAddressesAsync(ClientUserId userId,
         CancellationToken cancellationToken)
     {

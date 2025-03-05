@@ -10,7 +10,9 @@ public interface ICurrentUser<out TUserId>
     string? GetClaimValue(string claimType);
 }
 
-public class ClientCurrentUser(IHttpContextAccessor httpContextAccessor) : ICurrentUser<ClientUserId>
+public interface ICurrentClientUser : ICurrentUser<ClientUserId>;
+
+public class CurrentClientUser(IHttpContextAccessor httpContextAccessor) : ICurrentClientUser
 {
     public ClientUserId UserId
     {
