@@ -25,19 +25,20 @@ public class ClientUserAccountController(
         var userAuthInfo = await clientUserQuery.RetrieveClientWithAuthInfoByPhoneAsync(request.Phone);
         var passwordHash = NewPasswordHasher.HashPassword(request.Password, userAuthInfo.PasswordSalt);
 
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
         var loginResult = await mediator.Send(new ClientUserLoginCommand(
             userAuthInfo.UserId,
             passwordHash,
             DateTime.UtcNow,
             request.LoginMethod,
-            request.IpAddress,
+            ipAddress,
             request.UserAgent
         ));
 
         if (!loginResult.IsSuccess)
             return ClientUserLoginResponse.Failure(loginResult.FailedMessage).AsResponseData();
 
-        var token = tokenGenerator.GenerateJwtAsync([
+        var token = await tokenGenerator.GenerateJwtAsync([
             new Claim(ClaimTypes.NameIdentifier, userAuthInfo.UserId.ToString())
         ]);
         return ClientUserLoginResponse.Success(token).AsResponseData();
@@ -57,7 +58,7 @@ public class ClientUserAccountController(
             request.Email
         ));
 
-        var token = tokenGenerator.GenerateJwtAsync([
+        var token = await tokenGenerator.GenerateJwtAsync([
             new Claim(ClaimTypes.NameIdentifier, userId.ToString())
         ]);
         return token.AsResponseData();

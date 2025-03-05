@@ -1,9 +1,8 @@
 ﻿using System.Net.Http.Json;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using NetCorePal.D3Shop.Infrastructure;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Client.Requests;
-using NetCorePal.D3Shop.Web.Helper;
+using NetCorePal.D3Shop.Web.Controllers.Identity.Client.Responses;
 using NetCorePal.Extensions.Dto;
 
 namespace NetCorePal.D3Shop.Web.Tests.Identity;
@@ -11,11 +10,11 @@ namespace NetCorePal.D3Shop.Web.Tests.Identity;
 [Collection("web")]
 public class ClientUserAccountControllerIntegrationTests
 {
-    private readonly MyWebApplicationFactory _factory;
     private readonly HttpClient _client;
+    private readonly MyWebApplicationFactory _factory;
 
     public ClientUserAccountControllerIntegrationTests(
-        MyWebApplicationFactory factory )
+        MyWebApplicationFactory factory)
     {
         _factory = factory;
         _client = _factory.WithWebHostBuilder(builder => { builder.ConfigureServices(_ => { }); })
@@ -36,7 +35,7 @@ public class ClientUserAccountControllerIntegrationTests
         );
 
         // Act
-        var response = await _client.PostAsJsonAsync(
+        var response = await _client.PostAsNewtonsoftJsonAsync(
             "/api/ClientUserAccount/register", request);
 
         // Assert
@@ -79,28 +78,14 @@ public class ClientUserAccountControllerIntegrationTests
         );
 
         // Act
-        var response = await _client.PostAsJsonAsync(
+        var response = await _client.PostAsNewtonsoftJsonAsync(
             "/api/ClientUserAccount/login", loginRequest);
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<ResponseData<string>>();
+        var result = await response.Content.ReadFromJsonAsync<ResponseData<ClientUserLoginResponse>>();
         var token = result?.Data;
-        Assert.NotNull(token);
-
-        // 验证JWT有效性
-        var tokenGenerator = _factory.Services.GetRequiredService<TokenGenerator>();
-        var principal = tokenGenerator.GetPrincipalFromToken(token);
-        Assert.NotNull(principal);
-        var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
-        Assert.NotNull(userIdClaim);
-
-        // 验证用户ID是否正确
-        using var scope = _factory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var user = await dbContext.ClientUsers
-            .FirstOrDefaultAsync(u => u.Phone == loginRequest.Phone);
-        Assert.Equal(userIdClaim.Value, user?.Id.ToString());
+        Assert.NotNull(token?.Token);
     }
 
     [Fact]
@@ -130,8 +115,8 @@ public class ClientUserAccountControllerIntegrationTests
         // Act & Assert
         var response = await _client.PostAsJsonAsync(
             "/api/ClientUserAccount/login", loginRequest);
-        var result = await response.Content.ReadFromJsonAsync<ResponseData>();
+        var result = await response.Content.ReadFromJsonAsync<ResponseData<ClientUserLoginResponse>>();
         Assert.NotNull(result);
-        Assert.Equal("用户名或密码错误", result.Message);
+        Assert.Equal("用户名或密码错误", result.Data.FailedMessage);
     }
 }

@@ -34,7 +34,8 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     public ICollection<UserDeliveryAddress> DeliveryAddresses { get; } = [];
     public ICollection<UserThirdPartyLogin> ThirdPartyLogins { get; } = [];
 
-    public string NickName { get; } = string.Empty;
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
+    public string NickName { get; private set; } = string.Empty;
     public string Avatar { get; private set; } = string.Empty;
     public string Phone { get; private set; } = string.Empty;
     public string PasswordHash { get; private set; } = string.Empty;

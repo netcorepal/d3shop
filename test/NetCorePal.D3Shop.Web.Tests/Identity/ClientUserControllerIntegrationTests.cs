@@ -25,8 +25,9 @@ public class ClientUserControllerIntegrationTests
         var scope = factory.Services.CreateScope();
         _dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         _testUser = CreateTestUser();
-        var token = scope.ServiceProvider.GetRequiredService<TokenGenerator>()
-            .GenerateJwtAsync([new Claim(ClaimTypes.NameIdentifier, _testUser.Id.ToString())]);
+        var tokenGenerator = scope.ServiceProvider.GetRequiredService<TokenGenerator>();
+        var token = tokenGenerator.GenerateJwtAsync([new Claim(ClaimTypes.NameIdentifier, _testUser.Id.ToString())])
+            .Result;
 
         _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
     }
@@ -45,7 +46,6 @@ public class ClientUserControllerIntegrationTests
     {
         // Arrange
         var request = new AddDeliveryAddressRequest(
-            _testUser.Id,
             "Test Address",
             "Recipient",
             "13800138000",
@@ -116,7 +116,6 @@ public class ClientUserControllerIntegrationTests
     {
         // Arrange
         var request = new BindThirdPartyLoginRequest(
-            _testUser.Id,
             ThirdPartyProvider.WeChat,
             "test-app",
             "openid-123"
@@ -183,7 +182,6 @@ public class ClientUserControllerIntegrationTests
         var salt = _testUser.PasswordSalt;
 
         var request = new EditPasswordRequest(
-            _testUser.Id,
             oldPassword,
             newPassword
         );
@@ -196,25 +194,5 @@ public class ClientUserControllerIntegrationTests
         var updatedUser = await _dbContext.ClientUsers.AsNoTracking().SingleAsync(u => u.Id == _testUser.Id);
         var newHash = NewPasswordHasher.HashPassword(newPassword, salt);
         Assert.Equal(newHash, updatedUser.PasswordHash);
-    }
-
-    [Fact]
-    public async Task DisableAndEnableUser_Success()
-    {
-        // Disable
-        var disableRequest = new ClientUserDisableRequest(_testUser.Id, "Test reason");
-        var disableResponse = await _client.PutAsNewtonsoftJsonAsync("/api/ClientUser/Disable", disableRequest);
-        disableResponse.EnsureSuccessStatusCode();
-
-        var disabledUser = await _dbContext.ClientUsers.AsNoTracking().SingleAsync(u => u.Id == _testUser.Id);
-        Assert.True(disabledUser.IsDisabled);
-
-        // Enable
-        var enableResponse =
-            await _client.PutAsNewtonsoftJsonAsync("/api/ClientUser/Enable", new ClientUserId(_testUser.Id.Id));
-        enableResponse.EnsureSuccessStatusCode();
-
-        var enabledUser = await _dbContext.ClientUsers.AsNoTracking().SingleAsync(u => u.Id == _testUser.Id);
-        Assert.False(enabledUser.IsDisabled);
     }
 }

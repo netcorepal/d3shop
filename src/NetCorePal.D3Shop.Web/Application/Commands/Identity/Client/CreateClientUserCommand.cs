@@ -26,7 +26,7 @@ public class CreateClientUserCommandValidator : AbstractValidator<CreateClientUs
 public class CreateClientUserCommandHandle(IClientUserRepository clientUserRepository)
     : ICommandHandler<CreateClientUserCommand, ClientUserId>
 {
-    public Task<ClientUserId> Handle(CreateClientUserCommand request, CancellationToken cancellationToken)
+    public async Task<ClientUserId> Handle(CreateClientUserCommand request, CancellationToken cancellationToken)
     {
         var user = new ClientUser(
             request.NickName,
@@ -35,7 +35,7 @@ public class CreateClientUserCommandHandle(IClientUserRepository clientUserRepos
             request.PasswordHash,
             request.PasswordSalt,
             request.Email);
-        clientUserRepository.Add(user);
-        return Task.FromResult(user.Id);
+        await clientUserRepository.AddAsync(user, cancellationToken);
+        return user.Id;
     }
 }

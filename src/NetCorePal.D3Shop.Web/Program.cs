@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NetCorePal.D3Shop.Admin.Shared.Authorization;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate;
 using NetCorePal.D3Shop.Web.Admin.Client.Auth;
 using NetCorePal.D3Shop.Web.Application.Hubs;
 using NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers;
@@ -68,11 +69,15 @@ try
     builder.Services.AddDataProtection()
         .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
 
-    builder.Services.AddAuthenticationSchemes(builder.Services.GetApplicationSettings(builder.Configuration));
+    builder.Services.GetApplicationSettings(builder.Configuration);
+    builder.Services.AddAuthenticationSchemes();
+    builder.Services.AddNetCorePalJwt().AddRedisStore();
     builder.Services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
     builder.Services.AddTransient<IPermissionChecker, ServerPermissionChecker>();
 
     builder.Services.AddSingleton<TokenGenerator>();
+
+    builder.Services.AddScoped<ICurrentUser<ClientUserId>, ClientCurrentUser>();
 
     #endregion
 
@@ -95,7 +100,7 @@ try
     #region 公共服务
 
     builder.Services.AddSingleton<IClock, SystemClock>();
-    
+
     #endregion
 
     #region 集成事件
@@ -175,7 +180,7 @@ try
     {
         ContractResolver = new CamelCasePropertyNamesContractResolver(),
         NullValueHandling = NullValueHandling.Ignore,
-        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
     });
     var settings = new RefitSettings(ser);
     builder.Services.AddRefitClient<IUserServiceClient>(settings)
