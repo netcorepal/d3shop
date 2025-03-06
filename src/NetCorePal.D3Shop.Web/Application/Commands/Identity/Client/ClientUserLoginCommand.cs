@@ -11,7 +11,8 @@ public record ClientUserLoginCommand(
     DateTime LoginTime,
     string LoginMethod,
     string IpAddress,
-    string UserAgent) : ICommand<ClientUserLoginResult>;
+    string UserAgent,
+    string RefreshToken) : ICommand<ClientUserLoginResult>;
 
 public class ClientUserLoginCommandHandler(IClientUserRepository clientUserRepository)
     : ICommandHandler<ClientUserLoginCommand, ClientUserLoginResult>
@@ -26,6 +27,7 @@ public class ClientUserLoginCommandHandler(IClientUserRepository clientUserRepos
             request.LoginTime,
             request.LoginMethod,
             request.IpAddress,
-            request.UserAgent);
+            request.UserAgent,
+            request.RefreshToken);
     }
 }

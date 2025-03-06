@@ -17,13 +17,20 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.Client;
 public class ClientUserController(
     IMediator mediator,
     ClientUserQuery clientUserQuery,
-    ICurrentClientUser user) : ControllerBase
+    ICurrentClientUser currentUser) : ControllerBase
 {
+    [HttpGet]
+    public async Task<ResponseData<ClientUserInfo>> GetClientUserInfo()
+    {
+        var userInfo = await clientUserQuery.GetClientUserInfoByIdAsync(currentUser.UserId, HttpContext.RequestAborted);
+        return userInfo.AsResponseData();
+    }
+
     [HttpPost]
     public async Task<ResponseData> AddDeliveryAddress([FromBody] AddDeliveryAddressRequest request)
     {
         return await mediator.Send(new ClientUserAddDeliveryAddressCommand(
-            user.UserId,
+            currentUser.UserId,
             request.Address,
             request.RecipientName,
             request.Phone,
@@ -34,7 +41,7 @@ public class ClientUserController(
     [HttpGet]
     public async Task<ResponseData<List<ClientUserDeliveryAddressInfo>>> GetDeliveryAddresses()
     {
-        var addresses = await clientUserQuery.GetDeliveryAddressesAsync(user.UserId, HttpContext.RequestAborted);
+        var addresses = await clientUserQuery.GetDeliveryAddressesAsync(currentUser.UserId, HttpContext.RequestAborted);
         return addresses.AsResponseData();
     }
 
@@ -42,7 +49,7 @@ public class ClientUserController(
     public async Task<ResponseData> RemoveDeliveryAddress(DeliveryAddressId deliveryAddressId)
     {
         return await mediator.Send(new ClientUserRemoveDeliveryAddressCommand(
-            user.UserId,
+            currentUser.UserId,
             deliveryAddressId
         )).AsResponseData();
     }
@@ -51,7 +58,7 @@ public class ClientUserController(
     public async Task<ResponseData> UpdateDeliveryAddress([FromBody] UpdateDeliveryAddressRequest request)
     {
         return await mediator.Send(new ClientUserUpdateDeliveryAddressCommand(
-            user.UserId,
+            currentUser.UserId,
             request.DeliveryAddressId,
             request.Address,
             request.RecipientName,
@@ -65,7 +72,7 @@ public class ClientUserController(
         [FromBody] BindThirdPartyLoginRequest request)
     {
         return await mediator.Send(new ClientUserBindThirdPartyLoginCommand(
-            user.UserId,
+            currentUser.UserId,
             request.ThirdPartyProvider,
             request.AppId,
             request.OpenId
@@ -76,7 +83,7 @@ public class ClientUserController(
     public async Task<ResponseData<List<ClientUserThirdPartyLoginInfo>>> GetThirdPartyLogins()
     {
         var thirdPartyLogins =
-            await clientUserQuery.GetThirdPartyLoginsAsync(user.UserId, HttpContext.RequestAborted);
+            await clientUserQuery.GetThirdPartyLoginsAsync(currentUser.UserId, HttpContext.RequestAborted);
         return thirdPartyLogins.AsResponseData();
     }
 
@@ -84,7 +91,7 @@ public class ClientUserController(
     public async Task<ResponseData> UnbindThirdPartyLogin(ThirdPartyLoginId thirdPartyLoginId)
     {
         return await mediator.Send(new ClientUserUnbindThirdPartyLoginCommand(
-            user.UserId,
+            currentUser.UserId,
             thirdPartyLoginId
         )).AsResponseData();
     }
@@ -92,7 +99,7 @@ public class ClientUserController(
     [HttpPut]
     public async Task<ResponseData> EditPassword([FromBody] EditPasswordRequest request)
     {
-        var userId = user.UserId;
+        var userId = currentUser.UserId;
         var salt = await clientUserQuery.GetUserPasswordSaltByIdAsync(userId, HttpContext.RequestAborted);
         var oldPasswordHash = NewPasswordHasher.HashPassword(request.OldPassword, salt);
         var newPasswordHash = NewPasswordHasher.HashPassword(request.NewPassword, salt);

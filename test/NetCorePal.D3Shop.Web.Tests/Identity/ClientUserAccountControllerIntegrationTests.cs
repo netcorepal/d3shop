@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate;
 using NetCorePal.D3Shop.Infrastructure;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Client.Requests;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Client.Responses;
@@ -40,9 +41,9 @@ public class ClientUserAccountControllerIntegrationTests
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<ResponseData<string>>();
+        var result = await response.Content.ReadFromJsonAsync<ResponseData<ClientUserId>>();
         Assert.NotNull(result?.Data);
-        Assert.False(string.IsNullOrEmpty(result.Data));
+        Assert.True(result.Data.Id > 0);
 
         // 验证数据库是否创建了用户
         using var scope = _factory.Services.CreateScope();
@@ -113,8 +114,62 @@ public class ClientUserAccountControllerIntegrationTests
         // Act & Assert
         var response = await _client.PostAsJsonAsync(
             "/api/ClientUserAccount/login", loginRequest);
-        var result = await response.Content.ReadFromJsonAsync<ResponseData<ClientUserLoginResponse>>();
+        var result = await response.Content.ReadFromNewtonsoftJsonAsync<ResponseData<ClientUserLoginResponse>>();
         Assert.NotNull(result);
         Assert.Equal("用户名或密码错误", result.Data.FailedMessage);
+    }
+
+
+    [Fact]
+    public async Task GetRefreshToken_ValidRequest_ReturnsRefreshToken()
+    {
+        // 先注册用户
+        var registerRequest = new ClientUserRegisterRequest
+        (
+            "GetRefreshToken_test",
+            "avatar.png",
+            "13800138002",
+            "Test@123456",
+            "login@test.com"
+        );
+        await _client.PostAsJsonAsync("/api/ClientUserAccount/register", registerRequest);
+
+        // 登录请求
+        var loginRequest = new ClientUserLoginRequest
+        (
+            "13800138002",
+            "Test@123456",
+            "1",
+            "xUnit"
+        );
+
+        // Act
+        var response = await _client.PostAsNewtonsoftJsonAsync(
+            "/api/ClientUserAccount/login", loginRequest);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<ResponseData<ClientUserLoginResponse>>();
+        var token = result?.Data;
+        Assert.NotNull(token?.Token);
+
+        var getRefreshTokenRequest = new ClientUserGetRefreshTokenRequest(token.Token, token.RefreshToken);
+        var getRefreshTokenResponse = await _client.PutAsNewtonsoftJsonAsync(
+            "/api/ClientUserAccount/getRefreshToken", getRefreshTokenRequest);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var getRefreshTokenResult = await getRefreshTokenResponse.Content
+            .ReadFromNewtonsoftJsonAsync<ResponseData<ClientUserGetRefreshTokenResponse>>();
+        var refreshToken = getRefreshTokenResult?.Data;
+        Assert.NotNull(refreshToken?.Token);
+        Assert.NotNull(refreshToken.RefreshToken);
+
+        using var scope = _factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var user = await dbContext.ClientUsers
+            .FirstOrDefaultAsync(u => u.Phone == registerRequest.Phone);
+        Assert.NotNull(user);
+        Assert.Equal(user.RefreshToken, refreshToken.RefreshToken);
     }
 }

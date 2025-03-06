@@ -44,10 +44,12 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     public DateTime CreatedAt { get; private set; }
     public DateTime LastLoginAt { get; private set; }
     public bool IsDisabled { get; private set; }
-    public DateTime? DisabledTime { get; private set; }
+    public DateTime DisabledTime { get; private set; }
     public string DisabledReason { get; private set; } = string.Empty;
     public int PasswordFailedTimes { get; private set; }
     public bool IsTwoFactorEnabled { get; private set; }
+    public string RefreshToken { get; private set; } = string.Empty;
+    public DateTime LoginExpiryDate { get; private set; }
 
     /// <summary>
     ///     用户登录
@@ -57,12 +59,14 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <param name="loginMethod"></param>
     /// <param name="ipAddress"></param>
     /// <param name="userAgent"></param>
+    /// <param name="refreshToken"></param>
     public ClientUserLoginResult Login(
         string passwordHash,
         DateTime loginTime,
         string loginMethod,
         string ipAddress,
-        string userAgent)
+        string userAgent,
+        string refreshToken)
     {
         if (IsDisabled)
             return ClientUserLoginResult.Failure("用户已被禁用");
@@ -73,10 +77,31 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
             return ClientUserLoginResult.Failure("用户名或密码错误");
         }
 
+        RefreshToken = refreshToken;
         PasswordFailedTimes = 0;
         LastLoginAt = loginTime;
+        LoginExpiryDate = loginTime.AddDays(30);
         AddDomainEvent(new ClientUserLoginEvent(Id, NickName, loginTime, loginMethod, ipAddress, userAgent));
         return ClientUserLoginResult.Success();
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="oldRefreshToken"></param>
+    /// <param name="newRefreshToken"></param>
+    /// <exception cref="KnownException"></exception>
+    public DateTime UpdateRefreshToken(string oldRefreshToken, string newRefreshToken)
+    {
+        if (RefreshToken != oldRefreshToken)
+            throw new KnownException("无效的令牌");
+
+        if (LoginExpiryDate <= DateTime.Now)
+            throw new KnownException("登录已过期");
+
+        RefreshToken = newRefreshToken;
+        LoginExpiryDate = DateTime.Now.AddDays(30);
+
+        return LoginExpiryDate;
     }
 
     /// <summary>
@@ -102,7 +127,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     {
         if (!IsDisabled) return;
         IsDisabled = false;
-        DisabledTime = null;
+        DisabledTime = default;
         DisabledReason = string.Empty;
     }
 
