@@ -57,6 +57,7 @@ export default {
     clothing: '服饰鞋包',
     phone: '手机',
     tablet: '平板',
+    title: '分类'
   },
   cart: {
     title: '购物车',
@@ -67,6 +68,7 @@ export default {
     totalPrice: '合计：'
   },
   profile: {
+    title: '我的',
     loginNow: '立即登录',
     myOrders: '我的订单',
     address: '收货地址',
