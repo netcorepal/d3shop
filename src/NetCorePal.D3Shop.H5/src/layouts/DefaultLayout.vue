@@ -8,11 +8,12 @@
     </div>
 
     <van-tabbar v-model="active" route>
-      <van-tabbar-item icon="home-o" to="/home">首页</van-tabbar-item>
-      <van-tabbar-item icon="apps-o" to="/category">分类</van-tabbar-item>
-      <van-tabbar-item icon="shopping-cart-o" to="/cart">购物车</van-tabbar-item>
-      <van-tabbar-item icon="user-o" to="/profile">我的</van-tabbar-item>
+      <van-tabbar-item icon="home-o" to="/home">{{ t('layout.home') }}</van-tabbar-item>
+      <van-tabbar-item icon="apps-o" to="/category">{{ t('layout.category') }}</van-tabbar-item>
+      <van-tabbar-item icon="shopping-cart-o" to="/cart">{{ t('layout.cart') }}</van-tabbar-item>
+      <van-tabbar-item icon="user-o" to="/profile">{{ t('layout.profile') }}</van-tabbar-item>
     </van-tabbar>
+
   </div>
 </template>
 
@@ -20,7 +21,9 @@
 import { ref, computed } from 'vue';
 import { NavBar } from 'vant';
 import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const active = ref(0);

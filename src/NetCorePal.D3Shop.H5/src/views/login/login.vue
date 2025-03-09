@@ -1,6 +1,10 @@
 <template>
   <div class="login-container">
-    <van-nav-bar title="登录" />
+    <van-nav-bar title="登录" class="login-nav">
+      <template #left>
+        <van-icon name="cross" size="18" @click="onClose" class="nav-icon" />
+      </template>
+    </van-nav-bar>
     
     <div class="login-form">
       <van-form @submit="loginBtnClick">
@@ -48,6 +52,10 @@ const loginViewData = reactive({
   password: '',
 });
 
+const onClose = () => {
+  router.back();
+};
+
 async function loginBtnClick() {
   try {
     const loginInputDto = new LoginInputDto(loginViewData.username, loginViewData.password);
@@ -72,11 +80,46 @@ async function loginBtnClick() {
 <style scoped>
 .login-container {
   height: 100vh;
-  background-color: #f7f8fa;
+  background-color: var(--van-background-2);
 }
 
 .login-form {
   padding: 16px;
   margin-top: 20px;
+}
+
+:deep(.van-nav-bar) {
+  background-color: var(--van-background-2);
+}
+
+:deep(.van-nav-bar__title) {
+  color: var(--van-text-color);
+}
+
+:deep(.van-nav-bar__left) {
+  cursor: pointer;
+  padding-left: 16px;
+}
+
+:deep(.nav-icon) {
+  color: var(--van-text-color);
+}
+
+@media (prefers-color-scheme: dark) {
+  :deep(.nav-icon) {
+    color: var(--van-white);
+  }
+
+  :deep(.van-nav-bar__title) {
+    color: var(--van-white);
+  }
+
+  :deep(.van-nav-bar) {
+    background-color: var(--van-background-2);
+  }
+
+  .login-container {
+    background-color: var(--van-black);
+  }
 }
 </style>
