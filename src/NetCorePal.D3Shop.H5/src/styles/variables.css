@@ -1,0 +1,38 @@
+:root {
+  /* Colors */
+  --primary-color: var(--van-primary-color);
+  --danger-color: var(--van-danger-color);
+  --text-color: var(--van-text-color);
+  --text-color-2: var(--van-text-color-2);
+  --background: var(--van-background);
+  --background-2: var(--van-background-2);
+  --border-color: var(--van-gray-2);
+
+  /* Spacing */
+  --padding-xs: 8px;
+  --padding-sm: 12px;
+  --padding-md: 16px;
+  --padding-lg: 24px;
+  
+  /* Border Radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+
+  /* Font Sizes */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+
+  /* Layout */
+  --nav-bar-height: 46px;
+  --tab-bar-height: 50px;
+}
+
+/* Dark Mode Variables */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --border-color: var(--van-gray-8);
+  }
+} 

@@ -1,63 +1,127 @@
 <template>
   <div class="cart">
-
-    <div v-if="cartItems.length > 0">
-      <van-checkbox-group v-model="checkedItems">
-        <van-swipe-cell v-for="item in cartItems" :key="item.id">
-          <van-card :price="item.price" :title="item.title" :thumb="item.thumb">
-            <template #tags>
-              <van-tag plain type="danger">{{ item.tag }}</van-tag>
+    
+    <div class="cart-content">
+      <template v-if="cartStore.items.length">
+        <div class="cart-list">
+          <van-swipe-cell v-for="item in cartStore.items" :key="item.id">
+            <van-card
+              :price="item.price"
+              :title="item.title"
+              :thumb="item.thumb"
+              class="cart-item"
+            >
+              <template #num>
+                <van-stepper
+                  v-model="item.quantity"
+                  :min="1"
+                  :max="99"
+                  @change="(value) => cartStore.updateQuantity(item.id, value)"
+                />
+              </template>
+            </van-card>
+            <template #right>
+              <van-button
+                square
+                text="delete"
+                type="danger"
+                class="delete-button"
+                @click="cartStore.removeFromCart(item.id)"
+              >
+                {{ t('cart.delete') }}
+              </van-button>
             </template>
-            <template #num>
-              <van-stepper v-model="item.count" />
-            </template>
-          </van-card>
-          <template #right>
-            <van-button square text="删除" type="danger" class="delete-button" />
-          </template>
-        </van-swipe-cell>
-      </van-checkbox-group>
+          </van-swipe-cell>
+        </div>
 
-      <van-submit-bar :price="totalPrice" button-text="提交订单" @submit="onSubmit">
-        <van-checkbox v-model="checkAll">全选</van-checkbox>
-      </van-submit-bar>
+        <van-submit-bar
+          :price="cartStore.totalAmount * 100"
+          :button-text="t('cart.submit')"
+          @submit="onSubmit"
+        >
+          <van-button
+            type="default"
+            size="small"
+            @click="cartStore.clearCart"
+          >
+            {{ t('cart.clear') }}
+          </van-button>
+        </van-submit-bar>
+      </template>
+
+      <van-empty
+        v-else
+        :description="t('cart.empty')"
+      />
     </div>
-
-    <van-empty v-else description="购物车空空如也" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useCartStore } from '@/store/cart';
+import { showToast } from 'vant';
 
-const cartItems = ref([
-  {
-    id: 1,
-    title: '商品1',
-    price: '99.99',
-    count: 1,
-    thumb: 'https://fastly.jsdelivr.net/npm/@vant/assets/apple-1.jpeg',
-    tag: '新品'
-  },
-  // ... 更多商品
-]);
-
-const checkedItems = ref([]);
-const checkAll = ref(false);
-
-const totalPrice = computed(() => {
-  return cartItems.value.reduce((total, item) => {
-    return total + Number(item.price) * item.count;
-  }, 0) * 100;
-});
+const { t } = useI18n();
+const cartStore = useCartStore();
 
 const onSubmit = () => {
-  // 提交订单逻辑
+  showToast('提交订单');
 };
 </script>
 
 <style scoped>
+.cart {
+  min-height: 100vh;
+  background: var(--van-background);
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-list {
+  flex: 1;
+  padding: 12px;
+}
+
+.cart-item {
+  margin-bottom: 12px;
+  background: var(--van-background-2);
+  border-radius: 8px;
+}
+
 .delete-button {
   height: 100%;
+}
+
+:deep(.van-submit-bar) {
+  background: var(--van-background-2);
+  border-top: 1px solid var(--van-border-color);
+}
+
+:deep(.van-card) {
+  background: var(--van-background-2);
+  border-radius: 8px;
+}
+
+:deep(.van-stepper) {
+  margin-top: 8px;
+}
+
+:deep(.van-empty) {
+  margin-top: 40%;
+  background: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  :deep(.van-card),
+  :deep(.van-submit-bar) {
+    background: var(--van-background-2);
+  }
 }
 </style>

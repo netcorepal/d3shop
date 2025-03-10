@@ -3,6 +3,8 @@ import type { RouteRecordRaw } from 'vue-router';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import { useAuthStore } from '@/store/auth';
 
+import i18n from '@/i18n';
+const { t } = i18n.global;
 const routes: RouteRecordRaw[] = [
     {
         path: '/login',
@@ -16,22 +18,27 @@ const routes: RouteRecordRaw[] = [
             {
                 path: 'home',
                 component: () => import('@/views/home/index.vue'),
-                meta: { requiresAuth: false, showNavBar: false, title: "首页" }
+                meta: { requiresAuth: false, showNavBar: false, title: t('home.title') }
             },
             {
                 path: 'category',
                 component: () => import('@/views/category/index.vue'),
-                meta: { requiresAuth: false, showNavBar: false, title: "分类" }
+                meta: { requiresAuth: false, showNavBar: false, title: t('category.title') }
             },
             {
                 path: 'cart',
                 component: () => import('@/views/cart/index.vue'),
-                meta: { requiresAuth: false, showNavBar: true, title: "购物车" }
+                meta: { requiresAuth: true, showNavBar: true, title: t('cart.title') }
             },
             {
                 path: 'profile',
                 component: () => import('@/views/profile/index.vue'),
-                meta: { requiresAuth: false, showNavBar: false, title: "我的" }
+                meta: { requiresAuth: true, showNavBar: false, title: t('profile.title') }
+            },
+            {
+                path: 'settings',
+                component: () => import('@/views/settings/index.vue'),
+                meta: { requiresAuth: true, showNavBar: false, title: t('settings.title') }
             }
         ]
     },

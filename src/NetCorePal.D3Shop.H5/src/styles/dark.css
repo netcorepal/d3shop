@@ -1,0 +1,86 @@
+@media (prefers-color-scheme: dark) {
+  /* 基础变量 */
+  :root {
+    --border-color: var(--van-gray-8);
+  }
+
+  /* 基础组件样式 */
+  .van-nav-bar,
+  .van-tabbar,
+  .van-dropdown-item__content {
+    background-color: var(--background);
+  }
+
+  .van-search {
+    background: var(--background);
+  }
+
+  .van-search__content {
+    background: var(--border-color);
+  }
+
+  /* 卡片和列表项 */
+  .van-grid-item__content,
+  .van-card,
+  .van-cell {
+    background: var(--background);
+    border: 1px solid var(--border-color);
+  }
+
+  .van-cell::after {
+    border-color: var(--border-color);
+  }
+
+  /* 下拉菜单 */
+  .van-dropdown-item__option {
+    color: var(--text-color);
+  }
+
+  .van-dropdown-item__option--active {
+    background-color: var(--background-2);
+  }
+
+  /* 分组和面板 */
+  .order-group,
+  .service-group,
+  .settings-group {
+    border: 1px solid var(--border-color);
+  }
+
+  /* 表单元素 */
+  .van-field__control {
+    color: var(--text-color);
+  }
+
+  /* 按钮和操作栏 */
+  .van-submit-bar {
+    background-color: var(--background);
+  }
+
+  .van-submit-bar__text {
+    color: var(--text-color);
+  }
+
+  /* 弹出层 */
+  .van-popup {
+    background-color: var(--background);
+  }
+
+  /* 对话框 */
+  .van-dialog {
+    background-color: var(--background);
+  }
+
+  .van-dialog__content {
+    color: var(--text-color);
+  }
+
+  /* 加载和空状态 */
+  .van-empty__description {
+    color: var(--text-color-2);
+  }
+
+  .van-loading__text {
+    color: var(--text-color-2);
+  }
+} 

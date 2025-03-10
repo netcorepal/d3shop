@@ -1,0 +1,69 @@
+/* Card Styles */
+.van-card {
+  background: var(--background);
+  border-radius: var(--border-radius-md);
+}
+
+.van-card__title {
+  color: var(--text-color);
+}
+
+.van-card__price {
+  color: var(--danger-color);
+}
+
+/* Grid Styles */
+.van-grid-item__content {
+  background: transparent;
+}
+
+.van-grid-item__text {
+  color: var(--text-color);
+  font-size: var(--font-size-xs);
+  margin-top: var(--padding-xs);
+}
+
+.van-grid-item__icon {
+  color: var(--primary-color);
+  font-size: 24px;
+}
+
+/* Cell Styles */
+.van-cell {
+  background: var(--background);
+  color: var(--text-color);
+}
+
+/* Search Bar Styles */
+.van-search {
+  padding: var(--padding-sm) var(--padding-md);
+}
+
+/* Nav Bar Styles */
+.van-nav-bar {
+  background-color: var(--background-2);
+}
+
+.van-nav-bar__title {
+  color: var(--text-color);
+}
+
+/* Dark Mode Styles */
+@media (prefers-color-scheme: dark) {
+  .van-search {
+    background: var(--background);
+  }
+
+  .van-search__content {
+    background: var(--border-color);
+  }
+
+  .van-grid-item__content,
+  .van-card {
+    border: 1px solid var(--border-color);
+  }
+
+  .van-cell::after {
+    border-color: var(--border-color);
+  }
+} 
