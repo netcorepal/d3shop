@@ -41,7 +41,7 @@ public class ClientUserAccountControllerIntegrationTests
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<ResponseData<ClientUserId>>();
+        var result = await response.Content.ReadFromNewtonsoftJsonAsync<ResponseData<ClientUserId>>();
         Assert.NotNull(result?.Data);
         Assert.True(result.Data.Id > 0);
 
@@ -73,8 +73,7 @@ public class ClientUserAccountControllerIntegrationTests
         (
             "13800138001",
             "Test@123456",
-            "1",
-            "xUnit"
+            "1"
         );
 
         // Act
@@ -107,8 +106,7 @@ public class ClientUserAccountControllerIntegrationTests
         (
             "13800138002",
             "WrongPassword",
-            "1",
-            "xUnit"
+            "1"
         );
 
         // Act & Assert
@@ -139,8 +137,7 @@ public class ClientUserAccountControllerIntegrationTests
         (
             "13800138002",
             "Test@123456",
-            "1",
-            "xUnit"
+            "1"
         );
 
         // Act
