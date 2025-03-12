@@ -14,6 +14,14 @@ public class TokenGenerator(
 {
     private AppConfiguration AppConfiguration => appConfiguration.Value;
 
+    public static string GenerateCryptographicallySecureGuid()
+    {
+        using var rng = RandomNumberGenerator.Create();
+        var bytes = new byte[16];
+        rng.GetBytes(bytes);
+        return new Guid(bytes).ToString("N");
+    }
+
     public static string GenerateRefreshToken()
     {
         var randomNumber = new byte[32];

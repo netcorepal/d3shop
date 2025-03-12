@@ -1,7 +1,6 @@
 ﻿namespace NetCorePal.D3Shop.Web.Controllers.Identity.Client.Requests;
 
-public record ClientUserLoginRequest(
+public record ClientUserExternalSignUpRequest(
+    string SignupToken,
     string Phone,
-    string Password,
-    string LoginMethod
-);
+    string Password);

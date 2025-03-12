@@ -94,6 +94,8 @@ try
         c.AddJwtSecurity(); //添加jwt认证
     });
 
+    builder.Services.ConfigOpenIddict(); //配置OpenIddict
+
     #endregion
 
     #region 公共服务
@@ -145,6 +147,7 @@ try
         options.LogTo(Console.WriteLine, LogLevel.Information)
             .EnableSensitiveDataLogging()
             .EnableDetailedErrors();
+        options.UseOpenIddict();
     });
     builder.Services.AddUnitOfWork<ApplicationDbContext>();
     builder.Services.AddMySqlTransactionHandler();

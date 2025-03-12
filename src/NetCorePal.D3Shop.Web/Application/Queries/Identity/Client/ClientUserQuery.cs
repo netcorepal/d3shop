@@ -85,4 +85,12 @@ public class ClientUserQuery(ApplicationDbContext applicationDbContext) : IQuery
         return await ClientUserSet.AsNoTracking()
             .AnyAsync(user => user.Phone == phoneNumber, cancellationToken);
     }
+
+    public async Task<ClientUserId?> GetClientUserIdByOpenIdAsync(string openId, CancellationToken cancellationToken)
+    {
+        return await ClientUserSet.AsNoTracking()
+            .Where(u => u.ThirdPartyLogins.Any(t => t.OpenId == openId))
+            .Select(u => u.Id)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
 }

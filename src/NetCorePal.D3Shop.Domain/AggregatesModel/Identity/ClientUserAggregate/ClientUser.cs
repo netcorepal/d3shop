@@ -86,6 +86,31 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     }
 
     /// <summary>
+    ///     第三方登录
+    /// </summary>
+    /// <param name="loginTime"></param>
+    /// <param name="loginMethod"></param>
+    /// <param name="ipAddress"></param>
+    /// <param name="userAgent"></param>
+    /// <param name="refreshToken"></param>
+    public ClientUserLoginResult ExternalLogin(
+        DateTime loginTime,
+        string loginMethod,
+        string ipAddress,
+        string userAgent,
+        string refreshToken)
+    {
+        if (IsDisabled)
+            return ClientUserLoginResult.Failure("用户已被禁用");
+
+        RefreshToken = refreshToken;
+        LastLoginAt = loginTime;
+        LoginExpiryDate = loginTime.AddDays(30);
+        AddDomainEvent(new ClientUserLoginEvent(Id, NickName, loginTime, loginMethod, ipAddress, userAgent));
+        return ClientUserLoginResult.Success();
+    }
+
+    /// <summary>
     /// </summary>
     /// <param name="oldRefreshToken"></param>
     /// <param name="newRefreshToken"></param>
@@ -265,5 +290,52 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
                     throw new KnownException("登录方式不存在");
 
         ThirdPartyLogins.Remove(login);
+    }
+
+    /// <summary>
+    ///     第三方登录注册
+    /// </summary>
+    /// <param name="signUpTime"></param>
+    /// <param name="phone"></param>
+    /// <param name="passwordHash"></param>
+    /// <param name="passwordSalt"></param>
+    /// <param name="thirdPartyProvider"></param>
+    /// <param name="appId"></param>
+    /// <param name="openId"></param>
+    /// <param name="refreshToken"></param>
+    /// <param name="ipAddress"></param>
+    /// <param name="userAgent"></param>
+    /// <returns></returns>
+    public static ClientUser ExternalSignUp(
+        DateTime signUpTime,
+        string phone,
+        string passwordHash,
+        string passwordSalt,
+        ThirdPartyProvider thirdPartyProvider,
+        string appId,
+        string openId,
+        string refreshToken,
+        string ipAddress,
+        string userAgent)
+    {
+        var user = new ClientUser
+        {
+            Phone = phone,
+            PasswordHash = passwordHash,
+            PasswordSalt = passwordSalt,
+            RefreshToken = refreshToken,
+            LastLoginAt = signUpTime,
+            LoginExpiryDate = signUpTime.AddDays(30)
+        };
+
+        user.ThirdPartyLogins.Add(new UserThirdPartyLogin(user.Id, thirdPartyProvider, appId, openId));
+        user.AddDomainEvent(new ClientUserExternalSignInDomainEvent(
+            user.Id,
+            user.NickName,
+            signUpTime,
+            thirdPartyProvider.ToString(),
+            ipAddress,
+            userAgent));
+        return user;
     }
 }
