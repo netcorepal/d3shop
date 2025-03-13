@@ -3,7 +3,6 @@ using NetCorePal.D3Shop.Infrastructure.Repositories;
 using NetCorePal.D3Shop.Web.Application.IntegrationEventHandlers;
 using NetCorePal.Extensions.Mappers;
 using NetCorePal.Extensions.Primitives;
-using NetCorePal.Extensions.Repository;
 
 namespace NetCorePal.D3Shop.Web.Application.Commands
 {

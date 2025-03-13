@@ -17,7 +17,7 @@ namespace NetCorePal.D3Shop.Web.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -25,10 +25,7 @@ namespace NetCorePal.D3Shop.Web.Migrations
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.DeliverAggregate.DeliverRecord", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("OrderId")
                         .HasColumnType("bigint");
@@ -41,10 +38,7 @@ namespace NetCorePal.D3Shop.Web.Migrations
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate.AdminUser", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -123,13 +117,171 @@ namespace NetCorePal.D3Shop.Web.Migrations
                     b.ToTable("userDepts", (string)null);
                 });
 
-            modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate.Department", b =>
+            modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate.ClientUser", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Avatar")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("DisabledReason")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("DisabledTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsTwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("LastLoginAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("LoginExpiryDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("NickName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("PasswordFailedTimes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("clientUsers", (string)null);
+                });
+
+            modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate.UserDeliveryAddress", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RecipientName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("userDeliveryAddresses", (string)null);
+                });
+
+            modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate.UserThirdPartyLogin", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AppId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("BindTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("OpenId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("userThirdPartyLogins", (string)null);
+                });
+
+            modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserLoginHistoryAggregate.ClientUserLoginHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LoginMethod")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("LoginTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("NickName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("clientUserLoginHistory", (string)null);
+                });
+
+            modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate.Department", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -178,10 +330,7 @@ namespace NetCorePal.D3Shop.Web.Migrations
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate.Role", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -215,10 +364,7 @@ namespace NetCorePal.D3Shop.Web.Migrations
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.OrderAggregate.Order", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("Count")
                         .HasColumnType("int");
@@ -234,6 +380,214 @@ namespace NetCorePal.D3Shop.Web.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("order", (string)null);
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ApplicationType")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("ClientId")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("ClientSecret")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ClientType")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("ConsentType")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DisplayNames")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("JsonWebKeySet")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Permissions")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PostLogoutRedirectUris")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RedirectUris")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Requirements")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Settings")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId")
+                        .IsUnique();
+
+                    b.ToTable("OpenIddictApplications", (string)null);
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ApplicationId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Scopes")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(400)
+                        .HasColumnType("varchar(400)");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId", "Status", "Subject", "Type");
+
+                    b.ToTable("OpenIddictAuthorizations", (string)null);
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreScope", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Descriptions")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DisplayNames")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Resources")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("OpenIddictScopes", (string)null);
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ApplicationId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("AuthorizationId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("ExpirationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Payload")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("RedemptionDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ReferenceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(400)
+                        .HasColumnType("varchar(400)");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorizationId");
+
+                    b.HasIndex("ReferenceId")
+                        .IsUnique();
+
+                    b.HasIndex("ApplicationId", "Status", "Subject", "Type");
+
+                    b.ToTable("OpenIddictTokens", (string)null);
                 });
 
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate.AdminUserPermission", b =>
@@ -263,6 +617,24 @@ namespace NetCorePal.D3Shop.Web.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate.UserDeliveryAddress", b =>
+                {
+                    b.HasOne("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate.ClientUser", null)
+                        .WithMany("DeliveryAddresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate.UserThirdPartyLogin", b =>
+                {
+                    b.HasOne("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate.ClientUser", null)
+                        .WithMany("ThirdPartyLogins")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate.DepartmentUser", b =>
                 {
                     b.HasOne("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate.Department", null)
@@ -281,6 +653,30 @@ namespace NetCorePal.D3Shop.Web.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>
+                {
+                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", "Application")
+                        .WithMany("Authorizations")
+                        .HasForeignKey("ApplicationId");
+
+                    b.Navigation("Application");
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken", b =>
+                {
+                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", "Application")
+                        .WithMany("Tokens")
+                        .HasForeignKey("ApplicationId");
+
+                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", "Authorization")
+                        .WithMany("Tokens")
+                        .HasForeignKey("AuthorizationId");
+
+                    b.Navigation("Application");
+
+                    b.Navigation("Authorization");
+                });
+
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate.AdminUser", b =>
                 {
                     b.Navigation("Permissions");
@@ -288,6 +684,13 @@ namespace NetCorePal.D3Shop.Web.Migrations
                     b.Navigation("Roles");
 
                     b.Navigation("UserDepts");
+                });
+
+            modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate.ClientUser", b =>
+                {
+                    b.Navigation("DeliveryAddresses");
+
+                    b.Navigation("ThirdPartyLogins");
                 });
 
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate.Department", b =>
@@ -298,6 +701,18 @@ namespace NetCorePal.D3Shop.Web.Migrations
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate.Role", b =>
                 {
                     b.Navigation("Permissions");
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", b =>
+                {
+                    b.Navigation("Authorizations");
+
+                    b.Navigation("Tokens");
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>
+                {
+                    b.Navigation("Tokens");
                 });
 #pragma warning restore 612, 618
         }

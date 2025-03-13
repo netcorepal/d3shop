@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using NetCorePal.D3Shop.Admin.Shared.Authorization;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Web.Application.Queries.Identity;
+using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
 
 namespace NetCorePal.D3Shop.Web.Auth;
 

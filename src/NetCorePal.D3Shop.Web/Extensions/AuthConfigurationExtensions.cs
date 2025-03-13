@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Security.Claims;
-using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,25 +11,21 @@ namespace NetCorePal.D3Shop.Web.Extensions;
 
 public static class AuthConfigurationExtensions
 {
-    internal static IServiceCollection AddAuthenticationSchemes(this IServiceCollection services,
-        AppConfiguration config)
+    internal static IServiceCollection AddAuthenticationSchemes(this IServiceCollection services)
     {
         services.AddAuthentication(authentication =>
             {
                 authentication.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 authentication.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
-            .AddJwtAuthentication(config)
+            .AddJwtAuthentication()
             .AddCookieAuthentication();
 
         return services;
     }
 
-    private static AuthenticationBuilder AddJwtAuthentication(this AuthenticationBuilder builder,
-        AppConfiguration config)
+    private static AuthenticationBuilder AddJwtAuthentication(this AuthenticationBuilder builder)
     {
-        var key = Encoding.ASCII.GetBytes(config.Secret);
-
         return builder.AddJwtBearer(bearer =>
         {
             bearer.RequireHttpsMetadata = false;
@@ -38,7 +33,6 @@ public static class AuthConfigurationExtensions
             bearer.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 RoleClaimType = ClaimTypes.Role,
@@ -84,7 +78,7 @@ public static class AuthConfigurationExtensions
                     var result = JsonConvert.SerializeObject(new ResponseData(false,
                         "You are not authorized to access this resource."));
                     return context.Response.WriteAsync(result);
-                },
+                }
             };
         });
     }

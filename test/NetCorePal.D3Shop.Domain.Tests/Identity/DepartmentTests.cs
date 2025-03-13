@@ -1,11 +1,5 @@
 ﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetCorePal.D3Shop.Domain.Tests.Identity
 {

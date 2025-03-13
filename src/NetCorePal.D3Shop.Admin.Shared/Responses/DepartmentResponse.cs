@@ -1,5 +1,4 @@
-﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
+﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
 
 namespace NetCorePal.D3Shop.Admin.Shared.Responses;
 

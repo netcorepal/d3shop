@@ -1,12 +1,7 @@
 ﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
-using NetCorePal.D3Shop.Domain.DomainEvents.Identity;
 using NetCorePal.Extensions.Domain;
 using NetCorePal.Extensions.Primitives;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using NetCorePal.D3Shop.Domain.DomainEvents.Identity.Admin;
 
 namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
 {

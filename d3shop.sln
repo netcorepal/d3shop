@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCorePal.D3Shop.Web.Admin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCorePal.D3Shop.Admin.Shared", "src\NetCorePal.D3Shop.Admin.Shared\NetCorePal.D3Shop.Admin.Shared.csproj", "{2F4BC49A-B73A-46D7-9418-3708C6E3A341}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCorePal.D3Shop.Web.AuthenticationServer", "src\NetCorePal.D3Shop.Web.AuthenticationServer\NetCorePal.D3Shop.Web.AuthenticationServer.csproj", "{C745ABCA-9885-4E0E-BE2F-50662B6333B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{2F4BC49A-B73A-46D7-9418-3708C6E3A341}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F4BC49A-B73A-46D7-9418-3708C6E3A341}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F4BC49A-B73A-46D7-9418-3708C6E3A341}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C745ABCA-9885-4E0E-BE2F-50662B6333B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C745ABCA-9885-4E0E-BE2F-50662B6333B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C745ABCA-9885-4E0E-BE2F-50662B6333B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C745ABCA-9885-4E0E-BE2F-50662B6333B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,6 +90,7 @@ Global
 		{64AD4028-B7DA-4858-964D-26977C1A5EA9} = {5C6B3693-7A37-4ABF-A217-8EDA0B51F742}
 		{45DFEB02-2164-4CF1-A17B-DCA18F763B72} = {D8FA34CE-25DA-4E6F-AD50-1EAD1F33F9F1}
 		{2F4BC49A-B73A-46D7-9418-3708C6E3A341} = {D8FA34CE-25DA-4E6F-AD50-1EAD1F33F9F1}
+		{C745ABCA-9885-4E0E-BE2F-50662B6333B7} = {D8FA34CE-25DA-4E6F-AD50-1EAD1F33F9F1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6FD5C45-63B8-458D-8CFA-7ACFD729624C}

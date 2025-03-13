@@ -1,9 +1,9 @@
 <Project>
-  <PropertyGroup>
-    <NetCorePalVersion>2.0.0</NetCorePalVersion>
-    <FrameworkVersion>9.0.0</FrameworkVersion>
-    <ExtensionsVersion>9.0.0</ExtensionsVersion>
-    <EntityFrameworkVersion>9.0.0</EntityFrameworkVersion>
-    <TestcontainersVersion>3.6.0</TestcontainersVersion>
-  </PropertyGroup>
+    <PropertyGroup>
+        <NetCorePalVersion>2.5.0-preview.1.2503040246</NetCorePalVersion>
+        <FrameworkVersion>9.0.0</FrameworkVersion>
+        <ExtensionsVersion>9.0.0</ExtensionsVersion>
+        <EntityFrameworkVersion>9.0.0</EntityFrameworkVersion>
+        <TestcontainersVersion>3.6.0</TestcontainersVersion>
+    </PropertyGroup>
 </Project>

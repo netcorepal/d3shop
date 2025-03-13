@@ -1,5 +1,4 @@
 ﻿using NetCorePal.D3Shop.Admin.Shared.Dtos.Identity;
-using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using System.ComponentModel.DataAnnotations;
 
 namespace NetCorePal.D3Shop.Admin.Shared.Requests;

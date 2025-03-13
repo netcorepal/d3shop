@@ -18,6 +18,7 @@ using NetCorePal.D3Shop.Web.Blazor;
 using NetCorePal.D3Shop.Web.Blazor.Components;
 using NetCorePal.D3Shop.Web.Clients;
 using NetCorePal.D3Shop.Web.Extensions;
+using NetCorePal.D3Shop.Web.Helper;
 using NetCorePal.Extensions.Domain.Json;
 using NetCorePal.Extensions.MultiEnv;
 using NetCorePal.Extensions.NewtonsoftJson;
@@ -27,7 +28,6 @@ using Newtonsoft.Json.Serialization;
 using Prometheus;
 using Refit;
 using Serilog;
-using Serilog.Formatting.Json;
 using StackExchange.Redis;
 using _Imports = NetCorePal.D3Shop.Web.Admin.Client._Imports;
 
@@ -68,9 +68,15 @@ try
     builder.Services.AddDataProtection()
         .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
 
-    builder.Services.AddAuthenticationSchemes(builder.Services.GetApplicationSettings(builder.Configuration));
+    builder.Services.GetApplicationSettings(builder.Configuration);
+    builder.Services.AddAuthenticationSchemes();
+    builder.Services.AddNetCorePalJwt().AddRedisStore();
     builder.Services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
     builder.Services.AddTransient<IPermissionChecker, ServerPermissionChecker>();
+
+    builder.Services.AddSingleton<TokenGenerator>();
+
+    builder.Services.AddScoped<ICurrentClientUser, CurrentClientUser>();
 
     #endregion
 
@@ -87,6 +93,8 @@ try
         c.AddEntityIdSchemaMap(); //强类型id swagger schema 映射
         c.AddJwtSecurity(); //添加jwt认证
     });
+
+    builder.Services.ConfigOpenIddict(); //配置OpenIddict
 
     #endregion
 
@@ -139,6 +147,7 @@ try
         options.LogTo(Console.WriteLine, LogLevel.Information)
             .EnableSensitiveDataLogging()
             .EnableDetailedErrors();
+        options.UseOpenIddict();
     });
     builder.Services.AddUnitOfWork<ApplicationDbContext>();
     builder.Services.AddMySqlTransactionHandler();
@@ -173,7 +182,7 @@ try
     {
         ContractResolver = new CamelCasePropertyNamesContractResolver(),
         NullValueHandling = NullValueHandling.Ignore,
-        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
     });
     var settings = new RefitSettings(ser);
     builder.Services.AddRefitClient<IUserServiceClient>(settings)
