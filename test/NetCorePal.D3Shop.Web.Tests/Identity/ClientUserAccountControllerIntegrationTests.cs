@@ -126,7 +126,7 @@ public class ClientUserAccountControllerIntegrationTests
         (
             "GetRefreshToken_test",
             "avatar.png",
-            "13800138002",
+            "13800138003",
             "Test@123456",
             "login@test.com"
         );
@@ -135,7 +135,7 @@ public class ClientUserAccountControllerIntegrationTests
         // 登录请求
         var loginRequest = new ClientUserLoginRequest
         (
-            "13800138002",
+            "13800138003",
             "Test@123456",
             "1"
         );
