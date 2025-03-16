@@ -17,7 +17,9 @@
   },
   "dependencies": {
     "@types/node": "^22.13.4",
+    "@vant/area-data": "^2.0.0",
     "axios": "^1.7.9",
+    "consola": "^3.4.0",
     "netcorepal-d3shop-h5": "file:",
     "pinia": "^3.0.1",
     "vant": "^4.9.17",
@@ -31,6 +33,7 @@
     "typescript": "~5.7.2",
     "unplugin-vue-components": "^28.4.0",
     "vite": "^6.1.0",
+    "vite-plugin-style-import": "^2.0.0",
     "vue-tsc": "^2.2.0"
   }
 }

@@ -6,13 +6,9 @@ import { showToast } from 'vant'
 export class LoginApiService {
     async login(loginInputDto: LoginInputDto): Promise<boolean> {
         const authStore = useAuthStore();
-        const result = await authStore.login(loginInputDto.userName, loginInputDto.password);
-        if (result) {
-            showToast('登录成功');
-        } else {
-            showToast('登录失败');
-        }
-        return result;
+        await authStore.login(loginInputDto.userName, loginInputDto.password);
+        showToast('登录成功');
+        return true;
     }
 }
 

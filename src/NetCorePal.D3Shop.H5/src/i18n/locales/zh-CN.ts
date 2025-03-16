@@ -14,6 +14,9 @@ export default {
     noMore: '没有更多了',
     select: '选择',
   },
+  comingsoon: {
+    "title": "功能正在开发中"
+  },
   auth: {
     login: '登录',
     register: '注册',
@@ -85,6 +88,8 @@ export default {
     logoutConfirm: {
       title: '退出确认',
       message: '确定要退出登录吗？',
+      cancel: '取消',
+      confirm: '确认',
     },
   },
   settings: {
@@ -99,4 +104,13 @@ export default {
     darkMode: '深色模式',
     systemMode: '跟随系统'
   },
+  address:{
+    title: '收货地址',
+    add: '添加地址',
+    edit: '编辑地址',
+    delete: '删除地址',
+    default: '默认地址',
+    switchable: '可切换地址',
+    
+  }
 } 
