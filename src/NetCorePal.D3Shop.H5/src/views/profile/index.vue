@@ -56,14 +56,19 @@ import { reactive } from 'vue';
 import { useAuthStore } from '@/store/auth';
 import { showDialog } from 'vant';
 import { useI18n } from 'vue-i18n';
+import { useAppStore } from '@/store/app';
+import { useRouter } from 'vue-router';
+
 
 const { t } = useI18n();
 const authStore = useAuthStore();
+const appStore = useAppStore();
+const router = useRouter();
 
 const userInfo = reactive({
-  nickname: '用户昵称',
-  phone: '138****8888',
-  avatar: ''
+  nickname: authStore.userInfo?.username,
+  phone: authStore.userInfo?.phone,
+  avatar: authStore.userInfo?.avatar || 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg'
 });
 
 const orderMenus = [
@@ -78,8 +83,12 @@ const onLogout = () => {
     title: t('profile.logoutConfirm.title'),
     message: t('profile.logoutConfirm.message'),
     showCancelButton: true,
+    cancelButtonText: t('profile.logoutConfirm.cancel'),
+    confirmButtonText: t('profile.logoutConfirm.confirm'),
+    confirmButtonColor: appStore.themeVars.primaryColor,
   }).then(() => {
     authStore.logout();
+    router.go(-1);
   });
 };
 </script>

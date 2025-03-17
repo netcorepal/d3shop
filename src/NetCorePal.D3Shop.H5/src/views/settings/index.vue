@@ -82,14 +82,11 @@ const { t } = useI18n();
 const router = useRouter();
 const appStore = useAppStore();
 const show = ref(false);
-
 // 主题模式状态
 const themeMode = ref(
   appStore.followSystem ? 'system' : (appStore.themeVars.dark ? 'dark' : 'light')
 );
 
-// 监听系统深色模式变化
-const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
 // 监听主题模式变化
 watch(themeMode, (newMode) => {

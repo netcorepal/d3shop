@@ -5,30 +5,25 @@
         <van-icon name="cross" size="18" @click="onClose" class="nav-icon" />
       </template>
     </van-nav-bar>
-    
+
     <div class="login-form">
-      <van-form @submit="loginBtnClick">
+      <van-form>
         <van-cell-group inset>
-          <van-field
-            v-model="loginViewData.username"
-            name="username"
-            label="用户名"
-            placeholder="请输入用户名"
-            :rules="[{ required: true, message: '请填写用户名' }]"
-          />
-          <van-field
-            v-model="loginViewData.password"
-            type="password"
-            name="password"
-            label="密码"
-            placeholder="请输入密码"
-            :rules="[{ required: true, message: '请填写密码' }]"
-          />
+          <van-field v-model="loginViewData.username" name="username" label="用户名" placeholder="请输入用户名"
+            :rules="[{ required: true, message: '请填写用户名' }]" />
+          <van-field v-model="loginViewData.password" type="password" name="password" label="密码" placeholder="请输入密码"
+            :rules="[{ required: true, message: '请填写密码' }]" />
         </van-cell-group>
 
         <div style="margin: 16px">
-          <van-button round block type="primary" native-type="submit">
-            登录
+          <van-button round block type="primary" @click="loginBtnClick" native-type="submit">
+            {{ t('auth.login') }}
+          </van-button>
+
+        </div>
+        <div style="margin: 16px;">
+          <van-button round block type="default" @click="gotoRegister" native-type="button">
+            {{ t('auth.register') }}
           </van-button>
         </div>
       </van-form>
@@ -43,9 +38,11 @@ import { useAuthStore } from '@/store/auth';
 import { LoginInputDto } from './apiServices/LoginDto';
 import loginApiService from './apiServices/loginApiService';
 import { showToast } from 'vant';
+import { useI18n } from 'vue-i18n';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const { t } = useI18n();
 
 const loginViewData = reactive({
   username: '',
@@ -74,6 +71,10 @@ async function loginBtnClick() {
     });
     console.error('登录失败:', error);
   }
+}
+
+async function gotoRegister() {
+  router.push('/register');
 }
 </script>
 
