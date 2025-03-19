@@ -48,7 +48,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     public string DisabledReason { get; private set; } = string.Empty;
     public int PasswordFailedTimes { get; private set; }
     public bool IsTwoFactorEnabled { get; private set; }
-    public string RefreshToken { get; private set; } = string.Empty;
+    public ICollection<ClientUserRefreshToken> RefreshTokens { get; } = [];
     public DateTime LoginExpiryDate { get; private set; }
 
     /// <summary>
@@ -77,7 +77,8 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
             return ClientUserLoginResult.Failure("用户名或密码错误");
         }
 
-        RefreshToken = refreshToken;
+        var refreshTokenInfo = new ClientUserRefreshToken(refreshToken);
+        RefreshTokens.Add(refreshTokenInfo);
         PasswordFailedTimes = 0;
         LastLoginAt = loginTime;
         LoginExpiryDate = loginTime.AddDays(30);
@@ -103,7 +104,8 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
         if (IsDisabled)
             return ClientUserLoginResult.Failure("用户已被禁用");
 
-        RefreshToken = refreshToken;
+        var refreshTokenInfo = new ClientUserRefreshToken(refreshToken);
+        RefreshTokens.Add(refreshTokenInfo);
         LastLoginAt = loginTime;
         LoginExpiryDate = loginTime.AddDays(30);
         AddDomainEvent(new ClientUserLoginEvent(Id, NickName, loginTime, loginMethod, ipAddress, userAgent));
@@ -115,18 +117,16 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <param name="oldRefreshToken"></param>
     /// <param name="newRefreshToken"></param>
     /// <exception cref="KnownException"></exception>
-    public DateTime UpdateRefreshToken(string oldRefreshToken, string newRefreshToken)
+    public void RefreshToken(string oldRefreshToken, string newRefreshToken)
     {
-        if (RefreshToken != oldRefreshToken)
-            throw new KnownException("无效的令牌");
-
         if (LoginExpiryDate <= DateTime.Now)
             throw new KnownException("登录已过期");
 
-        RefreshToken = newRefreshToken;
-        LoginExpiryDate = DateTime.Now.AddDays(30);
+        var oldRefreshTokenInfo = RefreshTokens.Single(t => t.Token == oldRefreshToken);
+        oldRefreshTokenInfo.Use();
 
-        return LoginExpiryDate;
+        var newRefreshTokenInfo = new ClientUserRefreshToken(newRefreshToken);
+        RefreshTokens.Add(newRefreshTokenInfo);
     }
 
     /// <summary>
@@ -323,11 +323,11 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
             Phone = phone,
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt,
-            RefreshToken = refreshToken,
             LastLoginAt = signUpTime,
             LoginExpiryDate = signUpTime.AddDays(30)
         };
 
+        user.RefreshTokens.Add(new ClientUserRefreshToken(refreshToken));
         user.ThirdPartyLogins.Add(new UserThirdPartyLogin(user.Id, thirdPartyProvider, appId, openId));
         user.AddDomainEvent(new ClientUserExternalSignInDomainEvent(
             user.Id,

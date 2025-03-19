@@ -93,4 +93,15 @@ public class ClientUserQuery(ApplicationDbContext applicationDbContext) : IQuery
             .Select(u => u.Id)
             .SingleOrDefaultAsync(cancellationToken);
     }
+
+    public async Task<ClientUserId> GetClientUserIdByRefreshTokenAsync(string refreshToken,
+        CancellationToken cancellationToken)
+    {
+        return await ClientUserSet.AsNoTracking()
+                   .SelectMany(u => u.RefreshTokens)
+                   .Where(t => t.Token == refreshToken)
+                   .Select(t => t.UserId)
+                   .SingleOrDefaultAsync(cancellationToken)
+               ?? throw new KnownException("无效的令牌");
+    }
 }
