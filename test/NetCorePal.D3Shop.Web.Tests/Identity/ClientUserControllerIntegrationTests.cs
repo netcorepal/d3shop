@@ -7,6 +7,7 @@ using NetCorePal.D3Shop.Web.Application.Queries.Identity.Client.Dto;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Client.Requests;
 using NetCorePal.D3Shop.Web.Helper;
 using NetCorePal.Extensions.Dto;
+using NetCorePal.Extensions.Jwt;
 
 namespace NetCorePal.D3Shop.Web.Tests.Identity;
 
@@ -25,11 +26,13 @@ public class ClientUserControllerIntegrationTests
         var scope = factory.Services.CreateScope();
         _dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         _testUser = CreateTestUser();
-        var tokenGenerator = scope.ServiceProvider.GetRequiredService<TokenGenerator>();
-        var token = tokenGenerator.GenerateJwtAsync([new Claim(ClaimTypes.NameIdentifier, _testUser.Id.ToString())])
-            .Result;
+        var jwtProvider = scope.ServiceProvider.GetRequiredService<IJwtProvider>();
+        var jwt = jwtProvider.GenerateJwtToken(new JwtData("issuer-x", "audience-y",
+            [new Claim(ClaimTypes.NameIdentifier, _testUser.Id.ToString())],
+            DateTime.Now,
+            DateTime.MaxValue)).Result;
 
-        _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+        _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwt}");
     }
 
     private ClientUser CreateTestUser()

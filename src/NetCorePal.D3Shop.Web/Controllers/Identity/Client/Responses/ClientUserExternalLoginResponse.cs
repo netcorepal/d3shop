@@ -5,6 +5,7 @@ public class ClientUserExternalLoginResponse
     public bool IsSuccess { get; set; }
     public string AccessToken { get; set; } = string.Empty;
     public string RefreshToken { get; set; } = string.Empty;
+    public DateTime TokenExpiryTime { get; set; }
     public bool RequiresSignUp { get; set; }
     public string SignupToken { get; set; } = string.Empty;
 
@@ -14,9 +15,12 @@ public class ClientUserExternalLoginResponse
             { RequiresSignUp = true, SignupToken = signupToken };
     }
 
-    public static ClientUserExternalLoginResponse Success(string accessToken, string refreshToken)
+    public static ClientUserExternalLoginResponse Success(string accessToken, string refreshToken,
+        DateTime tokenExpiryTime)
     {
         return new ClientUserExternalLoginResponse
-            { IsSuccess = true, AccessToken = accessToken, RefreshToken = refreshToken };
+        {
+            IsSuccess = true, AccessToken = accessToken, RefreshToken = refreshToken, TokenExpiryTime = tokenExpiryTime
+        };
     }
 }
