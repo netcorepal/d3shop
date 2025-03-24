@@ -49,6 +49,12 @@ public class ClientUserControllerIntegrationTests
     {
         // Arrange
         var request = new AddDeliveryAddressRequest(
+            "广东省",
+            "440000",
+            "深圳市",
+            "440300",
+            "南山区",
+            "440305",
             "Test Address",
             "Recipient",
             "13800138000",
@@ -76,7 +82,18 @@ public class ClientUserControllerIntegrationTests
     {
         // Arrange
         _testUser.DeliveryAddresses.Clear();
-        var newAddress = new UserDeliveryAddress(_testUser.Id, "Test Address", "Recipient", "13800138000", true);
+        var newAddress = new UserDeliveryAddress(
+            _testUser.Id,
+            "广东省",
+            "440000",
+            "深圳市",
+            "440300",
+            "南山区",
+            "440305",
+            "Test Address",
+            "Recipient",
+            "13800138000",
+            true);
         _testUser.DeliveryAddresses.Add(newAddress);
         await _dbContext.SaveChangesAsync();
 
@@ -97,7 +114,18 @@ public class ClientUserControllerIntegrationTests
     {
         // Arrange
         _testUser.DeliveryAddresses.Clear();
-        var newAddress = new UserDeliveryAddress(_testUser.Id, "Test Address", "Recipient", "13800138000", true);
+        var newAddress = new UserDeliveryAddress(
+            _testUser.Id,
+            "广东省",
+            "440000",
+            "深圳市",
+            "440300",
+            "南山区",
+            "440305",
+            "Test Address",
+            "Recipient",
+            "13800138000",
+            true);
         _testUser.DeliveryAddresses.Add(newAddress);
         await _dbContext.SaveChangesAsync();
 

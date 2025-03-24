@@ -179,12 +179,24 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <summary>
     ///     新增收货地址
     /// </summary>
+    /// <param name="districtCode"></param>
     /// <param name="address"></param>
     /// <param name="recipientName"></param>
     /// <param name="phone"></param>
     /// <param name="setAsDefault"></param>
+    /// <param name="province"></param>
+    /// <param name="provinceCode"></param>
+    /// <param name="city"></param>
+    /// <param name="cityCode"></param>
+    /// <param name="district"></param>
     /// <returns></returns>
     public DeliveryAddressId AddDeliveryAddress(
+        string province,
+        string provinceCode,
+        string city,
+        string cityCode,
+        string district,
+        string districtCode,
         string address,
         string recipientName,
         string phone,
@@ -192,6 +204,12 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     {
         var newAddress = new UserDeliveryAddress(
             Id,
+            province,
+            provinceCode,
+            city,
+            cityCode,
+            district,
+            districtCode,
             address,
             recipientName,
             phone,
@@ -213,13 +231,25 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     ///     更新收货地址
     /// </summary>
     /// <param name="deliveryAddressId"></param>
+    /// <param name="district"></param>
+    /// <param name="districtCode"></param>
     /// <param name="address"></param>
     /// <param name="recipientName"></param>
     /// <param name="phone"></param>
     /// <param name="setAsDefault"></param>
+    /// <param name="city"></param>
+    /// <param name="cityCode"></param>
+    /// <param name="province"></param>
+    /// <param name="provinceCode"></param>
     /// <exception cref="KnownException"></exception>
     public void UpdateDeliveryAddress(
         DeliveryAddressId deliveryAddressId,
+        string province,
+        string provinceCode,
+        string city,
+        string cityCode,
+        string district,
+        string districtCode,
         string address,
         string recipientName,
         string phone,
@@ -227,7 +257,17 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     {
         var deliveryAddress = DeliveryAddresses.SingleOrDefault(a => a.Id == deliveryAddressId) ??
                               throw new KnownException("地址不存在");
-        deliveryAddress.UpdateDetails(address, recipientName, phone);
+
+        deliveryAddress.UpdateDetails(
+            province,
+            provinceCode,
+            city,
+            cityCode,
+            district,
+            districtCode,
+            address,
+            recipientName,
+            phone);
 
         if (!setAsDefault) return;
 

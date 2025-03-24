@@ -8,6 +8,12 @@ namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Client;
 public record ClientUserUpdateDeliveryAddressCommand(
     ClientUserId UserId,
     DeliveryAddressId DeliveryAddressId,
+    string Province,
+    string ProvinceCode,
+    string City,
+    string CityCode,
+    string District,
+    string DistrictCode,
     string Address,
     string RecipientName,
     string Phone,
@@ -24,7 +30,17 @@ public class ClientUserUpdateDeliveryAddressCommandHandler(ClientUserRepository 
     {
         var user = await clientUserRepository.GetAsync(request.UserId, cancellationToken) ??
                    throw new KnownException($"用户不存在，UserId={request.UserId}");
-        user.UpdateDeliveryAddress(request.DeliveryAddressId, request.Address, request.RecipientName,
-            request.Phone, request.SetAsDefault);
+        user.UpdateDeliveryAddress(
+            request.DeliveryAddressId,
+            request.Province,
+            request.ProvinceCode,
+            request.City,
+            request.CityCode,
+            request.District,
+            request.DistrictCode,
+            request.Address,
+            request.RecipientName,
+            request.Phone,
+            request.SetAsDefault);
     }
 }

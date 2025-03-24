@@ -31,6 +31,12 @@ public class ClientUserController(
     {
         return await mediator.Send(new ClientUserAddDeliveryAddressCommand(
             currentUser.UserId,
+            request.Province,
+            request.ProvinceCode,
+            request.City,
+            request.CityCode,
+            request.District,
+            request.DistrictCode,
             request.Address,
             request.RecipientName,
             request.Phone,
@@ -60,6 +66,12 @@ public class ClientUserController(
         return await mediator.Send(new ClientUserUpdateDeliveryAddressCommand(
             currentUser.UserId,
             request.DeliveryAddressId,
+            request.Province,
+            request.ProvinceCode,
+            request.City,
+            request.CityCode,
+            request.District,
+            request.DistrictCode,
             request.Address,
             request.RecipientName,
             request.Phone,
