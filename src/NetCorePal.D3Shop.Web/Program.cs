@@ -150,16 +150,17 @@ try
         options.UseOpenIddict();
     });
     builder.Services.AddUnitOfWork<ApplicationDbContext>();
-    builder.Services.AddMySqlTransactionHandler();
     builder.Services.AddRedisLocks();
     //配置多环境Options
     builder.Services.Configure<EnvOptions>(envOptions => builder.Configuration.GetSection("Env").Bind(envOptions));
     builder.Services.AddContext().AddEnvContext().AddCapContextProcessor();
     builder.Services.AddNetCorePalServiceDiscoveryClient();
-    builder.Services.AddIntegrationEventServices(typeof(Program))
-        .AddIIntegrationEventConverter(typeof(Program))
-        .UseCap(typeof(Program))
-        .AddContextIntegrationFilters();
+    builder.Services.AddIntegrationEvents(typeof(Program))
+        .UseCap<ApplicationDbContext>(capBuilder => {
+            capBuilder.RegisterServicesFromAssemblies(typeof(Program));
+            capBuilder.AddContextIntegrationFilters();
+            capBuilder.UseMySql();
+        });
     builder.Services.AddCap(x =>
     {
         x.UseEntityFramework<ApplicationDbContext>();
