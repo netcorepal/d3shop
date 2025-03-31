@@ -23,7 +23,11 @@ internal class ClientUserConfiguration : IEntityTypeConfiguration<ClientUser>
             .WithOne()
             .HasForeignKey(tpl => tpl.UserId)
             .OnDelete(DeleteBehavior.ClientCascade);
-        builder.Navigation(cu => cu.ThirdPartyLogins).AutoInclude();
+
+        builder.HasMany(cu => cu.RefreshTokens)
+            .WithOne()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.ClientCascade);
     }
 }
 
@@ -33,7 +37,7 @@ internal class UserDeliveryAddressConfiguration : IEntityTypeConfiguration<UserD
     {
         builder.ToTable("userDeliveryAddresses");
         builder.HasKey(uda => uda.Id);
-        builder.Property(uda => uda.Id).ValueGeneratedOnAdd().UseSnowFlakeValueGenerator();
+        builder.Property(uda => uda.Id).UseSnowFlakeValueGenerator();
     }
 }
 
@@ -43,10 +47,20 @@ internal class UserThirdPartyLoginConfiguration : IEntityTypeConfiguration<UserT
     {
         builder.ToTable("userThirdPartyLogins");
         builder.HasKey(tpl => tpl.Id);
-        builder.Property(tpl => tpl.Id).ValueGeneratedOnAdd().UseSnowFlakeValueGenerator();
+        builder.Property(tpl => tpl.Id).UseSnowFlakeValueGenerator();
         builder.Property(x => x.Provider)
             .HasConversion(
                 v => v.ToString(),
                 v => Enum.Parse<ThirdPartyProvider>(v));
+    }
+}
+
+internal class ClientUserRefreshTokenConfiguration : IEntityTypeConfiguration<ClientUserRefreshToken>
+{
+    public void Configure(EntityTypeBuilder<ClientUserRefreshToken> builder)
+    {
+        builder.ToTable("clientUserRefreshTokens");
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).UseSnowFlakeValueGenerator();
     }
 }
