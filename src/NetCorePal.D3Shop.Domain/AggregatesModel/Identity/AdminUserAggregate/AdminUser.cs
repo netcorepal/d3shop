@@ -18,6 +18,9 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         public string Name { get; private set; } = string.Empty;
         public string Phone { get; private set; } = string.Empty;
         public string Password { get; private set; } = string.Empty;
+
+        public string RealName { get; private set; } = string.Empty;
+        public string Email { get; private set; } = string.Empty;
         public DateTime CreatedAt { get; init; }
         public virtual ICollection<AdminUserRole> Roles { get; } = [];
 

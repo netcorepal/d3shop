@@ -7,6 +7,7 @@ using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Const;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Admin.Dto;
+using NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin.Responses;
 using NetCorePal.D3Shop.Web.Extensions;
 using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;
@@ -62,6 +63,17 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCa
             .OrderBy(au => au.Id)
             .Select(au => new AdminUserResponse(au.Id, au.Name, au.Phone, au.Roles.Select(r => r.RoleName)))
             .ToPagedDataAsync(queryRequest, cancellationToken);
+        return adminUsers;
+    }
+
+
+    public async Task<VueAdminUserResponse?> GetAdminUserByIdAsync(AdminUserId id,
+       CancellationToken cancellationToken)
+    {
+        var adminUsers = await AdminUserSet.AsNoTracking()
+            .Where(x => x.Id == id)
+            .Select(au => new VueAdminUserResponse(au.Id, au.Name, au.Name, au.Roles.Select(r => r.RoleName), "/dashboard"))
+            .FirstOrDefaultAsync(cancellationToken);
         return adminUsers;
     }
 

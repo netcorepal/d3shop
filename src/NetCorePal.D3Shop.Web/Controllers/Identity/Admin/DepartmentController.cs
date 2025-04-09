@@ -29,14 +29,20 @@ public class DepartmentController(
     public async Task<ResponseData<DeptId>> CreateDepartment([FromBody] CreateDepartmentRequest request)
     {
         var departmentId = await mediator.Send(
-            new CreateDepartmentCommand(request.Name, request.Description, request.Users, request.ParentId),
+            new CreateDepartmentCommand(
+                request.Name,
+                request.Remark,
+                request.Users,
+                request.Pid,
+                request.Status
+                ),
             CancellationToken);
 
         return departmentId.AsResponseData();
     }
 
     [HttpGet]
-    public async Task<ResponseData<PagedData<DepartmentResponse>>> GetAllDepartments(
+    public async Task<ResponseData<List<DepartmentResponse>>> GetAllDepartments(
         [FromQuery] DepartmentQueryRequest request)
     {
         var department = await departmentQuery.GetAllDepartmentsAsync(request, CancellationToken);
@@ -49,8 +55,16 @@ public class DepartmentController(
     public async Task<ResponseData> UpdateDepartmentInfo([FromRoute] DeptId id,
         [FromBody] UpdateDepartmentInfoRequest request)
     {
-        await mediator.Send(new UpdateDepartmrntInfoCommand(id, request.Name, request.Description, request.Users),
-            CancellationToken);
+        await mediator.Send(new UpdateDepartmrntInfoCommand(
+                 id,
+                 request.Name,
+                 request.Remark,
+                 request.Code,
+                 request.ParentId,
+                 request.Status,
+                 request.Users
+                ),
+                 CancellationToken);
         return new ResponseData();
     }
 

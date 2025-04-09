@@ -10,14 +10,19 @@ namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin;
 public record UpdateDepartmrntInfoCommand(
     DeptId DepartmentId,
     string Name,
-    string Description,
+    string Remark,
+    string Code,
+    DeptId ParentId,
+    int Status,
     IEnumerable<CreateDepartmentUserInfoDto> Users) : ICommand;
 
 public class UpdateDepartmentCommandValidator : AbstractValidator<UpdateDepartmrntInfoCommand>
 {
     public UpdateDepartmentCommandValidator(DepartmentQuery departmentQuery)
     {
-        RuleFor(u => u.Name).NotEmpty().WithMessage("部门名称不能为空");
+        //RuleFor(x => x.DepartmentId).Must(x => x.Id == 0).WithMessage("部门ID不能为空");
+        RuleFor(x => x.Name).NotEmpty().WithMessage("部门名称不能为空");
+        RuleFor(x => x.Status).InclusiveBetween(0, 1).WithMessage("状态值必须为0或1");
     }
 }
 
@@ -31,7 +36,11 @@ public class UpdateDepartmentInfoCommandHandler(DepartmentRepository departmentR
 
         List<DepartmentUser> departmentUsers = [];
         foreach (var user in request.Users) departmentUsers.Add(new DepartmentUser(user.UserName, user.UserId));
-
-        department.UpdateDepartInfo(request.Name, request.Description, departmentUsers);
+        department.UpdateDepartInfo(
+                request.Name,
+                request.Code,
+                request.Remark,
+                request.Status,
+                Array.Empty<DepartmentUser>());
     }
 }

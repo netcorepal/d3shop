@@ -8,17 +8,17 @@
 <Table
     TItem="DepartmentResponse"
     @ref="_table"
-    DataSource="_pagedDepartments.Items"
-    Total="_pagedDepartments.Total"
-    @bind-PageIndex="_departmentQueryRequest.PageIndex"
-    @bind-PageSize="_departmentQueryRequest.PageSize"
+    DataSource="_pagedDepartments"
+    Total="_totalDepartments"
+    @bind-PageIndex="_pageIndex"
+    @bind-PageSize="_totalDepartments"
     OnChange="Table_OnChange"
     Loading="_loading">
     <PaginationTemplate>
         <Pagination Class="@context.PaginationClass"
-                    Total="context.Total"
-                    PageSize="context.PageSize"
-                    Current="context.PageIndex"
+                    Total="_totalDepartments"
+                    PageSize="_totalDepartments"
+                    Current="_pageIndex"
                     ShowSizeChanger
                     OnChange="context.HandlePageChange"/>
     </PaginationTemplate>
@@ -42,7 +42,7 @@
     </TitleTemplate>
     <ColumnDefinitions Context="row">
         <PropertyColumn Title="名称" Property="c => c.Name"/>
-        <PropertyColumn Title="描述" Property="c => c.Description" />
+        <PropertyColumn Title="描述" Property="c => c.Remark" />
         <ActionColumn Title="操作">
             <AuthorizeView>
                 @if (context.CheckPermission(PermissionCodes.DepartmentEdit))
@@ -61,4 +61,4 @@
             </AuthorizeView>
         </ActionColumn>
     </ColumnDefinitions>
-</Table>
+</Table> 
