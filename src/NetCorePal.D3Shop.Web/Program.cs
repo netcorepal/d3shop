@@ -46,6 +46,7 @@ try
     builder.Services.AddMvc().AddNewtonsoftJson(options =>
     {
         options.SerializerSettings.Converters.Add(new NewtonsoftEntityIdJsonConverter());
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
     builder.Services.AddSignalR();
 
@@ -78,13 +79,46 @@ try
 
     builder.Services.AddScoped<ICurrentClientUser, CurrentClientUser>();
 
+    builder.Services.AddScoped<ICurrentVueAdminUser, CurrentVueAdminUser>();
     #endregion
+    #region CORS
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowVueApp", policy =>
+        {
+            var origins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>();
+            if (origins == null || origins.Length == 0)
+            {
+                throw new InvalidOperationException("CORS origins are not configured. Please add 'Cors:Origins' to your configuration.");
+            }
+            policy.WithOrigins(origins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        });
+    });
+    // 添加 CORS 服务
+    //builder.Services.AddCors(options =>
+    //{
+    //    options.AddPolicy("AllowVueApp", policy =>
+    //    {
+    //        policy.WithOrigins("http://localhost:5555") // Vue 应用的地址
+    //              .AllowAnyMethod()
+    //              .AllowAnyHeader()
+    //              .AllowCredentials(); // 允许携带认证信息
+    //    });
+    //});
+    #endregion
+
+
 
     #region Controller
 
     builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new EntityIdJsonConverterFactory());
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
@@ -156,7 +190,8 @@ try
     builder.Services.AddContext().AddEnvContext().AddCapContextProcessor();
     builder.Services.AddNetCorePalServiceDiscoveryClient();
     builder.Services.AddIntegrationEvents(typeof(Program))
-        .UseCap<ApplicationDbContext>(capBuilder => {
+        .UseCap<ApplicationDbContext>(capBuilder =>
+        {
             capBuilder.RegisterServicesFromAssemblies(typeof(Program));
             capBuilder.AddContextIntegrationFilters();
             capBuilder.UseMySql();
@@ -239,6 +274,7 @@ try
 
     app.UseAuthentication();
     app.UseHttpsRedirection();
+    app.UseCors("AllowVueApp");
     app.UseStaticFiles();
 
     app.UseRouting();

@@ -37,8 +37,8 @@ namespace NetCorePal.D3Shop.Web.Tests.Identity
             var request = new CreateDepartmentRequest
             {
                 Name = "TestDepartment",
-                Description = "test decription",
-                ParentId = new DeptId(0),
+                Remark = "test decription",
+                Pid = new DeptId(0),
                 Users = new List<CreateDepartmentUserInfoDto>
                 {
                     new CreateDepartmentUserInfoDto(new AdminUserId(1),"User1"), // 创建 User1
@@ -68,13 +68,13 @@ namespace NetCorePal.D3Shop.Web.Tests.Identity
             // Arrange
             var request = new DepartmentQueryRequest
             {
-                PageIndex = 1,
-                PageSize = 10,
+                //PageIndex = 1,
+                //PageSize = 10,
                 Name = testDeptName,
             };
 
-            var queryString = $"?PageIndex={request.PageIndex}&PageSize={request.PageSize}";
-            var url = "/api/Department/GetAllDepartments" + queryString;
+            //var queryString = $"?PageIndex={request.PageIndex}&PageSize={request.PageSize}";
+            var url = "/api/Department/GetAllDepartments";// + queryString;
 
             // Act
             var response = await _client.GetAsync(url);
@@ -99,7 +99,7 @@ namespace NetCorePal.D3Shop.Web.Tests.Identity
             var request = new UpdateDepartmentInfoRequest
             {
                 Name = "Updated Department",
-                Description = "Updated Description",
+                Remark = "Updated Description",
                 Users = new List<CreateDepartmentUserInfoDto>
                 {
                          new CreateDepartmentUserInfoDto( new AdminUserId(1),"User3"), // 创建 User1

@@ -46,6 +46,10 @@ namespace NetCorePal.D3Shop.Web.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
@@ -58,6 +62,10 @@ namespace NetCorePal.D3Shop.Web.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RealName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -108,7 +116,15 @@ namespace NetCorePal.D3Shop.Web.Migrations
                     b.Property<long>("DeptId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("DeptCode")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("DeptName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -283,6 +299,10 @@ namespace NetCorePal.D3Shop.Web.Migrations
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -302,6 +322,9 @@ namespace NetCorePal.D3Shop.Web.Migrations
 
                     b.Property<long>("ParentId")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -327,6 +350,70 @@ namespace NetCorePal.D3Shop.Web.Migrations
                     b.ToTable("departmentUser", (string)null);
                 });
 
+            modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate.Menu", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("AuthCode")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Component")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Meta")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("ParentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("ParentId");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Redirect")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("Path")
+                        .IsUnique();
+
+                    b.ToTable("menus", (string)null);
+                });
+
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate.Role", b =>
                 {
                     b.Property<long>("Id")
@@ -343,6 +430,13 @@ namespace NetCorePal.D3Shop.Web.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Remark")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("roles", (string)null);
@@ -355,6 +449,9 @@ namespace NetCorePal.D3Shop.Web.Migrations
 
                     b.Property<string>("PermissionCode")
                         .HasColumnType("varchar(255)");
+
+                    b.Property<long?>("MenuId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("RoleId", "PermissionCode");
 
@@ -644,6 +741,16 @@ namespace NetCorePal.D3Shop.Web.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate.Menu", b =>
+                {
+                    b.HasOne("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate.Menu", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate.RolePermission", b =>
                 {
                     b.HasOne("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate.Role", null)
@@ -696,6 +803,11 @@ namespace NetCorePal.D3Shop.Web.Migrations
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate.Department", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate.Menu", b =>
+                {
+                    b.Navigation("Children");
                 });
 
             modelBuilder.Entity("NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate.Role", b =>
