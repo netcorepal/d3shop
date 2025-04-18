@@ -10,6 +10,7 @@ using NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin.Requests;
 using NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin.Responses;
 using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;
+using NetCorePal.D3Shop.Admin.Shared.Responses.MenuResponses;
 
 namespace PlaygroundApi.Controllers
 {
@@ -24,7 +25,7 @@ namespace PlaygroundApi.Controllers
         [HttpPost]
         public async Task<ResponseData<RoleId>> CreateRole([FromBody] VueCreateRoleRequest request)
         {
-            var menus = await menuQuery.GetAllMenusAsync(CancellationToken);
+            var menus = await menuQuery.GetAllMenusFlatAsync(CancellationToken);
 
             var permissions = request.Permissions
                 .Select(item =>
@@ -45,7 +46,7 @@ namespace PlaygroundApi.Controllers
         [HttpPut("{id}")]
         public async Task<ResponseData> UpdateRole([FromRoute] RoleId id, [FromBody] VueUpdateRoleRequest request, CancellationToken cancellationToken)
         {
-            var menus = await menuQuery.GetAllMenusAsync(cancellationToken);
+            var menus = await menuQuery.GetAllMenusFlatAsync(cancellationToken);
             var permissions = request.Permissions
                 .Select(item =>
                 {

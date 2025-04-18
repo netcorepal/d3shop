@@ -54,7 +54,7 @@ namespace NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin
         }
 
         /// <summary>
-        /// 获取所有菜单
+        /// 获取所有菜单（树形结构）
         /// </summary>
         /// <param name="cancellationToken">取消令牌</param>
         /// <returns>菜单列表</returns>
@@ -92,6 +92,46 @@ namespace NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin
                })
                .ToListAsync(cancellationToken);
             return menuTreeNode.ToTree(new MenuId(0));
+        }
+
+        /// <summary>
+        /// 获取所有菜单（扁平结构）
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌</param>
+        /// <returns>菜单列表</returns>
+        public async Task<List<MenusFlatResponse>> GetAllMenusFlatAsync(CancellationToken cancellationToken)
+        {
+            return await MenuSet
+               .OrderBy(menu => menu.Order)
+               .Select(menu => new MenusFlatResponse
+               {
+                   Id = menu.Id,
+                   Pid = menu.ParentId,
+                   Name = menu.Name,
+                   Path = menu.Path,
+                   Component = menu.Component,
+                   Icon = menu.Icon,
+                   Status = menu.Status,
+                   Redirect = menu.Redirect,
+                   Type = menu.Type.ToString().ToLower(),
+                   AuthCode = menu.AuthCode,
+                   Meta = new MenuMeta
+                   {
+                       Title = menu.Name,
+                       Icon = menu.Icon,
+                       Order = menu.Order,
+                       HideInMenu = !menu.IsVisible,
+                       HideInTab = !menu.IsEnabled,
+                       KeepAlive = true,
+                       AffixTab = false,
+                       HideInBreadcrumb = false,
+                       HideChildrenInMenu = false,
+                       OpenInNewWindow = false,
+                       NoBasicLayout = false,
+                       MaxNumOfOpenTab = 10
+                   }
+               })
+               .ToListAsync(cancellationToken);
         }
 
         /// <summary>
