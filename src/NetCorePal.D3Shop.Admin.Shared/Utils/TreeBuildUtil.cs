@@ -34,60 +34,94 @@ namespace NetCorePal.D3Shop.Admin.Shared.Utils
     }
 
     /// <summary>
-    /// 树构建工具类
+    /// 树构建扩展方法
     /// </summary>
-    /// <typeparam name="T">节点类型</typeparam>
-    /// <typeparam name="TId">节点ID类型</typeparam>
-    public class TreeBuildUtil<T, TId> where T : ITreeNode<TId> where TId : class
+    public static class TreeExtensions
     {
         /// <summary>
-        /// 顶级节点的父节点Id
+        /// 将集合转换为树结构
         /// </summary>
-        private TId _rootParentId;
-
-        /// <summary>
-        /// 构造函数
-        /// </summary>
+        /// <typeparam name="T">节点类型</typeparam>
+        /// <typeparam name="TId">节点ID类型</typeparam>
+        /// <param name="items">节点集合</param>
+        /// <param name="idSelector">ID选择器</param>
+        /// <param name="parentIdSelector">父ID选择器</param>
+        /// <param name="childrenSetter">子节点设置器</param>
         /// <param name="rootParentId">根节点的父ID</param>
-        public TreeBuildUtil(TId rootParentId)
+        /// <returns>树结构</returns>
+        public static List<T> ToTree<T, TId>(
+            this IEnumerable<T> items,
+            Func<T, TId> idSelector,
+            Func<T, TId> parentIdSelector,
+            Func<T, IEnumerable<T>, T> childrenSetter,
+            TId rootParentId)
         {
-            _rootParentId = rootParentId ?? throw new ArgumentNullException(nameof(rootParentId));
-        }
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+            if (idSelector == null)
+                throw new ArgumentNullException(nameof(idSelector));
+            if (parentIdSelector == null)
+                throw new ArgumentNullException(nameof(parentIdSelector));
+            if (childrenSetter == null)
+                throw new ArgumentNullException(nameof(childrenSetter));
+            if (rootParentId == null)
+                throw new ArgumentNullException(nameof(rootParentId));
 
-        /// <summary>
-        /// 设置根节点方法
-        /// 查询数据可以设置其他节点为根节点，避免父节点永远是默认值，查询不到数据的问题
-        /// </summary>
-        public void SetRootParentId(TId rootParentId)
-        {
-            _rootParentId = rootParentId ?? throw new ArgumentNullException(nameof(rootParentId));
-        }
-
-        public List<T> Build(List<T> nodes)
-        {
-            if (nodes == null)
-                throw new ArgumentNullException(nameof(nodes));
-                
-            // 构建以父节点ID为键的字典
-            var nodeLookup = nodes.GroupBy(node => node.GetPid())
-                                  .ToDictionary(group => group.Key, group => group.ToList());
-
-            var result = new List<T>();
-            nodes.ForEach(node =>
+            // 构建以父节点ID为键的查找表
+            var lookup = items.ToLookup(parentIdSelector);
+            
+            // 获取根节点
+            var roots = lookup[rootParentId].ToList();
+            
+            // 递归设置子节点
+            foreach (var root in roots)
             {
-                if (_rootParentId.Equals(node.GetPid()))
-                {
-                    result.Add(node);
-                }
-                if (nodeLookup.ContainsKey(node.GetId()))
-                {
-                    node.SetChildren(nodeLookup[node.GetId()]);
-                }
-            });
+                SetChildren(root, lookup, idSelector, childrenSetter);
+            }
+            
+            return roots;
+        }
+        
+        /// <summary>
+        /// 递归设置子节点
+        /// </summary>
+        private static void SetChildren<T, TId>(
+            T item,
+            ILookup<TId, T> lookup,
+            Func<T, TId> idSelector,
+            Func<T, IEnumerable<T>, T> childrenSetter)
+        {
+            var children = lookup[idSelector(item)].ToList();
+            childrenSetter(item, children);
+            
+            foreach (var child in children)
+            {
+                SetChildren(child, lookup, idSelector, childrenSetter);
+            }
+        }
+        
+        /// <summary>
+        /// 将集合转换为树结构（适用于ITreeNode接口）
+        /// </summary>
+        /// <typeparam name="T">节点类型</typeparam>
+        /// <typeparam name="TId">节点ID类型</typeparam>
+        /// <param name="items">节点集合</param>
+        /// <param name="rootParentId">根节点的父ID</param>
+        /// <returns>树结构</returns>
+        public static List<T> ToTree<T, TId>(
+            this IEnumerable<T> items,
+            TId rootParentId) where T : ITreeNode<TId> where TId : class
+        {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+            if (rootParentId == null)
+                throw new ArgumentNullException(nameof(rootParentId));
 
-            return result;
+            return items.ToTree(
+                item => item.GetId(),
+                item => item.GetPid(),
+                (item, children) => { item.SetChildren(children.ToList()); return item; },
+                rootParentId);
         }
     }
-
-  
 }

@@ -9,21 +9,6 @@ using System.Threading.Tasks;
 
 namespace NetCorePal.D3Shop.Admin.Shared.Responses.MenuResponses
 {
-
-    /// <summary>
-    /// 为MenuId类型提供的便捷类
-    /// </summary>
-    /// <typeparam name="T">节点类型</typeparam>
-    public class MenuTreeBuildUtil<T> : TreeBuildUtil<T, MenuId> where T : ITreeNode<MenuId>
-    {
-        /// <summary>
-        /// 构造函数，默认根节点父ID为0
-        /// </summary>
-        public MenuTreeBuildUtil() : base(new MenuId(0))
-        {
-        }
-    }
-
     /// <summary>
     /// 菜单树
     /// </summary>
@@ -83,19 +68,12 @@ namespace NetCorePal.D3Shop.Admin.Shared.Responses.MenuResponses
 
 
 
-        public MenuId GetId()
-        {
-            return Id;
-        }
 
-        public MenuId GetPid()
-        {
-            return Pid;
-        }
-
-        public void SetChildren(IList children)
-        {
-            Children = (List<MenuTreeNodeResponse>)children;
-        }
+        public MenuId GetId() => Id;
+        public MenuId GetPid() => Pid;
+        
+        public void SetChildren(IList children) => Children = children.Cast<MenuTreeNodeResponse>().ToList();
     }
+
+
 }

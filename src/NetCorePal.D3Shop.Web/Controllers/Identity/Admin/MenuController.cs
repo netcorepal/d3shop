@@ -109,7 +109,7 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin
                 throw new KnownException("菜单不存在", -1);
             }
 
-            return new ResponseData<MenuTreeNodeResponse>(MapToDto(menu), true, "success", 0, null);
+            return menu.AsResponseData();
         }
 
         /// <summary>
@@ -198,53 +198,7 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin
         }
 
 
-        /// <summary>
-        /// 将Menu实体转换为MenuDto
-        /// </summary>
-        /// <param name="menu">菜单实体</param>
-        /// <returns>菜单DTO</returns>
-        private static MenuTreeNodeResponse MapToDto(Menu menu)
-        {
-            var response = new MenuTreeNodeResponse
-            {
-                Id = menu.Id,
-                Pid = menu.ParentId,
-                Name = menu.Name,
-                Path = menu.Path,
-                Component = menu.Component,
-                Icon = menu.Icon,
-                Status = menu.Status,
-                Redirect = menu.Redirect,
-                Type = menu.Type.ToString().ToLower(),
-                AuthCode = menu.AuthCode,
-                Meta = new MenuMeta
-                {
-                    Title = menu.Name,
-                    Icon = menu.Icon,
-                    Order = menu.Order,
-                    HideInMenu = !menu.IsVisible,
-                    HideInTab = !menu.IsEnabled,
-                    KeepAlive = true,
-                    AffixTab = false,
-                    HideInBreadcrumb = false,
-                    HideChildrenInMenu = false,
-                    OpenInNewWindow = false,
-                    NoBasicLayout = false,
-                    MaxNumOfOpenTab = 10
-                }
-            };
-
-            //// 递归转换子菜单，避免循环引用
-            //if (menu.Children != null && menu.Children.Any())
-            //{
-            //    response.Children = menu.Children.ToList();
-            //}
-            //else
-            //{
-            //    response.Children = new List<MenuTreeNodeResponse>();
-            //}
-            return response;
-        }
+       
 
         /// <summary>
         /// 设置菜单可见性

@@ -15,5 +15,4 @@ public class UpdateDepartmentInfoRequest
     public DeptId ParentId { get; set; } = new DeptId(0);
 
     public int Status { get; set; }
-    public IEnumerable<CreateDepartmentUserInfoDto> Users { get; set; } = [];
 }

@@ -16,6 +16,6 @@ public class CreateDepartmentRequest
 
     public string Remark { get; set; } = string.Empty;
 
-    public IEnumerable<CreateDepartmentUserInfoDto> Users { get; set; } = [];
+   
 }
 

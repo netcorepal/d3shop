@@ -1,4 +1,5 @@
 using FluentValidation;
+using NetCorePal.D3Shop.Admin.Shared.Requests.MenuRequests;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate;
 using NetCorePal.D3Shop.Infrastructure.Repositories.Identity.Admin;
 using NetCorePal.D3Shop.Web.Application.Queries;
@@ -19,7 +20,7 @@ public record UpdateMenuCommand(
     int Order,
     string Icon,
     int Status,
-    MenuMeta Meta)
+    UpdateMenuMetaRequest Meta)
     : ICommand;
 
 public class UpdateMenuCommandValidator : AbstractValidator<UpdateMenuCommand>
@@ -60,7 +61,30 @@ public class UpdateMenuCommandHandler(IMenuRepository menuRepository)
             request.Order,
             request.Icon,//request.Icon,待优化
             request.Status,
-            request.Meta
+            new MenuMeta
+            {
+                ActiveIcon = request.Meta.ActiveIcon,
+                ActivePath = request.Meta.ActivePath,
+                AffixTab = request.Meta.AffixTab,
+                AffixTabOrder = request.Meta.AffixTabOrder,
+                Badge = request.Meta.Badge,
+                BadgeType = request.Meta.BadgeType,
+                BadgeVariants = request.Meta.BadgeVariants,
+                HideChildrenInMenu = request.Meta.HideChildrenInMenu,
+                HideInBreadcrumb = request.Meta.HideInBreadcrumb,
+                HideInMenu = request.Meta.HideInMenu,
+                HideInTab = request.Meta.HideInTab,
+                Icon = request.Meta.Icon,
+                IframeSrc = request.Meta.IframeSrc,
+                KeepAlive = request.Meta.KeepAlive,
+                Link = request.Meta.Link,
+                MaxNumOfOpenTab = request.Meta.MaxNumOfOpenTab,
+                NoBasicLayout = request.Meta.NoBasicLayout,
+                OpenInNewWindow = request.Meta.OpenInNewWindow,
+                Order = request.Meta.Order,
+                Query = request.Meta.Query,
+                Title = request.Meta.Title
+            }
         );
     }
 }

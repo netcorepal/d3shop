@@ -55,6 +55,6 @@ namespace NetCorePal.D3Shop.Admin.Shared.Requests.MenuRequests
         public int Status { get; set; }
 
 
-        public MenuMeta Meta { get; set; } = new MenuMeta();
+        public UpdateMenuMetaRequest Meta { get; set; } = new UpdateMenuMetaRequest();
     }
 }

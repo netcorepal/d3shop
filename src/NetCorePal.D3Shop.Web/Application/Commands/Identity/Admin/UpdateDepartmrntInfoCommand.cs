@@ -13,8 +13,7 @@ public record UpdateDepartmrntInfoCommand(
     string Remark,
     string Code,
     DeptId ParentId,
-    int Status,
-    IEnumerable<CreateDepartmentUserInfoDto> Users) : ICommand;
+    int Status) : ICommand;
 
 public class UpdateDepartmentCommandValidator : AbstractValidator<UpdateDepartmrntInfoCommand>
 {
@@ -34,13 +33,10 @@ public class UpdateDepartmentInfoCommandHandler(DepartmentRepository departmentR
         var department = await departmentRepository.GetAsync(request.DepartmentId, cancellationToken) ??
                          throw new KnownException($"未找到部门，DepartId = {request.DepartmentId}");
 
-        List<DepartmentUser> departmentUsers = [];
-        foreach (var user in request.Users) departmentUsers.Add(new DepartmentUser(user.UserName, user.UserId));
         department.UpdateDepartInfo(
                 request.Name,
                 request.Code,
                 request.Remark,
-                request.Status,
-                Array.Empty<DepartmentUser>());
+                request.Status);
     }
 }

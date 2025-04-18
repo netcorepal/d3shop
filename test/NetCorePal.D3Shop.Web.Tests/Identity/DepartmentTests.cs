@@ -38,12 +38,8 @@ namespace NetCorePal.D3Shop.Web.Tests.Identity
             {
                 Name = "TestDepartment",
                 Remark = "test decription",
-                Pid = new DeptId(0),
-                Users = new List<CreateDepartmentUserInfoDto>
-                {
-                    new CreateDepartmentUserInfoDto(new AdminUserId(1),"User1"), // 创建 User1
-                    new CreateDepartmentUserInfoDto(new AdminUserId(2), "User2" )  // 创建 User2
-                 },
+                Pid = new DeptId(0)
+                
 
             };
 
@@ -99,12 +95,7 @@ namespace NetCorePal.D3Shop.Web.Tests.Identity
             var request = new UpdateDepartmentInfoRequest
             {
                 Name = "Updated Department",
-                Remark = "Updated Description",
-                Users = new List<CreateDepartmentUserInfoDto>
-                {
-                         new CreateDepartmentUserInfoDto( new AdminUserId(1),"User3"), // 创建 User1
-                         new CreateDepartmentUserInfoDto(new AdminUserId(2), "User4" )  // 创建 User2
-                 }
+                Remark = "Updated Description"
             };
 
             // Act

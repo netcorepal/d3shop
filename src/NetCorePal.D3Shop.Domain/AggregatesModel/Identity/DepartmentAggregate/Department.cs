@@ -38,10 +38,10 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
         /// </summary>
         public DeptId ParentId { get; private set; } = new DeptId(0);
 
-        public DateTime CreatedAt { get; init; }
+        public DateTimeOffset CreatedAt { get; init; }
 
         public bool IsDeleted { get; private set; }
-        public DateTime? DeletedAt { get; private set; }
+        public DateTimeOffset? DeletedAt { get; private set; }
 
         public virtual ICollection<DepartmentUser> Users { get; } = [];
 
@@ -49,17 +49,13 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
         {
         }
 
-        public Department(string name, string description, DeptId parentId, IEnumerable<DepartmentUser> deptUsers,int status)
+        public Department(string name, string description, DeptId parentId, int status)
         {
             Name = name;
             Description = description;
             ParentId = parentId;
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTimeOffset.Now;
             Status = status;
-            foreach (var user in deptUsers)
-            {
-                Users.Add(user);
-            }
         }
 
         /// <summary>
@@ -96,34 +92,18 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
         /// <param name="code">部门编码</param>
         /// <param name="description">部门描述</param>
         /// <param name="status">是否启用</param>
-        /// <param name="deptUsers">部门用户</param>
         public void UpdateDepartInfo(
             string name,
             string code,
             string description,
-            int status,
-            IEnumerable<DepartmentUser> deptUsers)
+            int status)
         {
             Name = name;
             Code = code;
             Description = description;
             Status = status;
 
-            var currentUserMap = Users.ToDictionary(r => r.UserId);
-            var targetUserMap = deptUsers.ToDictionary(r => r.UserId);
 
-            var userIdsToRemove = currentUserMap.Keys.Except(targetUserMap.Keys);
-            foreach (var userId in userIdsToRemove)
-            {
-                Users.Remove(currentUserMap[userId]);
-            }
-
-            var userIdsToAdd = targetUserMap.Keys.Except(currentUserMap.Keys);
-            foreach (var userId in userIdsToAdd)
-            {
-                var targetUser = targetUserMap[userId];
-                Users.Add(targetUser);
-            }
 
             AddDomainEvent(new DepartmentInfoChangedDomainEvent(this));
         }
@@ -156,7 +136,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
         {
             if (IsDeleted) throw new KnownException("部门已经被删除！");
             IsDeleted = true;
-            DeletedAt = DateTime.Now;
+            DeletedAt = DateTimeOffset.Now;
         }
     }
 }

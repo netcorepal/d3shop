@@ -35,7 +35,6 @@ public class DepartmentController(
             new CreateDepartmentCommand(
                 request.Name,
                 request.Remark,
-                request.Users,
                 request.Pid,
                 request.Status
                 ),
@@ -65,8 +64,7 @@ public class DepartmentController(
                  request.Remark,
                  request.Code,
                  request.ParentId,
-                 request.Status,
-                 request.Users
+                 request.Status
                 ),
                  CancellationToken);
         return new ResponseData();
