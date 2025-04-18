@@ -3,13 +3,13 @@ using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
 using NetCorePal.D3Shop.Infrastructure.Repositories.Identity.Admin;
 using NetCorePal.Extensions.Primitives;
 
-namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.VueAdmin
+namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin
 {
-    public record VueUpdateDepartmentStatusCommand(
+    public record UpdateDepartmentStatusCommand(
         DeptId DepartmentId,
         int Status) : ICommand;
 
-    public class VueUpdateDepartmentStatusCommandValidator : AbstractValidator<VueUpdateDepartmentStatusCommand>
+    public class VueUpdateDepartmentStatusCommandValidator : AbstractValidator<UpdateDepartmentStatusCommand>
     {
         public VueUpdateDepartmentStatusCommandValidator()
         {
@@ -18,7 +18,7 @@ namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.VueAdmin
         }
     }
 
-    public class VueUpdateDepartmentStatusCommandHandler : ICommandHandler<VueUpdateDepartmentStatusCommand>
+    public class VueUpdateDepartmentStatusCommandHandler : ICommandHandler<UpdateDepartmentStatusCommand>
     {
         private readonly IDepartmentRepository _departmentRepository;
 
@@ -27,7 +27,7 @@ namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.VueAdmin
             _departmentRepository = departmentRepository;
         }
 
-        public async Task Handle(VueUpdateDepartmentStatusCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateDepartmentStatusCommand request, CancellationToken cancellationToken)
         {
             var department = await _departmentRepository.GetAsync(request.DepartmentId, cancellationToken) ??
                              throw new KnownException($"未找到部门，DepartmentId = {request.DepartmentId}");

@@ -7,7 +7,7 @@ using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
 using NetCorePal.Extensions.Primitives;
 using NetCorePal.Extensions.Repository;
 
-namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.VueAdmin;
+namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin.Menus;
 
 public record UpdateMenuCommand(
     MenuId Id,
@@ -60,7 +60,7 @@ public class UpdateMenuCommandHandler(IMenuRepository menuRepository)
             request.Component,
             request.Redirect,
             request.Order,
-            request.Icon,//request.Icon,待优化
+            request.Meta.Icon,
             request.Status,
             new MenuMeta
             {

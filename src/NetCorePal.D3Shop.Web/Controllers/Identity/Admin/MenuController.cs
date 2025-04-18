@@ -10,6 +10,7 @@ using NetCorePal.D3Shop.Admin.Shared.Permission;
 using NetCorePal.D3Shop.Admin.Shared.Requests.MenuRequests;
 using NetCorePal.D3Shop.Admin.Shared.Responses.MenuResponses;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
+using NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin.Menus;
 
 namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin
 {
@@ -166,7 +167,7 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin
                     request.Component,
                     request.Redirect,
                     request.Order,
-                    request.Icon,
+                    request.Meta.Icon,
                     request.Status,
                     request.Meta
                 ), CancellationToken);
@@ -208,12 +209,12 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin
         /// <param name="request">可见性设置请求</param>
         /// <returns>设置结果</returns>
         [HttpPut("{id}/visibility")]
-        public async Task<ResponseData<object>> SetMenuVisibility(long id, [FromBody] SetVisibilityRequest request)
+        public async Task<ResponseData> SetMenuVisibility(long id, [FromBody] SetVisibilityRequest request)
         {
             try
             {
                 await _mediator.Send(new SetMenuVisibilityCommand(new MenuId(id), request.IsVisible), CancellationToken);
-                return new ResponseData<object>(new object(), true, "Menu visibility updated successfully", 0, null);
+                return new ResponseData();
             }
             catch (InvalidOperationException ex)
             {
@@ -228,12 +229,12 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin
         /// <param name="request">启用状态设置请求</param>
         /// <returns>设置结果</returns>
         [HttpPut("{id}/enabled")]
-        public async Task<ResponseData<object>> SetMenuEnabled(long id, [FromBody] SetEnabledRequest request)
+        public async Task<ResponseData> SetMenuEnabled(long id, [FromBody] SetEnabledRequest request)
         {
             try
             {
                 await _mediator.Send(new SetMenuEnabledCommand(new MenuId(id), request.IsEnabled), CancellationToken);
-                return new ResponseData<object>(new object(), true, "Menu enabled status updated successfully", 0, null);
+                return new ResponseData();
             }
             catch (InvalidOperationException ex)
             {

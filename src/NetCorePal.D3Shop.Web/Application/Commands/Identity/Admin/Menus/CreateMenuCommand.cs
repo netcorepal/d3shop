@@ -9,7 +9,7 @@ using NetCorePal.Extensions.Primitives;
 using NetCorePal.Extensions.Repository;
 using System.ComponentModel.Design;
 
-namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.VueAdmin;
+namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin.Menus;
 
 public record CreateMenuCommand(
     string Name,
@@ -30,11 +30,11 @@ public class CreateMenuCommandValidator : AbstractValidator<CreateMenuCommand>
     public CreateMenuCommandValidator(MenuQuery menuQuery)
     {
         RuleFor(u => u.Name).NotEmpty().WithMessage("菜单名称不能为空");
-        RuleFor(u => u.Path).NotEmpty().WithMessage("菜单路径不能为空");
+        // RuleFor(u => u.Path).NotEmpty().WithMessage("菜单路径不能为空");
         RuleFor(u => u.Name).MustAsync(async (n, ct) => !await menuQuery.ExistsByNameAsync(n, ct))
             .WithMessage(u => $"该菜单名称已存在，Name={u.Name}");
-        RuleFor(u => u.Path).MustAsync(async (p, ct) => !await menuQuery.ExistsByPathAsync(p, ct))
-            .WithMessage(u => $"该菜单路径已存在，Path={u.Path}");
+        //RuleFor(u => u.Path).MustAsync(async (p, ct) => !await menuQuery.ExistsByPathAsync(p, ct))
+        //    .WithMessage(u => $"该菜单路径已存在，Path={u.Path}");
     }
 }
 
@@ -54,7 +54,8 @@ public class CreateMenuCommandHandler(IMenuRepository menuRepository)
             request.Order,
             request.Icon,
             request.Status,
-            new MenuMeta { 
+            new MenuMeta
+            {
                 ActiveIcon = request.Meta.ActiveIcon,
                 ActivePath = request.Meta.ActivePath,
                 AffixTab = request.Meta.AffixTab,
