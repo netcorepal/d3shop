@@ -63,6 +63,12 @@ public class AdminUserAccountController(
         return claims;
     }
 
+    /// <summary>
+    /// vue-admin登录
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="KnownException"></exception>
     [HttpPost("auth/login")]
     public async Task<ResponseData<AdminUserLoginResponse>> Login([FromBody] AdminUserLoginRequest request)
     {
@@ -87,6 +93,32 @@ public class AdminUserAccountController(
                 new Claim(ClaimTypes.Name, authInfo.Name)
         ]);
         return AdminUserLoginResponse.Success(token, refreshToken, authInfo.Id, authInfo.Name, authInfo.Name, roles, redirectUri).AsResponseData();
+    }
+
+
+    /// <summary>
+    /// vue-admin退出登录
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("/api/auth/logout")]
+    public ActionResult<object> Logout()
+    {
+        try
+        {
+            // 清除Refresh Token Cookie
+            Response.Cookies.Delete("refreshToken", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
+            });
+
+            return Ok(new { code = 0, data = new { }, error = "", message = "ok" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { code = -1, message = "服务器内部错误", error = ex.Message });
+        }
     }
 
 }

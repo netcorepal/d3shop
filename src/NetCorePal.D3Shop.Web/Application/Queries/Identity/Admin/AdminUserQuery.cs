@@ -61,18 +61,18 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCa
             .WhereIf(!queryRequest.Name.IsNullOrWhiteSpace(), au => au.Name.Contains(queryRequest.Name!))
             .WhereIf(!queryRequest.Phone.IsNullOrWhiteSpace(), au => au.Phone.Contains(queryRequest.Phone!))
             .OrderBy(au => au.Id)
-            .Select(au => new AdminUserResponse(au.Id, au.Name, au.Phone, au.Roles.Select(r => r.RoleName)))
+            .Select(au => new AdminUserResponse(au.Id, au.Name, au.Phone, au.Roles.Select(r => r.RoleName),au.RealName))
             .ToPagedDataAsync(queryRequest, cancellationToken);
         return adminUsers;
     }
 
 
-    public async Task<VueAdminUserResponse?> GetAdminUserByIdAsync(AdminUserId id,
+    public async Task<AdminUserResponse?> GetAdminUserByIdAsync(AdminUserId id,
        CancellationToken cancellationToken)
     {
         var adminUsers = await AdminUserSet.AsNoTracking()
             .Where(x => x.Id == id)
-            .Select(au => new VueAdminUserResponse(au.Id, au.Name, au.Name, au.Roles.Select(r => r.RoleName), "/dashboard"))
+            .Select(au => new AdminUserResponse(au.Id, au.Name, au.Name, au.Roles.Select(r => r.RoleName), au.RealName))
             .FirstOrDefaultAsync(cancellationToken);
         return adminUsers;
     }
