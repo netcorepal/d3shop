@@ -9,6 +9,7 @@ using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Admin.Shared.Permission;
 using NetCorePal.D3Shop.Admin.Shared.Requests.MenuRequests;
 using NetCorePal.D3Shop.Admin.Shared.Responses.MenuResponses;
+using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
 
 namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin
 {

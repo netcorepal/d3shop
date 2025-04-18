@@ -34,39 +34,10 @@ namespace NetCorePal.D3Shop.Domain.Tests.Identity
             Assert.Equal(newDescription, _department.Description);
         }
 
-        // 测试：添加新用户
-        [Fact]
-        public void UpdateDepartInfo_ShouldAddNewUsers()
-        {
-            // Act：调用 UpdateDepartInfo 方法更新用户列表
-            _department.UpdateDepartInfo(_department.Name, "001", _department.Description, 0);
-                
-            // Assert：验证新用户是否已成功添加
-            Assert.Contains(_department.Users, u => u.UserId.Equals(new AdminUserId(3)) && u.UserName == "User3");
-        }
-
-        // 测试：移除已不存在的用户
-        [Fact]
-        public void UpdateDepartInfo_ShouldRemoveAbsentUsers()
-        {
    
-            // Act：调用 UpdateDepartInfo 方法更新用户列表
-            _department.UpdateDepartInfo(_department.Name,"001", _department.Description,0);
 
-            // Assert：验证 User1 是否被移除
-            Assert.DoesNotContain(_department.Users, u => u.UserId.Equals(new AdminUserId(1)) && u.UserName == "User1");
-        }
+     
 
-        // 测试：保留没有改变的用户
-        [Fact]
-        public void UpdateDepartInfo_ShouldRetainUnchangedUsers()
-        {
-            // Act：调用 UpdateDepartInfo 方法更新用户列表
-            _department.UpdateDepartInfo(_department.Name,"001", _department.Description,0);
-
-            // Assert：验证用户列表中依然只有 2 个用户，没有丢失或重复
-            Assert.Equal(2, _department.Users.Count); // 确保用户数量没有变化
-        }
     }
 
 

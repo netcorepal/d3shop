@@ -1,16 +1,10 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NetCorePal.D3Shop.Admin.Shared.Responses.MenuResponses;
 using NetCorePal.D3Shop.Admin.Shared.Utils;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate;
-using NetCorePal.D3Shop.Infrastructure;
 using NetCorePal.Extensions.Primitives;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace NetCorePal.D3Shop.Web.Application.Queries
+namespace NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin
 {
     /// <summary>
     /// 菜单查询服务
@@ -97,11 +91,7 @@ namespace NetCorePal.D3Shop.Web.Application.Queries
                    }
                })
                .ToListAsync(cancellationToken);
-
-            //var menuTreeBuilder = new MenuTreeBuildUtil<MenuTreeNodeResponse>();
-            //return menuTreeBuilder.Build(menuTreeNode);
-
-          return  menuTreeNode.ToTree(new MenuId(0));
+            return menuTreeNode.ToTree(new MenuId(0));
         }
 
         /// <summary>

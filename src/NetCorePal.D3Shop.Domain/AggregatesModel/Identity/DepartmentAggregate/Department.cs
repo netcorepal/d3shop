@@ -2,6 +2,7 @@
 using NetCorePal.Extensions.Domain;
 using NetCorePal.Extensions.Primitives;
 using NetCorePal.D3Shop.Domain.DomainEvents.Identity.Admin;
+using System.Runtime.CompilerServices;
 
 namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
 {
@@ -24,6 +25,11 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
         public string Code { get; private set; } = string.Empty;
 
         /// <summary>
+        /// 部门内部人数
+        /// </summary>
+        public int UserCount { get; private set; }
+
+        /// <summary>
         /// 是否启用
         /// </summary>
         public int Status { get; private set; }
@@ -43,7 +49,6 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
         public bool IsDeleted { get; private set; }
         public DateTimeOffset? DeletedAt { get; private set; }
 
-        public virtual ICollection<DepartmentUser> Users { get; } = [];
 
         protected Department()
         {
@@ -103,9 +108,16 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
             Description = description;
             Status = status;
 
-
-
             AddDomainEvent(new DepartmentInfoChangedDomainEvent(this));
+        }
+
+        /// <summary>
+        ///  设置部门内部人数
+        /// </summary>
+        /// <param name="userCount"></param>
+        public void SetUserCount(int userCount)
+        {
+            UserCount = userCount;
         }
 
         /// <summary>
@@ -118,16 +130,9 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
             AddDomainEvent(new DepartmentInfoChangedDomainEvent(this));
         }
 
-        /// <summary>
-        /// 更新部门用户名称
-        /// </summary>
-        /// <param name="userId">用户ID</param>
-        /// <param name="userName">用户名称</param>
-        public void UpdateDepartmentUserName(AdminUserId userId, string userName)
-        {
-            var savedUser = Users.FirstOrDefault(r => r.UserId == userId);
-            savedUser?.UpdateUserInfo(userName);
-        }
+        
+
+     
 
         /// <summary>
         /// 删除部门

@@ -4,6 +4,7 @@ using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate;
 using NetCorePal.D3Shop.Infrastructure.Repositories;
 using NetCorePal.D3Shop.Infrastructure.Repositories.Identity.Admin;
 using NetCorePal.D3Shop.Web.Application.Queries;
+using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
 using NetCorePal.Extensions.Primitives;
 using NetCorePal.Extensions.Repository;
 using System.ComponentModel.Design;

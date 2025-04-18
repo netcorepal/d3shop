@@ -79,6 +79,36 @@ public class DepartmentController(
         return new ResponseData();
     }
 
+    /// <summary>
+    /// 添加用户到部门
+    /// </summary>
+    [HttpPost]
+    [AdminPermission(PermissionCodes.DepartmentEdit)]
+    public async Task<ResponseData> AddUserToDepartment([FromBody] AddUserDeptRequest request)
+    {
+        await mediator.Send(new AddUserDeptCommand(
+                request.AdminUserId,
+                request.DeptId,
+                request.DeptName
+            ),
+            CancellationToken);
+        return new ResponseData();
+    }
+
+    /// <summary>
+    /// 从部门中移除用户
+    /// </summary>
+    [HttpPost]
+    [AdminPermission(PermissionCodes.DepartmentEdit)]
+    public async Task<ResponseData> RemoveUserFromDepartment([FromBody] RemoveUserDeptRequest request)
+    {
+        await mediator.Send(new RemoveUserDeptCommand(
+                request.AdminUserId,
+                request.DeptId
+            ),
+            CancellationToken);
+        return new ResponseData();
+    }
 
     //[HttpPut("{id}/status")]
     //public async Task<ResponseData<DeptId>> UpdateDepartmentStatus(DeptId id, [FromBody] VueUpdateDepartmentStatusRequest request)
