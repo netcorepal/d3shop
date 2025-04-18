@@ -5,6 +5,7 @@ using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserLoginHistoryAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.OrderAggregate;
 using NetCorePal.Extensions.Repository.EntityFrameworkCore;
@@ -35,8 +36,11 @@ public partial class ApplicationDbContext(DbContextOptions options, IMediator me
     #region Identity
 
     public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
+
+    public DbSet<UserDept> UserDepts => Set<UserDept>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<Department> Departments => Set<Department>();
+    public DbSet<Menu> Menus => Set<Menu>();
 
     public DbSet<ClientUser> ClientUsers => Set<ClientUser>();
     public DbSet<ClientUserLoginHistory> ClientUserLoginHistories => Set<ClientUserLoginHistory>();

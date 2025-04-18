@@ -32,6 +32,16 @@ public static class PermissionCodes
 
     #endregion
 
+    #region Menu
+    public const string MenuManagement = nameof(MenuManagement);
+    public const string MenuCreate = nameof(MenuCreate);
+    public const string MenuEdit = nameof(MenuEdit);
+    public const string MenuUpdatePermissions = nameof(MenuUpdatePermissions);
+    public const string MenuDelete = nameof(MenuDelete);
+    public const string MenuView = nameof(MenuView);
+
+    #endregion
+
     #region DepartmentManagement
     public const string DepartmentManagement = nameof(DepartmentManagement);
     public const string DepartmentCreate = nameof(DepartmentCreate);
