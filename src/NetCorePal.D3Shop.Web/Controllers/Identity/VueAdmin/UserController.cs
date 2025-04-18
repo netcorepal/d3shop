@@ -10,7 +10,7 @@ namespace PlaygroundApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [VueAuthorize(PermissionCodes.AdminUserManagement)]
+    [AdminPermission(PermissionCodes.AdminUserManagement)]
     public class UserController(IMediator mediator, AdminUserQuery adminUserQuery, RoleQuery roleQuery, ICurrentVueAdminUser currentUser) : ControllerBase
     {
         private CancellationToken CancellationToken => HttpContext?.RequestAborted ?? default;
@@ -25,7 +25,7 @@ namespace PlaygroundApi.Controllers
 
 
         [HttpGet("/api/auth/codes")]
-        [VueAuthorize(PermissionCodes.AdminUserCreate)]
+        [AdminPermission(PermissionCodes.AdminUserCreate)]
         public async Task<ActionResult<object>> GetAccessCodes()
         {
             try

@@ -17,7 +17,7 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin
     /// </summary>
     [ApiController]
     [Route("api/system/[controller]")]
-    [VueAuthorize(PermissionCodes.MenuManagement)]
+    [AdminPermission(PermissionCodes.MenuManagement)]
     public class MenuController(IMediator _mediator, MenuQuery _menuQuery) : ControllerBase
     {
 

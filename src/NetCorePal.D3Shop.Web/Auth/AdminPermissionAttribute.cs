@@ -1,17 +1,24 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using NetCorePal.D3Shop.Admin.Shared.Authorization;
 
 namespace NetCorePal.D3Shop.Web.Auth
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-    public class AdminPermissionAttribute(params string[] permissionCodes)
-        : AuthorizeAttribute, IAuthorizationRequirementData
+    public class AdminPermissionAttribute : AuthorizeAttribute, IAuthorizationRequirementData
     {
-        private IReadOnlyList<string> PermissionCodes { get; } = permissionCodes;
+        private readonly string[] _permissionCodes;
+
+        public AdminPermissionAttribute(params string[] permissionCodes)
+        {
+            _permissionCodes = permissionCodes;
+            // 同时支持 Cookie 和 JWT 认证
+            AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme},Cookies";
+        }
 
         public IEnumerable<IAuthorizationRequirement> GetRequirements()
         {
-            return PermissionCodes.Select(code => new PermissionRequirement(code));
+            return _permissionCodes.Select(code => new PermissionRequirement(code));
         }
     }
 }

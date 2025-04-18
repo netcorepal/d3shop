@@ -15,7 +15,7 @@ namespace PlaygroundApi.Controllers
 {
     [ApiController]
     [Route("api/system/[controller]")]
-    [VueAuthorize(PermissionCodes.RoleManagement)]
+    [AdminPermission(PermissionCodes.RoleManagement)]
     public class RoleController(IMediator mediator, RoleQuery roleQuery, MenuQuery menuQuery) : ControllerBase
     {
 
@@ -70,7 +70,7 @@ namespace PlaygroundApi.Controllers
         }
 
         [HttpGet("list")]
-        [VueAuthorize(PermissionCodes.RoleView)]
+        [AdminPermission(PermissionCodes.RoleView)]
         public async Task<ResponseData<PagedData<VueRoleResponse>>> GetAllRoles([FromQuery] VueRoleQueryRequest request)
         {
             var roles = await roleQuery.GetVueAllRolesAsync(request, CancellationToken);

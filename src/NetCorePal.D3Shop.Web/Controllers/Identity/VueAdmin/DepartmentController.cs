@@ -19,13 +19,13 @@ namespace PlaygroundApi.Controllers
 {
     [Route("api/system/dept")]
     [ApiController]
-    [VueAuthorize(PermissionCodes.DepartmentManagement)]
+    [AdminPermission(PermissionCodes.DepartmentManagement)]
     public class DepartmentController(IMediator mediator, DepartmentQuery departmentQuery) : ControllerBase
     {
         private CancellationToken CancellationToken => HttpContext?.RequestAborted ?? default;
 
         [HttpPost]
-        [VueAuthorize(PermissionCodes.DepartmentCreate)]
+        [AdminPermission(PermissionCodes.DepartmentCreate)]
         public async Task<ResponseData<DeptId>> CreateDepartment([FromBody] CreateDepartmentRequest request)
         {
             var departmentId = await mediator.Send(new CreateDepartmentCommand(
