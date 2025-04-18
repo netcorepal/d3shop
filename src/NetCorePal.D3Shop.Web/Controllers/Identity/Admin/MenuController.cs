@@ -1,16 +1,16 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate;
 using NetCorePal.D3Shop.Web.Application.Queries;
-using NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin.Requests;
 using NetCorePal.Extensions.Dto;
-using NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin.Responses;
 using NetCorePal.Extensions.Primitives;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity.VueAdmin;
 using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Admin.Shared.Permission;
+using NetCorePal.D3Shop.Admin.Shared.Requests.MenuRequests;
+using NetCorePal.D3Shop.Admin.Shared.Responses.MenuResponses;
 
-namespace NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin
+namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin
 {
     /// <summary>
     /// 菜单
@@ -89,12 +89,10 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin
         /// </summary>
         /// <returns>菜单列表</returns>
         [HttpGet("list")]
-        public async Task<ResponseData<List<MenuResponse>>> GetMenuList()
+        public async Task<ResponseData<List<MenuTreeNodeResponse>>> GetMenuList()
         {
-            var menus = await _menuQuery.GetAllMenusAsync(CancellationToken);
-            // 只返回顶级菜单（没有父菜单的菜单）
-            var topLevelMenus = menus.Where(m => m.ParentId == null).Select(m => MapToDto(m)).ToList();
-            return topLevelMenus.AsResponseData();
+            var menuTreeNode = await _menuQuery.GetAllMenusAsync(CancellationToken);
+            return menuTreeNode.AsResponseData();
         }
 
         /// <summary>
@@ -103,7 +101,7 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin
         /// <param name="id">菜单ID</param>
         /// <returns>菜单详情</returns>
         [HttpGet("{id}")]
-        public async Task<ResponseData<MenuResponse>> GetMenu(MenuId id)
+        public async Task<ResponseData<MenuTreeNodeResponse>> GetMenu(MenuId id)
         {
             var menu = await _menuQuery.GetMenuByIdAsync(id, CancellationToken);
             if (menu is null)
@@ -111,7 +109,7 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin
                 throw new KnownException("菜单不存在", -1);
             }
 
-            return new ResponseData<MenuResponse>(MapToDto(menu), true, "success", 0, null);
+            return new ResponseData<MenuTreeNodeResponse>(MapToDto(menu), true, "success", 0, null);
         }
 
         /// <summary>
@@ -205,9 +203,9 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin
         /// </summary>
         /// <param name="menu">菜单实体</param>
         /// <returns>菜单DTO</returns>
-        private static MenuResponse MapToDto(Menu menu)
+        private static MenuTreeNodeResponse MapToDto(Menu menu)
         {
-            var response = new MenuResponse
+            var response = new MenuTreeNodeResponse
             {
                 Id = menu.Id,
                 Pid = menu.ParentId,
@@ -236,15 +234,15 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin
                 }
             };
 
-            // 递归转换子菜单，避免循环引用
-            if (menu.Children != null && menu.Children.Any())
-            {
-                response.Children = menu.Children.Select(child => MapToDto(child)).ToList();
-            }
-            else
-            {
-                response.Children = new List<MenuResponse>();
-            }
+            //// 递归转换子菜单，避免循环引用
+            //if (menu.Children != null && menu.Children.Any())
+            //{
+            //    response.Children = menu.Children.ToList();
+            //}
+            //else
+            //{
+            //    response.Children = new List<MenuTreeNodeResponse>();
+            //}
             return response;
         }
 
@@ -290,15 +288,4 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin
 
 
     }
-
-
-
-
-
-
-
-
-
-
 }
-

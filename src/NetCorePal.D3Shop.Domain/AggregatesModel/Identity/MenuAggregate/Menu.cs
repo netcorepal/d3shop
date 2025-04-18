@@ -35,11 +35,9 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate
         /// <summary>
         /// 父菜单ID
         /// </summary>
-        public MenuId? ParentId { get; private set; }
-        /// <summary>
-        /// 父菜单
-        /// </summary>
-        public Menu? Parent { get; private set; }
+        public MenuId ParentId { get; private set; } = new MenuId(0);
+       
+
         /// <summary>
         /// 菜单类型
         /// </summary>
@@ -76,11 +74,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate
         /// 菜单元数据
         /// </summary>
         public MenuMeta? Meta { get; private set; }
-        /// <summary>
-        /// 子菜单列表
-        /// </summary>
-        public IReadOnlyCollection<Menu> Children => _children.AsReadOnly();
-        private readonly List<Menu> _children = new();
+
 
         /// <summary>
         /// 初始化菜单聚合根
@@ -95,7 +89,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate
         /// <param name="order">排序顺序</param>
         /// <param name="icon">菜单图标</param>
         /// <param name="meta">菜单元数据</param>
-        public Menu(string name, string path, MenuType type, MenuId? parentId, string authCode, string component, string redirect, int order, string icon, int status, MenuMeta meta)
+        public Menu(string name, string path, MenuType type, MenuId parentId, string authCode, string component, string redirect, int order, string icon, int status, MenuMeta meta)
         {
             Name = name;
             Path = path;
@@ -125,7 +119,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate
         /// <param name="order">排序顺序</param>
         /// <param name="icon">菜单图标</param>
         /// <param name="meta">菜单元数据</param>
-        public void Update(string name, string path, MenuType type, MenuId? parentId, string authCode, string component, string redirect, int order, string icon, int status, MenuMeta meta)
+        public void Update(string name, string path, MenuType type, MenuId parentId, string authCode, string component, string redirect, int order, string icon, int status, MenuMeta meta)
         {
             Name = name;
             Path = path;
@@ -158,31 +152,9 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate
             IsEnabled = isEnabled;
         }
 
-        /// <summary>
-        /// 添加子菜单
-        /// </summary>
-        /// <param name="child">子菜单</param>
-        public void AddChild(Menu child)
-        {
-            if (child.ParentId != Id)
-            {
-                throw new InvalidOperationException("Child menu's parent ID does not match this menu's ID");
-            }
-            _children.Add(child);
-        }
 
-        /// <summary>
-        /// 移除子菜单
-        /// </summary>
-        /// <param name="childId">子菜单ID</param>
-        public void RemoveChild(MenuId childId)
-        {
-            var child = _children.FirstOrDefault(c => c.Id == childId);
-            if (child != null)
-            {
-                _children.Remove(child);
-            }
-        }
+
+
     }
 
     /// <summary>

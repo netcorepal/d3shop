@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using NetCorePal.D3Shop.Admin.Shared.Responses.MenuResponses;
+using NetCorePal.D3Shop.Admin.Shared.Utils;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate;
 using NetCorePal.D3Shop.Infrastructure;
 using NetCorePal.Extensions.Primitives;
@@ -26,7 +28,6 @@ namespace NetCorePal.D3Shop.Web.Application.Queries
         public async Task<Menu?> GetMenuByIdAsync(MenuId id, CancellationToken cancellationToken)
         {
             return await MenuSet
-                .Include(m => m.Children)
                 .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
         }
 
@@ -35,13 +36,47 @@ namespace NetCorePal.D3Shop.Web.Application.Queries
         /// </summary>
         /// <param name="cancellationToken">取消令牌</param>
         /// <returns>菜单列表</returns>
-        public async Task<List<Menu>> GetAllMenusAsync(CancellationToken cancellationToken)
+        public async Task<List<MenuTreeNodeResponse>> GetAllMenusAsync(CancellationToken cancellationToken)
         {
-            return await MenuSet
-            .IgnoreAutoIncludes()
-            .Include(m => m.Children)
-            .OrderBy(m => m.Order)
-            .ToListAsync(cancellationToken);
+            //return await MenuSet
+            //.IgnoreAutoIncludes()
+            //.OrderBy(m => m.Order)
+            //.ToListAsync(cancellationToken);
+
+            var menuTreeNode = await MenuSet
+               // .OrderBy(menu => menu.Order)
+               .Select(menu => new MenuTreeNodeResponse
+               {
+                   Id = menu.Id,
+                   Pid = menu.ParentId,
+                   Name = menu.Name,
+                   Path = menu.Path,
+                   Component = menu.Component,
+                   Icon = menu.Icon,
+                   Status = menu.Status,
+                   //  Redirect = menu.Redirect,
+                   Type = menu.Type.ToString().ToLower(),
+                   AuthCode = menu.AuthCode,
+                   Meta = new MenuMeta
+                   {
+                       Title = menu.Name,
+                       Icon = menu.Icon,
+                       // Order = menu.Order,
+                       HideInMenu = !menu.IsVisible,
+                       HideInTab = !menu.IsEnabled,
+                       KeepAlive = true,
+                       AffixTab = false,
+                       HideInBreadcrumb = false,
+                       HideChildrenInMenu = false,
+                       OpenInNewWindow = false,
+                       NoBasicLayout = false,
+                       MaxNumOfOpenTab = 10
+                   }
+               })
+               .ToListAsync(cancellationToken);
+
+            var menuTreeBuilder = new MenuTreeBuildUtil<MenuTreeNodeResponse>();
+            return menuTreeBuilder.Build(menuTreeNode);
         }
 
         /// <summary>
@@ -53,7 +88,6 @@ namespace NetCorePal.D3Shop.Web.Application.Queries
         public async Task<List<Menu>> GetMenusByParentIdAsync(MenuId parentId, CancellationToken cancellationToken)
         {
             return await MenuSet
-                .Include(m => m.Children)
                 .Where(m => m.ParentId == parentId)
                 .OrderBy(m => m.Order)
                 .ToListAsync(cancellationToken);

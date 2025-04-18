@@ -14,11 +14,11 @@ internal class MenuConfiguration : IEntityTypeConfiguration<Menu>
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id).UseSnowFlakeValueGenerator();
 
-        // 配置 Menu 与子菜单的一对多关系
-        builder.HasMany(m => m.Children)
-            .WithOne(m => m.Parent)
-            .HasForeignKey(m => m.ParentId)
-            .OnDelete(DeleteBehavior.Restrict);
+        //// 配置 Menu 与子菜单的一对多关系
+        //builder.HasMany(m => m.Children)
+        //    .WithOne(m => m.Parent)
+        //    .HasForeignKey(m => m.ParentId)
+        //    .OnDelete(DeleteBehavior.Restrict);
 
         // 配置 ParentId 列名
         builder.Property(m => m.ParentId)

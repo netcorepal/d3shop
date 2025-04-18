@@ -1,11 +1,16 @@
 ﻿using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin.Requests
+namespace NetCorePal.D3Shop.Admin.Shared.Requests.MenuRequests
 {
     /// <summary>
-    /// 更新菜单请求
+    /// 创建菜单请求
     /// </summary>
-    public class UpdateMenuRequest
+    public class CreateMenuRequest
     {
         /// <summary>
         /// 菜单名称
@@ -48,7 +53,6 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin.Requests
         /// 状态
         /// </summary>
         public int Status { get; set; }
-
 
         public MenuMeta Meta { get; set; } = new MenuMeta();
     }

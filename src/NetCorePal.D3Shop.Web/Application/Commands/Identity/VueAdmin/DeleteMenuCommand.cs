@@ -19,10 +19,10 @@ public class DeleteMenuCommandHandler(IMenuRepository menuRepository)
             throw new InvalidOperationException($"菜单不存在，Id={request.Id}");
         }
 
-        if (menu.Children.Count > 0)
-        {
-            throw new InvalidOperationException($"菜单存在子菜单，无法删除，Id={request.Id}");
-        }
+        //if (menu.Children.Count > 0)
+        //{
+        //    throw new InvalidOperationException($"菜单存在子菜单，无法删除，Id={request.Id}");
+        //}
 
         await menuRepository.RemoveAsync(menu);
     }
