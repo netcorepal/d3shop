@@ -114,7 +114,8 @@ public class ClientUserAccountControllerIntegrationTests
             "/api/ClientUserAccount/login", loginRequest);
         var result = await response.Content.ReadFromNewtonsoftJsonAsync<ResponseData<ClientUserLoginResponse>>();
         Assert.NotNull(result);
-        Assert.Equal("用户名或密码错误", result.Data.FailedMessage);
+        Assert.False(result.Success);
+        Assert.Equal("用户名或密码错误", result.Message);
     }
 
 
@@ -150,9 +151,9 @@ public class ClientUserAccountControllerIntegrationTests
         var token = result?.Data;
         Assert.NotNull(token?.Token);
 
-        var getRefreshTokenRequest = new ClientUserGetRefreshTokenRequest(token.Token, token.RefreshToken);
         var getRefreshTokenResponse = await _client.PutAsNewtonsoftJsonAsync(
-            "/api/ClientUserAccount/getRefreshToken", getRefreshTokenRequest);
+            "/api/ClientUserAccount/getRefreshToken", token.RefreshToken);
+
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -164,9 +165,9 @@ public class ClientUserAccountControllerIntegrationTests
 
         using var scope = _factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var user = await dbContext.ClientUsers
+        var user = await dbContext.ClientUsers.Include(clientUser => clientUser.RefreshTokens)
             .FirstOrDefaultAsync(u => u.Phone == registerRequest.Phone);
         Assert.NotNull(user);
-        Assert.Equal(user.RefreshToken, refreshToken.RefreshToken);
+        Assert.Equal(user.RefreshTokens.First().Token, refreshToken.RefreshToken);
     }
 }

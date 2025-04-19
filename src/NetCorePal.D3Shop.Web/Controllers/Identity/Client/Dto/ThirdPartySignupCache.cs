@@ -8,4 +8,4 @@ public record ThirdPartySignupCache(
     string OpenId,
     string IpAddress,
     string UserAgent,
-    DateTime AuthTime);
+    DateTimeOffset AuthTime);

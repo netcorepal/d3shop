@@ -27,8 +27,8 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
         PasswordHash = passwordHash;
         PasswordSalt = passwordSalt;
         Email = email;
-        CreatedAt = DateTime.Now;
-        LastLoginAt = DateTime.Now;
+        CreatedAt = DateTimeOffset.Now;
+        LastLoginAt = DateTimeOffset.Now;
     }
 
     public ICollection<UserDeliveryAddress> DeliveryAddresses { get; } = [];
@@ -41,15 +41,15 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     public string PasswordHash { get; private set; } = string.Empty;
     public string PasswordSalt { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
-    public DateTime CreatedAt { get; private set; }
-    public DateTime LastLoginAt { get; private set; }
+    public DateTimeOffset CreatedAt { get; private set; }
+    public DateTimeOffset LastLoginAt { get; private set; }
     public bool IsDisabled { get; private set; }
-    public DateTime DisabledTime { get; private set; }
+    public DateTimeOffset DisabledTime { get; private set; }
     public string DisabledReason { get; private set; } = string.Empty;
     public int PasswordFailedTimes { get; private set; }
     public bool IsTwoFactorEnabled { get; private set; }
-    public string RefreshToken { get; private set; } = string.Empty;
-    public DateTime LoginExpiryDate { get; private set; }
+    public ICollection<ClientUserRefreshToken> RefreshTokens { get; } = [];
+    public DateTimeOffset LoginExpiryDate { get; private set; }
 
     /// <summary>
     ///     用户登录
@@ -62,7 +62,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <param name="refreshToken"></param>
     public ClientUserLoginResult Login(
         string passwordHash,
-        DateTime loginTime,
+        DateTimeOffset loginTime,
         string loginMethod,
         string ipAddress,
         string userAgent,
@@ -77,7 +77,8 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
             return ClientUserLoginResult.Failure("用户名或密码错误");
         }
 
-        RefreshToken = refreshToken;
+        var refreshTokenInfo = new ClientUserRefreshToken(refreshToken);
+        RefreshTokens.Add(refreshTokenInfo);
         PasswordFailedTimes = 0;
         LastLoginAt = loginTime;
         LoginExpiryDate = loginTime.AddDays(30);
@@ -94,7 +95,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <param name="userAgent"></param>
     /// <param name="refreshToken"></param>
     public ClientUserLoginResult ExternalLogin(
-        DateTime loginTime,
+        DateTimeOffset loginTime,
         string loginMethod,
         string ipAddress,
         string userAgent,
@@ -103,7 +104,8 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
         if (IsDisabled)
             return ClientUserLoginResult.Failure("用户已被禁用");
 
-        RefreshToken = refreshToken;
+        var refreshTokenInfo = new ClientUserRefreshToken(refreshToken);
+        RefreshTokens.Add(refreshTokenInfo);
         LastLoginAt = loginTime;
         LoginExpiryDate = loginTime.AddDays(30);
         AddDomainEvent(new ClientUserLoginEvent(Id, NickName, loginTime, loginMethod, ipAddress, userAgent));
@@ -115,18 +117,16 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <param name="oldRefreshToken"></param>
     /// <param name="newRefreshToken"></param>
     /// <exception cref="KnownException"></exception>
-    public DateTime UpdateRefreshToken(string oldRefreshToken, string newRefreshToken)
+    public void RefreshToken(string oldRefreshToken, string newRefreshToken)
     {
-        if (RefreshToken != oldRefreshToken)
-            throw new KnownException("无效的令牌");
-
-        if (LoginExpiryDate <= DateTime.Now)
+        if (LoginExpiryDate <= DateTimeOffset.Now)
             throw new KnownException("登录已过期");
 
-        RefreshToken = newRefreshToken;
-        LoginExpiryDate = DateTime.Now.AddDays(30);
+        var oldRefreshTokenInfo = RefreshTokens.Single(t => t.Token == oldRefreshToken);
+        oldRefreshTokenInfo.Use();
 
-        return LoginExpiryDate;
+        var newRefreshTokenInfo = new ClientUserRefreshToken(newRefreshToken);
+        RefreshTokens.Add(newRefreshTokenInfo);
     }
 
     /// <summary>
@@ -141,7 +141,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
 
         if (IsDisabled) return;
         IsDisabled = true;
-        DisabledTime = DateTime.UtcNow;
+        DisabledTime = DateTimeOffset.UtcNow;
         DisabledReason = reason.Trim();
     }
 
@@ -179,12 +179,24 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <summary>
     ///     新增收货地址
     /// </summary>
+    /// <param name="districtCode"></param>
     /// <param name="address"></param>
     /// <param name="recipientName"></param>
     /// <param name="phone"></param>
     /// <param name="setAsDefault"></param>
+    /// <param name="province"></param>
+    /// <param name="provinceCode"></param>
+    /// <param name="city"></param>
+    /// <param name="cityCode"></param>
+    /// <param name="district"></param>
     /// <returns></returns>
     public DeliveryAddressId AddDeliveryAddress(
+        string province,
+        string provinceCode,
+        string city,
+        string cityCode,
+        string district,
+        string districtCode,
         string address,
         string recipientName,
         string phone,
@@ -192,6 +204,12 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     {
         var newAddress = new UserDeliveryAddress(
             Id,
+            province,
+            provinceCode,
+            city,
+            cityCode,
+            district,
+            districtCode,
             address,
             recipientName,
             phone,
@@ -213,13 +231,25 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     ///     更新收货地址
     /// </summary>
     /// <param name="deliveryAddressId"></param>
+    /// <param name="district"></param>
+    /// <param name="districtCode"></param>
     /// <param name="address"></param>
     /// <param name="recipientName"></param>
     /// <param name="phone"></param>
     /// <param name="setAsDefault"></param>
+    /// <param name="city"></param>
+    /// <param name="cityCode"></param>
+    /// <param name="province"></param>
+    /// <param name="provinceCode"></param>
     /// <exception cref="KnownException"></exception>
     public void UpdateDeliveryAddress(
         DeliveryAddressId deliveryAddressId,
+        string province,
+        string provinceCode,
+        string city,
+        string cityCode,
+        string district,
+        string districtCode,
         string address,
         string recipientName,
         string phone,
@@ -227,7 +257,17 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     {
         var deliveryAddress = DeliveryAddresses.SingleOrDefault(a => a.Id == deliveryAddressId) ??
                               throw new KnownException("地址不存在");
-        deliveryAddress.UpdateDetails(address, recipientName, phone);
+
+        deliveryAddress.UpdateDetails(
+            province,
+            provinceCode,
+            city,
+            cityCode,
+            district,
+            districtCode,
+            address,
+            recipientName,
+            phone);
 
         if (!setAsDefault) return;
 
@@ -307,7 +347,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <param name="userAgent"></param>
     /// <returns></returns>
     public static ClientUser ExternalSignUp(
-        DateTime signUpTime,
+        DateTimeOffset signUpTime,
         string phone,
         string passwordHash,
         string passwordSalt,
@@ -323,11 +363,11 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
             Phone = phone,
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt,
-            RefreshToken = refreshToken,
             LastLoginAt = signUpTime,
             LoginExpiryDate = signUpTime.AddDays(30)
         };
 
+        user.RefreshTokens.Add(new ClientUserRefreshToken(refreshToken));
         user.ThirdPartyLogins.Add(new UserThirdPartyLogin(user.Id, thirdPartyProvider, appId, openId));
         user.AddDomainEvent(new ClientUserExternalSignInDomainEvent(
             user.Id,

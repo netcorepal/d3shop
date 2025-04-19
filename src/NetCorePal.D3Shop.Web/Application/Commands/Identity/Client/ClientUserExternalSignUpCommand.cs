@@ -7,7 +7,7 @@ using NetCorePal.Extensions.Primitives;
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Client;
 
 public record ClientUserExternalSignUpCommand(
-    DateTime SignUpTime,
+    DateTimeOffset SignUpTime,
     string Phone,
     string PasswordHash,
     string PasswordSalt,
