@@ -30,10 +30,10 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
 
         public DeptId ParentId { get; private set; } = new DeptId(0);
 
-        public DateTime CreatedAt { get; init; }
+        public DateTimeOffset CreatedAt { get; init; }
 
         public bool IsDeleted { get; private set; }
-        public DateTime? DeletedAt { get; private set; }
+        public DateTimeOffset? DeletedAt { get; private set; }
 
         public virtual ICollection<DepartmentUser> Users { get; } = [];
 
@@ -48,7 +48,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
             Name = name;
             Description = description;
             ParentId = parentId;
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTimeOffset.Now;
             foreach (var user in deptUsers)
             {
                 Users.Add(user);
@@ -97,7 +97,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate
         {
             if (IsDeleted) throw new KnownException("部门已经被删除！");
             IsDeleted = true;
-            DeletedAt = DateTime.Now;
+            DeletedAt = DateTimeOffset.Now;
         }
     }
 }

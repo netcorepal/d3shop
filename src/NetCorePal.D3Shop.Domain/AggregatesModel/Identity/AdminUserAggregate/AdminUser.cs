@@ -18,7 +18,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         public string Name { get; private set; } = string.Empty;
         public string Phone { get; private set; } = string.Empty;
         public string Password { get; private set; } = string.Empty;
-        public DateTime CreatedAt { get; init; }
+        public DateTimeOffset CreatedAt { get; init; }
         public virtual ICollection<AdminUserRole> Roles { get; } = [];
 
         public virtual ICollection<UserDept> UserDepts { get; } = [];
@@ -27,12 +27,12 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
 
         public virtual ICollection<AdminUserPermission> Permissions { get; } = [];
         public bool IsDeleted { get; private set; }
-        public DateTime? DeletedAt { get; private set; }
+        public DateTimeOffset? DeletedAt { get; private set; }
 
         public AdminUser(string name, string phone, string password,
             IEnumerable<AdminUserRole> roles, IEnumerable<AdminUserPermission> permissions)
         {
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTimeOffset.Now;
             Name = name;
             Phone = phone;
             Password = password;
@@ -142,7 +142,7 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         {
             if (IsDeleted) throw new KnownException("用户已经被删除！");
             IsDeleted = true;
-            DeletedAt = DateTime.Now;
+            DeletedAt = DateTimeOffset.Now;
         }
 
         public bool IsInRole(string roleName)

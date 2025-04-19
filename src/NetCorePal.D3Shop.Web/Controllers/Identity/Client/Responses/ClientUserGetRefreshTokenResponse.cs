@@ -3,4 +3,4 @@
 public record ClientUserGetRefreshTokenResponse(
     string Token,
     string RefreshToken,
-    DateTime TokenExpiryTime);
+    DateTimeOffset TokenExpiryTime);

@@ -27,8 +27,8 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
         PasswordHash = passwordHash;
         PasswordSalt = passwordSalt;
         Email = email;
-        CreatedAt = DateTime.Now;
-        LastLoginAt = DateTime.Now;
+        CreatedAt = DateTimeOffset.Now;
+        LastLoginAt = DateTimeOffset.Now;
     }
 
     public ICollection<UserDeliveryAddress> DeliveryAddresses { get; } = [];
@@ -41,15 +41,15 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     public string PasswordHash { get; private set; } = string.Empty;
     public string PasswordSalt { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
-    public DateTime CreatedAt { get; private set; }
-    public DateTime LastLoginAt { get; private set; }
+    public DateTimeOffset CreatedAt { get; private set; }
+    public DateTimeOffset LastLoginAt { get; private set; }
     public bool IsDisabled { get; private set; }
-    public DateTime DisabledTime { get; private set; }
+    public DateTimeOffset DisabledTime { get; private set; }
     public string DisabledReason { get; private set; } = string.Empty;
     public int PasswordFailedTimes { get; private set; }
     public bool IsTwoFactorEnabled { get; private set; }
     public ICollection<ClientUserRefreshToken> RefreshTokens { get; } = [];
-    public DateTime LoginExpiryDate { get; private set; }
+    public DateTimeOffset LoginExpiryDate { get; private set; }
 
     /// <summary>
     ///     用户登录
@@ -62,7 +62,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <param name="refreshToken"></param>
     public ClientUserLoginResult Login(
         string passwordHash,
-        DateTime loginTime,
+        DateTimeOffset loginTime,
         string loginMethod,
         string ipAddress,
         string userAgent,
@@ -95,7 +95,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <param name="userAgent"></param>
     /// <param name="refreshToken"></param>
     public ClientUserLoginResult ExternalLogin(
-        DateTime loginTime,
+        DateTimeOffset loginTime,
         string loginMethod,
         string ipAddress,
         string userAgent,
@@ -119,7 +119,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <exception cref="KnownException"></exception>
     public void RefreshToken(string oldRefreshToken, string newRefreshToken)
     {
-        if (LoginExpiryDate <= DateTime.Now)
+        if (LoginExpiryDate <= DateTimeOffset.Now)
             throw new KnownException("登录已过期");
 
         var oldRefreshTokenInfo = RefreshTokens.Single(t => t.Token == oldRefreshToken);
@@ -141,7 +141,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
 
         if (IsDisabled) return;
         IsDisabled = true;
-        DisabledTime = DateTime.UtcNow;
+        DisabledTime = DateTimeOffset.UtcNow;
         DisabledReason = reason.Trim();
     }
 
@@ -347,7 +347,7 @@ public class ClientUser : Entity<ClientUserId>, IAggregateRoot
     /// <param name="userAgent"></param>
     /// <returns></returns>
     public static ClientUser ExternalSignUp(
-        DateTime signUpTime,
+        DateTimeOffset signUpTime,
         string phone,
         string passwordHash,
         string passwordSalt,

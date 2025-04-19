@@ -45,7 +45,7 @@ public class ClientUserAccountController(
         var loginResult = await mediator.Send(new ClientUserLoginCommand(
             userAuthInfo.UserId,
             passwordHash,
-            DateTime.UtcNow,
+            DateTimeOffset.Now,
             request.LoginMethod,
             ipAddress,
             userAgent,
@@ -55,11 +55,11 @@ public class ClientUserAccountController(
         if (!loginResult.IsSuccess)
             throw new KnownException(loginResult.FailedMessage);
 
-        var tokenExpiryTime = DateTime.Now.AddMinutes(appConfiguration.Value.TokenExpiryInMinutes);
+        var tokenExpiryTime = DateTimeOffset.Now.AddMinutes(appConfiguration.Value.TokenExpiryInMinutes);
         var jwt = await jwtProvider.GenerateJwtToken(new JwtData("issuer-x", "audience-y",
             [new Claim(ClaimTypes.NameIdentifier, userAuthInfo.UserId.ToString())],
-            DateTime.Now,
-            tokenExpiryTime));
+            DateTimeOffset.Now.DateTime,
+            tokenExpiryTime.DateTime));
         return new ClientUserLoginResponse(jwt, refreshToken, tokenExpiryTime).AsResponseData();
     }
 
@@ -89,11 +89,11 @@ public class ClientUserAccountController(
         await mediator.Send(
             new UpdateClientUserRefreshTokenCommand(userId, refreshToken, newRefreshToken));
 
-        var tokenExpiryTime = DateTime.Now.AddMinutes(appConfiguration.Value.TokenExpiryInMinutes);
+        var tokenExpiryTime = DateTimeOffset.Now.AddMinutes(appConfiguration.Value.TokenExpiryInMinutes);
         var jwt = await jwtProvider.GenerateJwtToken(new JwtData("issuer-x", "audience-y",
             [new Claim(ClaimTypes.NameIdentifier, userId.ToString())],
-            DateTime.Now,
-            tokenExpiryTime));
+            DateTimeOffset.Now.DateTime,
+            tokenExpiryTime.DateTime));
         var response = new ClientUserGetRefreshTokenResponse(
             jwt,
             refreshToken,
@@ -160,7 +160,7 @@ public class ClientUserAccountController(
                 openId,
                 ipAddress,
                 userAgent,
-                DateTime.Now);
+                DateTimeOffset.Now);
 
             memoryCache.Set(signupToken, cacheData);
 
@@ -170,15 +170,15 @@ public class ClientUserAccountController(
         }
 
         var refreshToken = TokenGenerator.GenerateRefreshToken();
-        await mediator.Send(new ClientUserExternalLoginCommand(userId, DateTime.Now, provider.ToString(), ipAddress,
+        await mediator.Send(new ClientUserExternalLoginCommand(userId, DateTimeOffset.Now, provider.ToString(), ipAddress,
             userAgent,
             refreshToken));
 
-        var tokenExpiryTime = DateTime.Now.AddMinutes(appConfiguration.Value.TokenExpiryInMinutes);
+        var tokenExpiryTime = DateTimeOffset.Now.AddMinutes(appConfiguration.Value.TokenExpiryInMinutes);
         var jwt = await jwtProvider.GenerateJwtToken(new JwtData("issuer-x", "audience-y",
             [new Claim(ClaimTypes.NameIdentifier, userId.ToString())],
-            DateTime.Now,
-            tokenExpiryTime));
+            DateTimeOffset.Now.DateTime,
+            tokenExpiryTime.DateTime));
         return ClientUserExternalLoginResponse.Success(jwt, refreshToken, tokenExpiryTime).AsResponseData();
     }
 
@@ -194,7 +194,7 @@ public class ClientUserAccountController(
         var refreshToken = TokenGenerator.GenerateRefreshToken();
 
         var userId = await mediator.Send(new ClientUserExternalSignUpCommand(
-            DateTime.Now,
+            DateTimeOffset.Now,
             request.Phone,
             passwordHash,
             passwordSalt,
@@ -205,11 +205,11 @@ public class ClientUserAccountController(
             thirdPartySignupCache.IpAddress,
             thirdPartySignupCache.UserAgent
         ));
-        var tokenExpiryTime = DateTime.Now.AddMinutes(appConfiguration.Value.TokenExpiryInMinutes);
+        var tokenExpiryTime = DateTimeOffset.Now.AddMinutes(appConfiguration.Value.TokenExpiryInMinutes);
         var jwt = await jwtProvider.GenerateJwtToken(new JwtData("issuer-x", "audience-y",
             [new Claim(ClaimTypes.NameIdentifier, userId.ToString())],
-            DateTime.Now,
-            tokenExpiryTime));
+            DateTimeOffset.Now.DateTime,
+            tokenExpiryTime.DateTime));
         return new ClientUserExternalSignUpResponse(jwt, refreshToken, tokenExpiryTime).AsResponseData();
     }
 

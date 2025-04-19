@@ -38,7 +38,7 @@ public class AdminUserAccountController(
         var authProperties = new AuthenticationProperties
         {
             AllowRefresh = true,
-            ExpiresUtc = DateTime.UtcNow.AddMinutes(AppConfiguration.TokenExpiryInMinutes),
+            ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(AppConfiguration.TokenExpiryInMinutes),
             IsPersistent = request.IsPersistent
         };
         await HttpContext.SignInAsync(

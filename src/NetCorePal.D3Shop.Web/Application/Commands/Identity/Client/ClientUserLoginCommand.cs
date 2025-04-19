@@ -8,7 +8,7 @@ namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Client;
 public record ClientUserLoginCommand(
     ClientUserId UserId,
     string PasswordHash,
-    DateTime LoginTime,
+    DateTimeOffset LoginTime,
     string LoginMethod,
     string IpAddress,
     string UserAgent,

@@ -3,5 +3,5 @@
 public record ClientUserLoginResponse(
     string Token = "",
     string RefreshToken = "",
-    DateTime TokenExpiryTime = default
+    DateTimeOffset TokenExpiryTime = default
 );

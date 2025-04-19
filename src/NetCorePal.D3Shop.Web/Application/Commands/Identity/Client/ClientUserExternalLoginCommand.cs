@@ -7,7 +7,7 @@ namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Client;
 
 public record ClientUserExternalLoginCommand(
     ClientUserId UserId,
-    DateTime LoginTime,
+    DateTimeOffset LoginTime,
     string LoginMethod,
     string IpAddress,
     string UserAgent,

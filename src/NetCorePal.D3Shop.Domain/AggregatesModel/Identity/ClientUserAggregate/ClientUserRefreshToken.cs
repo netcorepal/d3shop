@@ -14,14 +14,14 @@ public class ClientUserRefreshToken : Entity<ClientUserRefreshTokenId>
     public ClientUserRefreshToken(string token)
     {
         Token = token;
-        CreatedTime = DateTime.Now;
+        CreatedTime = DateTimeOffset.Now;
         ExpiresTime = CreatedTime.AddDays(1);
     }
 
     public ClientUserId UserId { get; private set; } = null!;
     public string Token { get; private set; } = string.Empty;
-    public DateTime CreatedTime { get; init; }
-    public DateTime ExpiresTime { get; init; }
+    public DateTimeOffset CreatedTime { get; init; }
+    public DateTimeOffset ExpiresTime { get; init; }
     public bool IsUsed { get; private set; }
     public bool IsRevoked { get; private set; }
 
@@ -29,7 +29,7 @@ public class ClientUserRefreshToken : Entity<ClientUserRefreshTokenId>
     {
         if (IsUsed ||
             IsRevoked ||
-            ExpiresTime < DateTime.Now)
+            ExpiresTime < DateTimeOffset.Now)
             throw new KnownException("无效的刷新令牌");
 
         IsUsed = true;
