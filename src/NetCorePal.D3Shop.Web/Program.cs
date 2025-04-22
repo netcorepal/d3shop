@@ -78,13 +78,13 @@ try
 
     builder.Services.AddScoped<ICurrentClientUser, CurrentClientUser>();
 
-    builder.Services.AddScoped<ICurrentVueAdminUser, CurrentVueAdminUser>();
+    builder.Services.AddScoped<ICurrentAdminUser, CurrentAdminUser>();
     #endregion
     #region CORS
 
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy("AllowVueApp", policy =>
+        options.AddPolicy("AllowCORS", policy =>
         {
             var origins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>();
             if (origins == null || origins.Length == 0)
@@ -261,7 +261,7 @@ try
 
     app.UseAuthentication();
     app.UseHttpsRedirection();
-    app.UseCors("AllowVueApp");
+    app.UseCors("AllowCORS");
     app.UseStaticFiles();
 
     app.UseRouting();

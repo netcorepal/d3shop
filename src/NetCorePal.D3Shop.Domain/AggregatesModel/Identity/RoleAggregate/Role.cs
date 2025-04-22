@@ -21,10 +21,9 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
         /// </summary>
         public int Status { get; set; }
 
-        public string Remark { get; set; } = string.Empty;
         public virtual ICollection<RolePermission> Permissions { get; init; } = [];
 
-        public Role(string name, string description, IEnumerable<RolePermission> permissions, int status = 0)
+        public Role(string name, string description, IEnumerable<RolePermission> permissions, int status)
         {
             CreatedAt = DateTimeOffset.Now;
             Name = name;
@@ -33,10 +32,11 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
             Status = status;
         }
 
-        public void UpdateRoleInfo(string name, string description)
+        public void UpdateRoleInfo(string name, string description, int status)
         {
             Name = name;
             Description = description;
+            Status = status;
             AddDomainEvent(new RoleInfoChangedDomainEvent(this));
         }
 

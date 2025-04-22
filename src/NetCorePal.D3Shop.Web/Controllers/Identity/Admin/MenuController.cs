@@ -4,7 +4,6 @@ using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate;
 using NetCorePal.D3Shop.Web.Application.Queries;
 using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;
-using NetCorePal.D3Shop.Web.Application.Commands.Identity.VueAdmin;
 using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Admin.Shared.Permission;
 using NetCorePal.D3Shop.Admin.Shared.Requests.MenuRequests;

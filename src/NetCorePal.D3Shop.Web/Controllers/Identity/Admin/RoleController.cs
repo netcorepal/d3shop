@@ -10,6 +10,8 @@ using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
 using NetCorePal.D3Shop.Web.Auth;
 using NetCorePal.D3Shop.Web.Blazor;
 using NetCorePal.Extensions.Dto;
+using NetCorePal.Extensions.Primitives;
+using System.Threading;
 
 namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin;
 
@@ -17,7 +19,7 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin;
 [ApiController]
 [KnownExceptionHandler]
 [AdminPermission(PermissionCodes.RoleManagement)]
-public class RoleController(IMediator mediator, RoleQuery roleQuery) : ControllerBase, IRolesService
+public class RoleController(IMediator mediator, RoleQuery roleQuery, MenuQuery menuQuery) : ControllerBase, IRolesService
 {
     private CancellationToken CancellationToken => HttpContext?.RequestAborted ?? CancellationToken.None;
 
@@ -25,16 +27,20 @@ public class RoleController(IMediator mediator, RoleQuery roleQuery) : Controlle
     [AdminPermission(PermissionCodes.RoleCreate)]
     public async Task<ResponseData<RoleId>> CreateRole([FromBody] CreateRoleRequest request)
     {
-        var permissionsToBeAssigned = request.PermissionCodes
-            .Select(code =>
-            {
-                var permission = PermissionDefinitionContext.GetPermission(code);
-                return permission.Code;
-            });
+        var menus = await menuQuery.GetAllMenusFlatAsync(CancellationToken);
+        var permissions = request.Permissions
+               .Select(item =>
+               {
+                   var menu = menus.FirstOrDefault(m => m.Id == item);
+                   if (menu == null || string.IsNullOrEmpty(menu.AuthCode))
+                   {
+                       throw new KnownException("无效的菜单", -1);
+                   }
+                   return (menu.Id, menu.AuthCode);
+               })
+               .ToList();
 
-        var roleId = await mediator.Send(
-            new CreateRoleCommand(request.Name, request.Description, permissionsToBeAssigned),
-            CancellationToken);
+        var roleId = await mediator.Send(new CreateRoleCommand(request.Name, request.Description, request.Status, permissions), CancellationToken);
 
         return roleId.AsResponseData();
     }
@@ -59,8 +65,21 @@ public class RoleController(IMediator mediator, RoleQuery roleQuery) : Controlle
     [AdminPermission(PermissionCodes.RoleEdit)]
     public async Task<ResponseData> UpdateRoleInfo([FromRoute] RoleId id, [FromBody] UpdateRoleInfoRequest request)
     {
+        var menus = await menuQuery.GetAllMenusFlatAsync(CancellationToken);
+        var permissions = request.Permissions
+               .Select(item =>
+               {
+                   var menu = menus.FirstOrDefault(m => m.Id == item);
+                   if (menu == null || string.IsNullOrEmpty(menu.AuthCode))
+                   {
+                       throw new KnownException("无效的菜单", -1);
+                   }
+                   return (menu.Id, menu.AuthCode);
+               })
+               .ToList();
+
         await mediator.Send(
-            new UpdateRoleInfoCommand(id, request.Name, request.Description),
+            new UpdateRoleInfoCommand(id, request.Name, request.Description,request.Status,permissions),
             CancellationToken);
 
         return new ResponseData();

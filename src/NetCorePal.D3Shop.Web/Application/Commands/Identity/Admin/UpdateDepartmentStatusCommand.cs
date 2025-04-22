@@ -9,20 +9,20 @@ namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin
         DeptId DepartmentId,
         int Status) : ICommand;
 
-    public class VueUpdateDepartmentStatusCommandValidator : AbstractValidator<UpdateDepartmentStatusCommand>
+    public class UpdateDepartmentStatusCommandValidator : AbstractValidator<UpdateDepartmentStatusCommand>
     {
-        public VueUpdateDepartmentStatusCommandValidator()
+        public UpdateDepartmentStatusCommandValidator()
         {
             RuleFor(x => x.DepartmentId).NotEmpty().WithMessage("部门ID不能为空");
             RuleFor(x => x.Status).InclusiveBetween(0, 1).WithMessage("状态值必须为0或1");
         }
     }
 
-    public class VueUpdateDepartmentStatusCommandHandler : ICommandHandler<UpdateDepartmentStatusCommand>
+    public class UpdateDepartmentStatusCommandHandler : ICommandHandler<UpdateDepartmentStatusCommand>
     {
         private readonly IDepartmentRepository _departmentRepository;
 
-        public VueUpdateDepartmentStatusCommandHandler(IDepartmentRepository departmentRepository)
+        public UpdateDepartmentStatusCommandHandler(IDepartmentRepository departmentRepository)
         {
             _departmentRepository = departmentRepository;
         }

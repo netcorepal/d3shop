@@ -3,7 +3,6 @@ using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Admin.Shared.Responses;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.DepartmentAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate;
-using NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin.Responses;
 using NetCorePal.D3Shop.Web.Extensions;
 using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;

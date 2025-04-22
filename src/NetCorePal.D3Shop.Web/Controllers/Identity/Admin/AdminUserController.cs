@@ -23,7 +23,7 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin;
 public class AdminUserController(
     IMediator mediator,
     AdminUserQuery adminUserQuery,
-    ICurrentVueAdminUser currentUser,
+    ICurrentAdminUser currentUser,
     RoleQuery roleQuery)
     : ControllerBase, IAdminUserService
 {

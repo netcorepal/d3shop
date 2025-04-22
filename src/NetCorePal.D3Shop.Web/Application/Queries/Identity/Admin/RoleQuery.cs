@@ -3,8 +3,6 @@ using NetCorePal.D3Shop.Admin.Shared.Requests;
 using NetCorePal.D3Shop.Admin.Shared.Responses;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin.Dto;
-using NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin.Requests;
-using NetCorePal.D3Shop.Web.Controllers.Identity.VueAdmin.Responses;
 using NetCorePal.D3Shop.Web.Extensions;
 using NetCorePal.Extensions.Dto;
 using NetCorePal.Extensions.Primitives;
@@ -21,22 +19,13 @@ public class RoleQuery(ApplicationDbContext dbContext) : IQuery
         return await RoleSet.AsNoTracking()
             .WhereIf(!query.Name.IsNullOrWhiteSpace(), r => r.Name.Contains(query.Name!))
             .WhereIf(!query.Description.IsNullOrWhiteSpace(), r => r.Description.Contains(query.Description!))
+            .WhereIf(query.Status.HasValue, r => r.Status == query.Status)
             .OrderBy(r => r.Id)
-            .Select(r => new RoleResponse(r.Id, r.Name, r.Description))
+            .Select(r => new RoleResponse(r.Id, r.Name, r.Status, r.Description, r.Permissions.Select(rp => rp.MenuId), r.CreatedAt))
             .ToPagedDataAsync(query, cancellationToken);
     }
 
-    public async Task<PagedData<VueRoleResponse>> GetVueAllRolesAsync(VueRoleQueryRequest query,
-    CancellationToken cancellationToken)
-    {
-        return await RoleSet.AsNoTracking()
-            .WhereIf(!query.Name.IsNullOrWhiteSpace(), r => r.Name.Contains(query.Name!))
-            .WhereIf(!query.Remark.IsNullOrWhiteSpace(), r => r.Description.Contains(query.Remark!))
-            .WhereIf(query.Status.HasValue, r => r.Status==query.Status)
-            .OrderBy(r => r.Id)
-            .Select(r => new VueRoleResponse(r.Id, r.Name, r.Status,r.Remark,r.Permissions.Select(rp=>rp.MenuId),r.CreatedAt))
-            .ToPagedDataAsync(query, cancellationToken);
-    }
+
 
     public async Task<List<AdminUserRoleResponse>> GetAllAdminUserRolesAsync(CancellationToken cancellationToken)
     {

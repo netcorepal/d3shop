@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using Consul;
+using FluentValidation;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Infrastructure.Repositories.Identity.Admin;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
@@ -6,7 +8,8 @@ using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin;
 
-public record UpdateRoleInfoCommand(RoleId RoleId, string Name, string Description) : ICommand;
+public record UpdateRoleInfoCommand(RoleId RoleId, string Name, string Description, int Status,
+        IEnumerable<(MenuId menuId, string code)> Permissions) : ICommand;
 
 public class UpdateRoleInfoCommandValidator : AbstractValidator<UpdateRoleInfoCommand>
 {
@@ -26,6 +29,10 @@ public class UpdateRoleInfoCommandHandler(IRoleRepository roleRepository) : ICom
     {
         var role = await roleRepository.GetAsync(request.RoleId, cancellationToken) ??
                    throw new KnownException($"未找到角色，RoleId = {request.RoleId}");
-        role.UpdateRoleInfo(request.Name, request.Description);
+        role.UpdateRoleInfo(request.Name, request.Description, request.Status);
+
+        // 更新角色权限
+        var permissions = request.Permissions.Select(perm => new RolePermission(perm.code, perm.menuId));
+        role.UpdateRolePermissions(permissions);
     }
 }

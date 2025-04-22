@@ -37,9 +37,9 @@ public class CurrentClientUser(IHttpContextAccessor httpContextAccessor) : ICurr
 
 
 
-public interface ICurrentVueAdminUser : ICurrentUser<AdminUserId>;
+public interface ICurrentAdminUser : ICurrentUser<AdminUserId>;
 
-public class CurrentVueAdminUser(IHttpContextAccessor httpContextAccessor) : ICurrentVueAdminUser
+public class CurrentAdminUser(IHttpContextAccessor httpContextAccessor) : ICurrentAdminUser
 {
     public AdminUserId UserId
     {
