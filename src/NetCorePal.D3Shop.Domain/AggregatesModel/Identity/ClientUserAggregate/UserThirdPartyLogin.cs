@@ -20,14 +20,14 @@ public class UserThirdPartyLogin : Entity<ThirdPartyLoginId>
         Provider = provider;
         AppId = appId;
         OpenId = openId;
-        BindTime = DateTime.UtcNow;
+        BindTime = DateTimeOffset.UtcNow;
     }
 
     public ClientUserId UserId { get; private set; } = null!;
     public ThirdPartyProvider Provider { get; private set; }
     public string AppId { get; private set; } = string.Empty;
     public string OpenId { get; private set; } = string.Empty;
-    public DateTime BindTime { get; private set; }
+    public DateTimeOffset BindTime { get; private set; }
 
     /// <summary>
     ///     更新OpenId（重新授权后获取新标识）

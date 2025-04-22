@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.ClientUserAggregate;
 using NetCorePal.D3Shop.Web.Application.Commands.Identity.Client;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity.Client;
@@ -12,6 +13,7 @@ using NetCorePal.D3Shop.Web.Controllers.Identity.Client.Requests;
 using NetCorePal.D3Shop.Web.Controllers.Identity.Client.Responses;
 using NetCorePal.D3Shop.Web.Helper;
 using NetCorePal.Extensions.Dto;
+using NetCorePal.Extensions.Jwt;
 using NetCorePal.Extensions.Primitives;
 using OpenIddict.Abstractions;
 using OpenIddict.Client;
@@ -25,9 +27,10 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.Client;
 public class ClientUserAccountController(
     IMediator mediator,
     ClientUserQuery clientUserQuery,
-    TokenGenerator tokenGenerator,
     OpenIddictClientService openIddictClientService,
-    IMemoryCache memoryCache) : ControllerBase
+    IMemoryCache memoryCache,
+    IJwtProvider jwtProvider,
+    IOptions<AppConfiguration> appConfiguration) : ControllerBase
 {
     [HttpPost]
     public async Task<ResponseData<ClientUserLoginResponse>> Login([FromBody] ClientUserLoginRequest request)
@@ -42,7 +45,7 @@ public class ClientUserAccountController(
         var loginResult = await mediator.Send(new ClientUserLoginCommand(
             userAuthInfo.UserId,
             passwordHash,
-            DateTime.UtcNow,
+            DateTimeOffset.Now,
             request.LoginMethod,
             ipAddress,
             userAgent,
@@ -50,12 +53,14 @@ public class ClientUserAccountController(
         ));
 
         if (!loginResult.IsSuccess)
-            return ClientUserLoginResponse.Failure(loginResult.FailedMessage).AsResponseData();
+            throw new KnownException(loginResult.FailedMessage);
 
-        var token = await tokenGenerator.GenerateJwtAsync([
-            new Claim(ClaimTypes.NameIdentifier, userAuthInfo.UserId.ToString())
-        ]);
-        return ClientUserLoginResponse.Success(token, refreshToken).AsResponseData();
+        var tokenExpiryTime = DateTimeOffset.Now.AddMinutes(appConfiguration.Value.TokenExpiryInMinutes);
+        var jwt = await jwtProvider.GenerateJwtToken(new JwtData("issuer-x", "audience-y",
+            [new Claim(ClaimTypes.NameIdentifier, userAuthInfo.UserId.ToString())],
+            DateTimeOffset.Now.DateTime,
+            tokenExpiryTime.DateTime));
+        return new ClientUserLoginResponse(jwt, refreshToken, tokenExpiryTime).AsResponseData();
     }
 
     [HttpPost]
@@ -75,27 +80,24 @@ public class ClientUserAccountController(
 
     [HttpPut]
     public async Task<ResponseData<ClientUserGetRefreshTokenResponse>> GetRefreshToken(
-        [FromBody] ClientUserGetRefreshTokenRequest request)
+        [FromBody] string refreshToken)
     {
-        var userPrincipal = await tokenGenerator.GetPrincipalFromExpiredToken(request.Token);
+        var userId =
+            await clientUserQuery.GetClientUserIdByRefreshTokenAsync(refreshToken, HttpContext.RequestAborted);
 
-        var userIdStr = userPrincipal.FindFirstValue(ClaimTypes.NameIdentifier) ??
-                        throw new KnownException("Invalid Token:There is no Id in the token");
-        if (!long.TryParse(userIdStr, out var userId))
-            throw new KnownException("Invalid Token:There is no Id in the token");
+        var newRefreshToken = TokenGenerator.GenerateRefreshToken();
+        await mediator.Send(
+            new UpdateClientUserRefreshTokenCommand(userId, refreshToken, newRefreshToken));
 
-        var refreshToken = TokenGenerator.GenerateRefreshToken();
-
-        var loginExpiryDate = await mediator.Send(
-            new UpdateClientUserRefreshTokenCommand(new ClientUserId(userId), request.RefreshToken, refreshToken));
-
-        var token = await tokenGenerator.GenerateJwtAsync([
-            new Claim(ClaimTypes.NameIdentifier, userIdStr)
-        ]);
+        var tokenExpiryTime = DateTimeOffset.Now.AddMinutes(appConfiguration.Value.TokenExpiryInMinutes);
+        var jwt = await jwtProvider.GenerateJwtToken(new JwtData("issuer-x", "audience-y",
+            [new Claim(ClaimTypes.NameIdentifier, userId.ToString())],
+            DateTimeOffset.Now.DateTime,
+            tokenExpiryTime.DateTime));
         var response = new ClientUserGetRefreshTokenResponse(
-            token,
+            jwt,
             refreshToken,
-            loginExpiryDate);
+            tokenExpiryTime);
         return response.AsResponseData();
     }
 
@@ -158,7 +160,7 @@ public class ClientUserAccountController(
                 openId,
                 ipAddress,
                 userAgent,
-                DateTime.Now);
+                DateTimeOffset.Now);
 
             memoryCache.Set(signupToken, cacheData);
 
@@ -168,13 +170,16 @@ public class ClientUserAccountController(
         }
 
         var refreshToken = TokenGenerator.GenerateRefreshToken();
-        var token = await tokenGenerator.GenerateJwtAsync([
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString())
-        ]);
-        await mediator.Send(new ClientUserExternalLoginCommand(userId, DateTime.Now, provider.ToString(), ipAddress,
+        await mediator.Send(new ClientUserExternalLoginCommand(userId, DateTimeOffset.Now, provider.ToString(), ipAddress,
             userAgent,
             refreshToken));
-        return ClientUserExternalLoginResponse.Success(token, refreshToken).AsResponseData();
+
+        var tokenExpiryTime = DateTimeOffset.Now.AddMinutes(appConfiguration.Value.TokenExpiryInMinutes);
+        var jwt = await jwtProvider.GenerateJwtToken(new JwtData("issuer-x", "audience-y",
+            [new Claim(ClaimTypes.NameIdentifier, userId.ToString())],
+            DateTimeOffset.Now.DateTime,
+            tokenExpiryTime.DateTime));
+        return ClientUserExternalLoginResponse.Success(jwt, refreshToken, tokenExpiryTime).AsResponseData();
     }
 
     [HttpPost]
@@ -189,7 +194,7 @@ public class ClientUserAccountController(
         var refreshToken = TokenGenerator.GenerateRefreshToken();
 
         var userId = await mediator.Send(new ClientUserExternalSignUpCommand(
-            DateTime.Now,
+            DateTimeOffset.Now,
             request.Phone,
             passwordHash,
             passwordSalt,
@@ -200,10 +205,12 @@ public class ClientUserAccountController(
             thirdPartySignupCache.IpAddress,
             thirdPartySignupCache.UserAgent
         ));
-        var token = await tokenGenerator.GenerateJwtAsync([
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString())
-        ]);
-        return new ClientUserExternalSignUpResponse(token, refreshToken).AsResponseData();
+        var tokenExpiryTime = DateTimeOffset.Now.AddMinutes(appConfiguration.Value.TokenExpiryInMinutes);
+        var jwt = await jwtProvider.GenerateJwtToken(new JwtData("issuer-x", "audience-y",
+            [new Claim(ClaimTypes.NameIdentifier, userId.ToString())],
+            DateTimeOffset.Now.DateTime,
+            tokenExpiryTime.DateTime));
+        return new ClientUserExternalSignUpResponse(jwt, refreshToken, tokenExpiryTime).AsResponseData();
     }
 
 // 注意：该控制器对所有提供者使用相同的回调操作，

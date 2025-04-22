@@ -44,7 +44,7 @@ public partial class Login
         var authProperties = new AuthenticationProperties
         {
             AllowRefresh = true,
-            ExpiresUtc = DateTime.UtcNow.AddMinutes(AppConfiguration.Value.TokenExpiryInMinutes),
+            ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(AppConfiguration.Value.TokenExpiryInMinutes),
             IsPersistent = LoginModel.IsPersistent
         };
         await HttpContext.SignInAsync(

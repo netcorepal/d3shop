@@ -6,7 +6,7 @@ namespace NetCorePal.D3Shop.Domain.DomainEvents.Identity.Client;
 public record ClientUserExternalSignInDomainEvent(
     ClientUserId UserId,
     string NickName,
-    DateTime LoginTime,
+    DateTimeOffset LoginTime,
     string LoginMethod,
     string IpAddress,
     string UserAgent) : IDomainEvent;

@@ -98,7 +98,7 @@ namespace NetCorePal.D3Shop.Web.Controllers
 
     public partial record MyId : IInt64StronglyTypedId;
 
-    public record JsonRequest(MyId Id, string Name, DateTime Time);
+    public record JsonRequest(MyId Id, string Name, DateTimeOffset Time);
 
-    public record JsonResponse(MyId Id, string Name, DateTime Time);
+    public record JsonResponse(MyId Id, string Name, DateTimeOffset Time);
 }

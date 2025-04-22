@@ -14,12 +14,12 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
 
         public string Name { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;
-        public DateTime CreatedAt { get; init; }
+        public DateTimeOffset CreatedAt { get; init; }
         public virtual ICollection<RolePermission> Permissions { get; init; } = [];
 
         public Role(string name, string description, IEnumerable<RolePermission> permissions)
         {
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTimeOffset.Now;
             Name = name;
             Description = description;
             Permissions = new List<RolePermission>(permissions);
