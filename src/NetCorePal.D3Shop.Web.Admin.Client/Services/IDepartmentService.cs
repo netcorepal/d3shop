@@ -10,7 +10,7 @@ public interface IDepartmentService
     Task<ResponseData<DeptId>> CreateDepartment([Body] CreateDepartmentRequest request);
 
     [Get("/api/Department/GetAllDepartments")]
-    Task<ResponseData<PagedData<DepartmentResponse>>> GetAllDepartments([Query] DepartmentQueryRequest request);
+    Task<ResponseData<List<DepartmentResponse>>> GetAllDepartments([Query] DepartmentQueryRequest request);
 
     [Put("/api/Department/UpdateDepartmentInfo/{id}")]
     Task<ResponseData> UpdateDepartmentInfo(DeptId id, [Body] UpdateDepartmentInfoRequest request);

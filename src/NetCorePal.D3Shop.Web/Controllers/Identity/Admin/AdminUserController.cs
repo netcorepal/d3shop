@@ -23,6 +23,7 @@ namespace NetCorePal.D3Shop.Web.Controllers.Identity.Admin;
 public class AdminUserController(
     IMediator mediator,
     AdminUserQuery adminUserQuery,
+    ICurrentVueAdminUser currentUser,
     RoleQuery roleQuery)
     : ControllerBase, IAdminUserService
 {
@@ -40,6 +41,33 @@ public class AdminUserController(
             CancellationToken);
 
         return adminUserId.AsResponseData();
+    }
+
+    /// <summary>
+    /// 获取当前登录用户的信息
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<ResponseData<AdminUserResponse?>> GetUserInfo()
+    {
+        var userId = currentUser.UserId;
+        var adminUsers = await adminUserQuery.GetAdminUserByIdAsync(userId, CancellationToken);
+        return adminUsers.AsResponseData();
+    }
+
+
+    /// <summary>
+    ///  获取当前登录用户的权限代码
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<ResponseData<List<string>?>> GetAccessCodes()
+    {
+        //从请求中获取用户ID
+        var userId = currentUser.UserId;
+        var codes = await adminUserQuery.GetAdminUserPermissionCodes(userId);
+        return codes.AsResponseData();
+
     }
 
     [HttpGet]
