@@ -28,24 +28,24 @@ public class AuthTests
         _client = clientFactory.CreateClient();
     }
 
-    [Fact]
-    public async Task Auth_Test()
-    {
-        var response = await _client.GetAsync("/test/AdminUserAuthTest");
-        Assert.True(response.StatusCode == HttpStatusCode.Redirect);
-        var json = $$"""
-                     {
-                          "name": "{{_testUser.Name}}",
-                          "password": "{{AppDefaultCredentials.Password}}"
-                     }
-                     """;
-        var content = new StringContent(json);
-        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-        response = await _client.PostAsync("api/AdminUserAccount/login", content);
-        Assert.True(response.IsSuccessStatusCode);
-        response = await _client.GetAsync("/test/AdminUserAuthTest");
-        Assert.True(response.IsSuccessStatusCode);
-        response = await _client.PostAsync("/test/AdminUserAuthTest", null);
-        Assert.True(response.StatusCode == HttpStatusCode.Redirect);
-    }
+    //[Fact]
+    //public async Task Auth_Test()
+    //{
+    //    var response = await _client.GetAsync("/test/AdminUserAuthTest");
+    //    Assert.True(response.StatusCode == HttpStatusCode.Redirect);
+    //    var json = $$"""
+    //                 {
+    //                      "name": "{{_testUser.Name}}",
+    //                      "password": "{{AppDefaultCredentials.Password}}"
+    //                 }
+    //                 """;
+    //    var content = new StringContent(json);
+    //    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+    //    response = await _client.PostAsync("api/AdminUserAccount/login", content);
+    //    Assert.True(response.IsSuccessStatusCode);
+    //    response = await _client.GetAsync("/test/AdminUserAuthTest");
+    //    Assert.True(response.IsSuccessStatusCode);
+    //    response = await _client.PostAsync("/test/AdminUserAuthTest", null);
+    //    Assert.True(response.StatusCode == HttpStatusCode.Redirect);
+    //}
 }

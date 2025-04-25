@@ -100,7 +100,7 @@ public class AdminUserRoleIntegrationTests
     {
         // Arrange
         var createRoleRequest = new CreateRoleRequest
-            { Name = roleName, Description = roleDescription, Permissions = [] };
+            { Name = roleName, Description = roleDescription, Permissions = permissionCodes };
 
         // Act
         var response = await _client.PostAsJsonAsync("api/Role/CreateRole", createRoleRequest);
