@@ -14,7 +14,7 @@
             <Input @bind-Value="@context.Name"/>
         </FormItem>
         <FormItem Label="描述">
-            <Input @bind-Value="@context.Description"/>
+            <Input @bind-Value="@context.Remark"/>
         </FormItem>
     </Form>
 </Modal>
@@ -34,7 +34,7 @@
     {
         _modalVisible = true;
         _deptInfoModel.Name = Row.Name;
-        _deptInfoModel.Description = Row.Description;
+        _deptInfoModel.Remark = Row.Remark;
     }
 
     private async Task Form_OnFinish(EditContext editContext)
@@ -48,7 +48,7 @@
             _modalVisible = false;
             _ = Message.Success("更新成功！");
             Row.Name = _deptInfoModel.Name;
-            Row.Description = _deptInfoModel.Description;
+            Row.Remark = _deptInfoModel.Remark;
             await OnRowUpdated.InvokeAsync();
         }
         else

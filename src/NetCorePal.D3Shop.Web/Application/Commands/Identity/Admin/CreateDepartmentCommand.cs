@@ -10,8 +10,8 @@ namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin;
 public record CreateDepartmentCommand(
     string Name,
     string Description,
-    IEnumerable<CreateDepartmentUserInfoDto> Users,
-    DeptId ParentId)
+    DeptId ParentId,
+    int Status)
     : ICommand<DeptId>;
 
 public class CreateDepartmentCommandValidator : AbstractValidator<CreateDepartmentCommand>
@@ -30,9 +30,8 @@ public class CreateDepartmentCommandHandler(IDepartmentRepository departmentRepo
 {
     public async Task<DeptId> Handle(CreateDepartmentCommand request, CancellationToken cancellationToken)
     {
-        List<DepartmentUser> departmentUsers = [];
-        foreach (var user in request.Users) departmentUsers.Add(new DepartmentUser(user.UserName, user.UserId));
-        var department = new Department(request.Name, request.Description, request.ParentId, departmentUsers);
+     
+        var department = new Department(request.Name, request.Description, request.ParentId, request.Status);
         await departmentRepository.AddAsync(department, cancellationToken);
         return department.Id;
     }

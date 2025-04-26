@@ -15,20 +15,28 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate
         public string Name { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;
         public DateTimeOffset CreatedAt { get; init; }
+
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public int Status { get; set; }
+
         public virtual ICollection<RolePermission> Permissions { get; init; } = [];
 
-        public Role(string name, string description, IEnumerable<RolePermission> permissions)
+        public Role(string name, string description, IEnumerable<RolePermission> permissions, int status)
         {
             CreatedAt = DateTimeOffset.Now;
             Name = name;
             Description = description;
             Permissions = new List<RolePermission>(permissions);
+            Status = status;
         }
 
-        public void UpdateRoleInfo(string name, string description)
+        public void UpdateRoleInfo(string name, string description, int status)
         {
             Name = name;
             Description = description;
+            Status = status;
             AddDomainEvent(new RoleInfoChangedDomainEvent(this));
         }
 

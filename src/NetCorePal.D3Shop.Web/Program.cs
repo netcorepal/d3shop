@@ -78,7 +78,28 @@ try
 
     builder.Services.AddScoped<ICurrentClientUser, CurrentClientUser>();
 
+    builder.Services.AddScoped<ICurrentAdminUser, CurrentAdminUser>();
     #endregion
+    #region CORS
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowCORS", policy =>
+        {
+            var origins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>();
+            if (origins == null || origins.Length == 0)
+            {
+                throw new InvalidOperationException("CORS 来源未配置。请将 'Cors:Origins' 添加到您的配置中");
+            }
+            policy.WithOrigins(origins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        });
+    });
+    #endregion
+
+
 
     #region Controller
 
@@ -156,7 +177,8 @@ try
     builder.Services.AddContext().AddEnvContext().AddCapContextProcessor();
     builder.Services.AddNetCorePalServiceDiscoveryClient();
     builder.Services.AddIntegrationEvents(typeof(Program))
-        .UseCap<ApplicationDbContext>(capBuilder => {
+        .UseCap<ApplicationDbContext>(capBuilder =>
+        {
             capBuilder.RegisterServicesFromAssemblies(typeof(Program));
             capBuilder.AddContextIntegrationFilters();
             capBuilder.UseMySql();
@@ -239,6 +261,7 @@ try
 
     app.UseAuthentication();
     app.UseHttpsRedirection();
+    app.UseCors("AllowCORS");
     app.UseStaticFiles();
 
     app.UseRouting();

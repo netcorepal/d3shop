@@ -10,6 +10,10 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         public DeptId DeptId { get; private set; } = default!;
         public string DeptName { get; private set; } = string.Empty;
 
+        public string DeptCode { get; private set; } = string.Empty;
+
+        public string Description { get; private set; } = string.Empty;
+
         public UserDept(DeptId deptId, string deptName)
         {
             DeptId = deptId;

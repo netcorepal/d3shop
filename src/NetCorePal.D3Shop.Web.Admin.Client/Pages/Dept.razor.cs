@@ -8,13 +8,17 @@ public sealed partial class Dept
     [Inject] private MessageService Message { get; set; } = default!;
     [Inject] private ConfirmService ConfirmService { get; set; } = default!;
 
-    private PagedData<DepartmentResponse> _pagedDepartments = new(default!, default, default, default);
+    private List<DepartmentResponse> _pagedDepartments = default!;
 
     private Table<DepartmentResponse> _table = default!;
 
-    private readonly DepartmentQueryRequest _departmentQueryRequest = new() { CountTotal = true };
+    private readonly DepartmentQueryRequest _departmentQueryRequest = new() { };
+
+    private int _totalDepartments = 100;
 
     private bool _loading;
+
+    private int _pageIndex = 1;
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -28,8 +32,8 @@ public sealed partial class Dept
         if (response.Success)
         {
             _pagedDepartments = response.Data;
-            _departmentQueryRequest.PageIndex = response.Data.PageIndex;
-            _departmentQueryRequest.PageSize = response.Data.PageSize;
+            //_departmentQueryRequest.PageIndex = response.Data.PageIndex;
+            //_departmentQueryRequest.PageSize = response.Data.PageSize;
         }
         else _ = Message.Error(response.Message);
     }
@@ -66,7 +70,7 @@ public sealed partial class Dept
 
     private async Task OnSearch()
     {
-        _departmentQueryRequest.PageIndex = 1;
+        //_departmentQueryRequest.PageIndex = 1;
         await GetPagedDepartments();
     }
 

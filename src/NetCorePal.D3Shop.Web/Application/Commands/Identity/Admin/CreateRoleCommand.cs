@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.MenuAggregate;
 using NetCorePal.D3Shop.Domain.AggregatesModel.Identity.RoleAggregate;
 using NetCorePal.D3Shop.Infrastructure.Repositories.Identity.Admin;
 using NetCorePal.D3Shop.Web.Application.Queries.Identity.Admin;
@@ -6,7 +7,7 @@ using NetCorePal.Extensions.Primitives;
 
 namespace NetCorePal.D3Shop.Web.Application.Commands.Identity.Admin;
 
-public record CreateRoleCommand(string Name, string Description, IEnumerable<string> PermissionCodes)
+public record CreateRoleCommand(string Name, string Description, int Status, IEnumerable<(MenuId menuId, string code)> Permissions)
     : ICommand<RoleId>;
 
 public class CreateRoleCommandValidator : AbstractValidator<CreateRoleCommand>
@@ -23,11 +24,12 @@ public class CreateRoleCommandHandler(IRoleRepository roleRepository) : ICommand
 {
     public async Task<RoleId> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {
-        var permissions = request.PermissionCodes.Select(code => new RolePermission(code));
+        var permissions = request.Permissions.Select(perm => new RolePermission(perm.code, perm.menuId));
 
-        var role = new Role(request.Name, request.Description, permissions);
+        var role = new Role(request.Name, request.Description, permissions, request.Status);
 
         await roleRepository.AddAsync(role, cancellationToken);
+
         return role.Id;
     }
 }

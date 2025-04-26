@@ -19,10 +19,13 @@ public class RoleQuery(ApplicationDbContext dbContext) : IQuery
         return await RoleSet.AsNoTracking()
             .WhereIf(!query.Name.IsNullOrWhiteSpace(), r => r.Name.Contains(query.Name!))
             .WhereIf(!query.Description.IsNullOrWhiteSpace(), r => r.Description.Contains(query.Description!))
+            .WhereIf(query.Status.HasValue, r => r.Status == query.Status)
             .OrderBy(r => r.Id)
-            .Select(r => new RoleResponse(r.Id, r.Name, r.Description))
+            .Select(r => new RoleResponse(r.Id, r.Name, r.Status, r.Description, r.Permissions.Select(rp => rp.MenuId), r.CreatedAt))
             .ToPagedDataAsync(query, cancellationToken);
     }
+
+
 
     public async Task<List<AdminUserRoleResponse>> GetAllAdminUserRolesAsync(CancellationToken cancellationToken)
     {
