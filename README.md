@@ -11,6 +11,10 @@
 
 视频与直播在B站：[https://b23.tv/hUNoBjA](https://b23.tv/hUNoBjA)
 
+## 项目文档
+
+https://deepwiki.com/netcorepal/d3shop
+
 ## 技术原则
 
 + 完善的自动化测试覆盖
@@ -41,6 +45,12 @@
 基于 Ant Design Blazor 实现，参见：
 
 https://antblazor.com/zh-CN/components/overview
+
+## Vue UI
+
+基于 Vben-admin 实现，参见：
+
+https://github.com/netcorepal/d3shop-vben-admin
 
 ## 数据库迁移
 
