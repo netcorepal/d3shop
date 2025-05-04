@@ -60,7 +60,7 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCa
             .WhereIf(!queryRequest.Name.IsNullOrWhiteSpace(), au => au.Name.Contains(queryRequest.Name!))
             .WhereIf(!queryRequest.Phone.IsNullOrWhiteSpace(), au => au.Phone.Contains(queryRequest.Phone!))
             .OrderBy(au => au.Id)
-            .Select(au => new AdminUserResponse(au.Id, au.Name, au.Phone, au.Roles.Select(r => r.RoleName),au.RealName))
+            .Select(au => new AdminUserResponse(au.Id, au.Name, au.Phone, au.Roles.Select(r => r.RoleName),au.RealName,au.Status,au.Email,au.CreatedAt))
             .ToPagedDataAsync(queryRequest, cancellationToken);
         return adminUsers;
     }
@@ -71,7 +71,7 @@ public class AdminUserQuery(ApplicationDbContext applicationDbContext, IMemoryCa
     {
         var adminUsers = await AdminUserSet.AsNoTracking()
             .Where(x => x.Id == id)
-            .Select(au => new AdminUserResponse(au.Id, au.Name, au.Name, au.Roles.Select(r => r.RoleName), au.RealName))
+           .Select(au => new AdminUserResponse(au.Id, au.Name, au.Phone, au.Roles.Select(r => r.RoleName), au.RealName, au.Status, au.Email, au.CreatedAt))
             .FirstOrDefaultAsync(cancellationToken);
         return adminUsers;
     }

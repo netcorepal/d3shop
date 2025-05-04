@@ -5,7 +5,7 @@ namespace NetCorePal.D3Shop.Domain.Tests.Identity
 {
     public class AdminUserTests
     {
-        private readonly AdminUser _testUser = new("test", "1", "", [], []);
+        private readonly AdminUser _testUser = new("test", "1", "", [], [],"",1,"");
 
         [Fact]
         public void EditRole_Test()
