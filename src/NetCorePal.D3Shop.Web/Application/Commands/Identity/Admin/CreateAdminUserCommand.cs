@@ -11,7 +11,10 @@ public record CreateAdminUserCommand(
     string Name,
     string Phone,
     string Password,
-    IEnumerable<AssignAdminUserRoleDto> RolesToBeAssigned)
+    IEnumerable<AssignAdminUserRoleDto> RolesToBeAssigned,
+    string RealName,
+    int Status,
+    string Email)
     : ICommand<AdminUserId>;
 
 public class CreateAdminUserCommandValidator : AbstractValidator<CreateAdminUserCommand>
@@ -42,7 +45,7 @@ public class CreateAdminUserCommandHandler(IAdminUserRepository adminUserReposit
 
         var adminUser = new AdminUser(request.Name, request.Phone,
             request.Password,
-            adminUserRoles, adminUserPermissions);
+            adminUserRoles, adminUserPermissions,request.RealName, request.Status, request.Email);
 
         await adminUserRepository.AddAsync(adminUser, cancellationToken);
         return adminUser.Id;

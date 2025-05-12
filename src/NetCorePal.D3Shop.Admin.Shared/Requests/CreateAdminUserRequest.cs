@@ -9,4 +9,9 @@ public class CreateAdminUserRequest
     [Required] public string Phone { get; set; } = string.Empty;
     [Required] public string PassWord { get; set; } = string.Empty;
     public IEnumerable<RoleId> RoleIds { get; set; } = [];
+
+    public string RealName { get; set; } = string.Empty;
+    public int Status { get; set; }
+
+    public string Email { get;  set; } = string.Empty;
 }

@@ -16,7 +16,7 @@ namespace NetCorePal.D3Shop.Web.Extensions
             if (!dbContext.AdminUsers.Any(u => u.Name == AppDefaultCredentials.Name))
             {
                 var adminUser = new AdminUser(AppDefaultCredentials.Name, "",
-                    PasswordHasher.HashPassword(AppDefaultCredentials.Password), [], []);
+                    PasswordHasher.HashPassword(AppDefaultCredentials.Password), [], [], "", 1, "");
                 dbContext.AdminUsers.Add(adminUser);
                 dbContext.SaveChanges();
             }

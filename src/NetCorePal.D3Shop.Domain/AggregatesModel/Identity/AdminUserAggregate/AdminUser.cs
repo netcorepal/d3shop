@@ -22,6 +22,12 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
 
         public string RealName { get; private set; } = string.Empty;
         public string Email { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// 0:已禁用  1:已启用
+        /// </summary>
+        public int Status { get; private set; } = 1;
+
         public DateTimeOffset CreatedAt { get; init; }
         public virtual ICollection<AdminUserRole> Roles { get; } = [];
 
@@ -34,12 +40,15 @@ namespace NetCorePal.D3Shop.Domain.AggregatesModel.Identity.AdminUserAggregate
         public DateTimeOffset? DeletedAt { get; private set; }
 
         public AdminUser(string name, string phone, string password,
-            IEnumerable<AdminUserRole> roles, IEnumerable<AdminUserPermission> permissions)
+            IEnumerable<AdminUserRole> roles, IEnumerable<AdminUserPermission> permissions, string realName, int status, string email)
         {
             CreatedAt = DateTimeOffset.Now;
             Name = name;
             Phone = phone;
             Password = password;
+            RealName = realName;
+            Status = status;
+            Email = email;
             foreach (var adminUserRole in roles)
             {
                 Roles.Add(adminUserRole);
