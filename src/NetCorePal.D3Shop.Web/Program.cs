@@ -159,7 +159,7 @@ try
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
         options.UseMySql(builder.Configuration.GetConnectionString("MySql"),
-            new MySqlServerVersion(new Version(8, 0, 34)),
+            ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MySql")),
             b =>
             {
                 b.MigrationsAssembly(typeof(Program).Assembly.FullName);
