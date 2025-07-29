@@ -12,9 +12,9 @@ namespace NetCorePal.D3Shop.Web.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "RefreshToken",
-                table: "clientUsers");
+            // migrationBuilder.DropColumn(
+            //     name: "RefreshToken",
+            //     table: "clientUsers");
 
             migrationBuilder.AlterColumn<long>(
                 name: "Id",
@@ -154,12 +154,12 @@ namespace NetCorePal.D3Shop.Web.Migrations
                 oldType: "bigint")
                 .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
 
-            migrationBuilder.AddColumn<string>(
-                name: "RefreshToken",
-                table: "clientUsers",
-                type: "longtext",
-                nullable: false)
-                .Annotation("MySql:CharSet", "utf8mb4");
+            // migrationBuilder.AddColumn<string>(
+            //     name: "RefreshToken",
+            //     table: "clientUsers",
+            //     type: "longtext",
+            //     nullable: false)
+            //     .Annotation("MySql:CharSet", "utf8mb4");
         }
     }
 }

@@ -12,6 +12,10 @@ namespace NetCorePal.D3Shop.Web.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_rolePermissions_roles_RoleId",
+                table: "rolePermissions");
+            
             migrationBuilder.AlterColumn<long>(
                 name: "Id",
                 table: "roles",
@@ -19,7 +23,18 @@ namespace NetCorePal.D3Shop.Web.Migrations
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .OldAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
+                .OldAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+                .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.None);
+            
+            migrationBuilder.AddForeignKey(
+                name: "FK_rolePermissions_roles_RoleId",
+                table: "rolePermissions",
+                column: "RoleId",
+                principalTable: "roles",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade,
+                onUpdate:ReferentialAction.Restrict);
+
 
             migrationBuilder.AlterColumn<long>(
                 name: "Id",
@@ -30,6 +45,10 @@ namespace NetCorePal.D3Shop.Web.Migrations
                 oldType: "bigint")
                 .OldAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
 
+            migrationBuilder.DropForeignKey(
+                name: "FK_departmentUser_departments_DeptId",
+                table: "departmentUser");
+            
             migrationBuilder.AlterColumn<long>(
                 name: "Id",
                 table: "departments",
@@ -37,7 +56,17 @@ namespace NetCorePal.D3Shop.Web.Migrations
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .OldAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
+                .OldAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+                .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.None);
+            
+            migrationBuilder.AddForeignKey(
+                name: "FK_departmentUser_departments_DeptId",
+                table: "departmentUser",
+                column: "DeptId",
+                principalTable: "departments",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict,
+                onUpdate:ReferentialAction.Restrict);
 
             migrationBuilder.AlterColumn<long>(
                 name: "Id",
@@ -58,6 +87,17 @@ namespace NetCorePal.D3Shop.Web.Migrations
                 oldType: "datetime(6)",
                 oldNullable: true);
 
+            // 手动删除外键
+            
+            migrationBuilder.DropForeignKey(
+                name: "FK_userDeliveryAddresses_clientUsers_UserId",
+                table: "userDeliveryAddresses");
+            
+            migrationBuilder.DropForeignKey(
+                name: "FK_userThirdPartyLogins_clientUsers_UserId",
+                table: "userThirdPartyLogins");
+
+            
             migrationBuilder.AlterColumn<long>(
                 name: "Id",
                 table: "clientUsers",
@@ -65,28 +105,49 @@ namespace NetCorePal.D3Shop.Web.Migrations
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .OldAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
+                .OldAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+                .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.None);
+            
+            migrationBuilder.AddForeignKey(
+                name: "FK_userDeliveryAddresses_clientUsers_UserId",
+                table: "userDeliveryAddresses",
+                column: "UserId",
+                principalTable: "clientUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict,
+                onUpdate:ReferentialAction.Restrict);
+            
+            migrationBuilder.AddForeignKey(
+                name: "FK_userThirdPartyLogins_clientUsers_UserId",
+                table: "userThirdPartyLogins",
+                column: "UserId",
+                principalTable: "clientUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict,
+                onUpdate:ReferentialAction.Restrict);
+            
+         
 
-            migrationBuilder.AddColumn<DateTime>(
-                name: "LoginExpiryDate",
-                table: "clientUsers",
-                type: "datetime(6)",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+            // migrationBuilder.AddColumn<DateTime>(
+            //     name: "LoginExpiryDate",
+            //     table: "clientUsers",
+            //     type: "datetime(6)",
+            //     nullable: false,
+            //     defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
-            migrationBuilder.AddColumn<string>(
-                name: "PasswordSalt",
-                table: "clientUsers",
-                type: "longtext",
-                nullable: false)
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.AddColumn<string>(
-                name: "RefreshToken",
-                table: "clientUsers",
-                type: "longtext",
-                nullable: false)
-                .Annotation("MySql:CharSet", "utf8mb4");
+            // migrationBuilder.AddColumn<string>(
+            //     name: "PasswordSalt",
+            //     table: "clientUsers",
+            //     type: "longtext",
+            //     nullable: false)
+            //     .Annotation("MySql:CharSet", "utf8mb4");
+            //
+            // migrationBuilder.AddColumn<string>(
+            //     name: "RefreshToken",
+            //     table: "clientUsers",
+            //     type: "longtext",
+            //     nullable: false)
+            //     .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.AlterColumn<long>(
                 name: "Id",
@@ -97,6 +158,20 @@ namespace NetCorePal.D3Shop.Web.Migrations
                 oldType: "bigint")
                 .OldAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
 
+            
+            
+            migrationBuilder.DropForeignKey(
+                name: "FK_adminUserPermissions_adminUsers_AdminUserId",
+                table: "adminUserPermissions");
+            
+            migrationBuilder.DropForeignKey(
+                name: "FK_adminUserRoles_adminUsers_AdminUserId",
+                table: "adminUserRoles");
+            
+            migrationBuilder.DropForeignKey(
+                name: "FK_userDepts_adminUsers_AdminUserId",
+                table: "userDepts");
+            
             migrationBuilder.AlterColumn<long>(
                 name: "Id",
                 table: "adminUsers",
@@ -104,8 +179,38 @@ namespace NetCorePal.D3Shop.Web.Migrations
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .OldAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
+                .OldAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+                .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.None);
 
+            
+            migrationBuilder.AddForeignKey(
+                name: "FK_adminUserPermissions_adminUsers_AdminUserId",
+                table: "adminUserPermissions",
+                column: "AdminUserId",
+                principalTable: "adminUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict,
+                onUpdate:ReferentialAction.Restrict);
+            
+            migrationBuilder.AddForeignKey(
+                name: "FK_adminUserRoles_adminUsers_AdminUserId",
+                table: "adminUserRoles",
+                column: "AdminUserId",
+                principalTable: "adminUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict,
+                onUpdate:ReferentialAction.Restrict);
+            
+            migrationBuilder.AddForeignKey(
+                name: "FK_userDepts_adminUsers_AdminUserId",
+                table: "userDepts",
+                column: "AdminUserId",
+                principalTable: "adminUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict,
+                onUpdate:ReferentialAction.Restrict);
+
+            
             migrationBuilder.CreateTable(
                 name: "OpenIddictApplications",
                 columns: table => new
@@ -304,17 +409,17 @@ namespace NetCorePal.D3Shop.Web.Migrations
             migrationBuilder.DropTable(
                 name: "OpenIddictApplications");
 
-            migrationBuilder.DropColumn(
-                name: "LoginExpiryDate",
-                table: "clientUsers");
+            // migrationBuilder.DropColumn(
+            //     name: "LoginExpiryDate",
+            //     table: "clientUsers");
 
-            migrationBuilder.DropColumn(
-                name: "PasswordSalt",
-                table: "clientUsers");
+            // migrationBuilder.DropColumn(
+            //     name: "PasswordSalt",
+            //     table: "clientUsers");
 
-            migrationBuilder.DropColumn(
-                name: "RefreshToken",
-                table: "clientUsers");
+            // migrationBuilder.DropColumn(
+            //     name: "RefreshToken",
+            //     table: "clientUsers");
 
             migrationBuilder.AlterColumn<long>(
                 name: "Id",
